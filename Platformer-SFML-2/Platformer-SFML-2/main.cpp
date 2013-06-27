@@ -1,4 +1,6 @@
+#include "game.h"
+
 int main()
 {
-    return 0;
+    return sGame.Update();
 }
