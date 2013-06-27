@@ -11,3 +11,14 @@
 *.lai
 *.la
 *.a
+
+# Other
+*.tlog
+*.log
+*.obj
+*.idb
+*.exe
+*.ilk
+*.pdb
+*.sdf
+*.opensdf
