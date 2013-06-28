@@ -22,31 +22,33 @@ void MenuManager::LoadMenus()
     //! Main Menu
     std::vector<MenuButton*> menuButtons;
 
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
 
-    MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f));
-    menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 100.0f)));
-    menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 150.0f)));
-    menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f)));
-    menuButtons.push_back(menuButtonMain1);
+    //! Temporarily disabled the child buttons because we don't need them at the moment. They'll become useful when we
+    //! start working on stuff like a level editor.
+    //MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f));
+    //menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(300.0f, 100.0f)));
+    //menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(300.0f, 150.0f)));
+    //menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(300.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
 
     menuButtons.push_back(new MenuButton(2, "Graphics/Menu/quit.png", sf::Vector2f(100.0f, 300.0f)));
-    menus[MENU_STATE_MAIN] = menuButtons;
+    menus[MENU_STATE_MAIN] = menuButtons; //! Play, Options, Quit
 
     //! Level selection sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/level_1.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/level_2.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/level_3.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_LEVEL_SELECTION] = menuButtons;
 
     //! Options sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_OPTIONS] = menuButtons;
 }
 
@@ -99,19 +101,19 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 {
                     switch ((*itr)->GetButtonId())
                     {
-                        case 0: //!
+                        case 0: //! Volume
                         {
-                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+                            std::cout << "Volume" << std::endl;
                             break;
                         }
-                        case 1: //!
+                        case 1: //! Herp
                         {
-                            std::cout << "Options sub-click" << std::endl;
+                            std::cout << "Herp" << std::endl;
                             break;
                         }
-                        case 2: //!
+                        case 2: //! Derp
                         {
-                            std::cout << "Options sub-click" << std::endl;
+                            std::cout << "Derp" << std::endl;
                             break;
                         }
                         default:
@@ -122,6 +124,27 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 }
                 case MENU_STATE_LEVEL_SELECTION:
                 {
+                    switch ((*itr)->GetButtonId())
+                    {
+                        case 0: //! Level 1
+                        {
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+                            break;
+                        }
+                        case 1: //! Level 2
+                        {
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+                            break;
+                        }
+                        case 2: //! Level 3
+                        {
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+                            break;
+                        }
+                        default:
+                            std::cout << "MenuManager::MouseButtonPressed: Unsupported button id " << (*itr)->GetButtonId() << ", menu " << currMenuState << std::endl;
+                            break;
+                    }
                     break;
                 }
                 default:
