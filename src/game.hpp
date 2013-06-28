@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "gameState.hpp"
+#include "gamestate.hpp"
 
 class Game : public GameState
 {

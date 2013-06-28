@@ -1,5 +1,5 @@
 #include "statemanager.hpp"
-#include "gameState.hpp"
+#include "gamestate.hpp"
 #include "game.hpp"
 #include "menumanager.hpp"
 

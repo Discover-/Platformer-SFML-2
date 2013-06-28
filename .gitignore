@@ -43,6 +43,7 @@ obj/
 *.sln
 *.cbp
 *.depend
+*.layout
 
 # Log files
 log
