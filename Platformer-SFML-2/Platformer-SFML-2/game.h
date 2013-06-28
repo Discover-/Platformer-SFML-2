@@ -1,21 +1,27 @@
 #pragma once
 
 #include <vector>
+#include "gameState.h"
 
-class Game
+class Game : public GameState
 {
     public:
-        static Game& instance()
+        static Game& instance(sf::RenderWindow* renderWindow, StateManager* manager)
         {
-            static Game game;
+            static Game game(renderWindow, manager);
             return game;
         }
 
-        int Update();
+        void handle_events();
+        void logic(double passed, double deltaTime);
+        void render(double alpha);
 
     private:
-        Game();
+        Game(sf::RenderWindow* renderWindow, StateManager* manager);
         ~Game();
-};
 
-#define sGame Game::instance()
+        StateManager* m_manager = nullptr;
+        sf::RenderWindow* m_window = nullptr;
+
+        sf::Color m_color; //Just to show the logic function
+};

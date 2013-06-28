@@ -1,9 +1,13 @@
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "game.h"
+#include "stateManager.h"
 
-Game::Game()
+Game::Game(sf::RenderWindow* window, StateManager* manager)
 {
+    m_window = window;
+    m_manager = manager;
 
+    m_color.r = 255;
 }
 
 Game::~Game()
@@ -11,29 +15,37 @@ Game::~Game()
 
 }
 
-int Game::Update()
+void Game::handle_events()
 {
-    sf::RenderWindow window(sf::VideoMode(1000, 600), "Platformer C++ SFML", sf::Style::Close);
     sf::Event _event;
 
-    while (window.isOpen())
+    while (m_window->pollEvent(_event))
     {
-        window.clear(sf::Color::Green);
-
-        while (window.pollEvent(_event))
+        switch (_event.type)
         {
-            switch (_event.type)
-            {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                default:
-                    break;
-            }
+            case sf::Event::Closed:
+                //Set the manager to shut down
+                m_manager->set_next_state(StateManager::GameStates::STATE_EXIT);
+                break;
+            default:
+                break;
         }
-
-        window.display();
     }
+}
 
-    return 0;
+void Game::logic(double passed, double deltaTime)
+{
+    //Just to show what kind of things logic should handle, other examples are movement etc
+    //don't forget to step in deltaTime sized chunks when working with physics
+    if ( m_color.r > 0 )
+    {
+        m_color.r--;
+        m_color.g++;
+    }
+}
+
+void Game::render(double alpha)
+{
+    m_window->clear(m_color);
+    m_window->display();
 }
