@@ -11,7 +11,7 @@
 class GameState;
 class Game;
 
-#define TICKS_PER_SECOND 25 //Used by the fixed timestep
+#define TICKS_PER_SECOND 25.0 //Used by the fixed timestep
 
 ///\brief A class for handling the switches between states(for example from menu to game)
 class StateManager
