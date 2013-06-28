@@ -11,3 +11,45 @@
 *.lai
 *.la
 *.a
+
+# Other
+*.tlog
+*.log
+*.obj
+*.idb
+*.exe
+*.ilk
+*.pdb
+*.sdf
+*.opensdf
+
+# dll's
+*.dll
+
+# Build directories
+Libraries/
+x64/
+Debug/
+Release/
+build/
+release/
+bin/
+obj/
+
+# Project files
+*.vcxproj
+*.vcxproj.filters
+*.suo
+*.sln
+*.cbp
+*.depend
+
+# Log files
+log
+*.log
+
+# Temporary files
+*~
+
+# Resource files
+Graphics/
