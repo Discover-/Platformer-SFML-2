@@ -10,11 +10,6 @@ Game::Game(sf::RenderWindow* window, StateManager* manager)
     m_color.r = 255;
 }
 
-Game::~Game()
-{
-
-}
-
 void Game::handle_events()
 {
     sf::Event _event;

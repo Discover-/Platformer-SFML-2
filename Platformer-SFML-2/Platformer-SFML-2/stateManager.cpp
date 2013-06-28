@@ -3,6 +3,7 @@
 
 //Include the states
 #include "game.h"
+#include "menumanager.h"
 
 void StateManager::clean()
 {
@@ -76,6 +77,7 @@ void StateManager::change_state()
         if ( nextState != STATE_EXIT)
         {
             delete m_currentState;
+            m_currentState = nullptr;
         }
 
         //Change the state
@@ -84,14 +86,12 @@ void StateManager::change_state()
             /*case STATE_INTRO:
                 delete m_currentState;
                 m_currentState = new Intro(m_window, this);
-                break;
-            case STATE_MENU:
-                delete m_currentState;
-                m_currentState = new Menu(m_window, this);
                 break;*/
+            case STATE_MENU:
+                m_currentState = new MenuManager(m_window, this);
+                break;
             case STATE_GAME:
-                delete m_currentState;
-                m_currentState = new Game(Game::instance(m_window, this));
+                m_currentState = new Game(m_window, this);
                 break;
         }
          stateID = nextState;

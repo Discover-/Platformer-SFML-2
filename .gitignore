@@ -50,3 +50,6 @@ log
 
 # Temporary files
 *~
+
+# Resource files
+Graphics/
