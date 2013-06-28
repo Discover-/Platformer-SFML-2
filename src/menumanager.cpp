@@ -23,35 +23,45 @@ void MenuManager::LoadMenus()
     //! Main Menu
     std::vector<MenuButton*> menuButtons;
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(300.0f, 25.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(300.0f, 100.0f)));
     //! Temporarily disabled the child buttons because we don't need them at the moment. They'll become useful when we
     //! start working on stuff like a level editor.
-    //MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f));
+    //MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f));
     //menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(300.0f, 100.0f)));
     //menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(300.0f, 150.0f)));
     //menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(300.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/quit.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/level_editor.png", sf::Vector2f(300.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(4, "Graphics/Menu/quit.png", sf::Vector2f(300.0f, 400.0f)));
     menus[MENU_STATE_MAIN] = menuButtons; //! Play, Options, Quit
 
     //! Level selection sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/level_1.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/level_2.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/level_3.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(300.0f, 0.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/level_1.png", sf::Vector2f(300.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/level_2.png", sf::Vector2f(300.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/level_3.png", sf::Vector2f(300.0f, 300.0f)));
     menus[MENU_STATE_LEVEL_SELECTION] = menuButtons; //! Levels 1, 2, 3
 
     //! Options sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/volume.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/herp.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/derp.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(300.0f, 0.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/volume.png", sf::Vector2f(300.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/herp.png", sf::Vector2f(300.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/derp.png", sf::Vector2f(300.0f, 300.0f)));
     menus[MENU_STATE_OPTIONS] = menuButtons; //! Volume, Herp, Derp
+
+    //! Level Editor sub-menu
+    menuButtons.clear();
+
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/save.png", sf::Vector2f(75.0f, 50.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/block1.png", sf::Vector2f(200.0f, 50.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/block2.png", sf::Vector2f(300.0f, 50.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/block3.png", sf::Vector2f(400.0f, 50.0f)));
+    menus[MENU_STATE_LEVEL_EDITOR] = menuButtons; //! Save, Blocks 1, 2, 3
 }
 
 void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
@@ -93,7 +103,13 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                             nextMenuState = MENU_STATE_OPTIONS;
                             break;
                         }
-                        case 3: //! Exit Game(tell the statemanager to shut down)
+                        case 3: //! Level Editor
+                        {
+                            //m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
+                            nextMenuState = MENU_STATE_LEVEL_EDITOR;
+                            break;
+                        }
+                        case 4: //! Exit Game
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
                             break;
@@ -156,6 +172,36 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                         case 3: //! Level 3
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+                            break;
+                        }
+                        default:
+                            std::cout << "MenuManager::MouseButtonPressed: Unsupported button id " << (*itr)->GetButtonId() << ", menu " << currMenuState << std::endl;
+                            break;
+                    }
+                    break;
+                }
+                case MENU_STATE_LEVEL_EDITOR:
+                {
+                    switch ((*itr)->GetButtonId())
+                    {
+                        case 0: //! Save
+                        {
+
+                            break;
+                        }
+                        case 1: //! Block 1
+                        {
+
+                            break;
+                        }
+                        case 2: //! Block 2
+                        {
+
+                            break;
+                        }
+                        case 3: //! Block 3
+                        {
+
                             break;
                         }
                         default:
@@ -241,6 +287,10 @@ void MenuManager::logic(double passed, double deltaTime)
             break;
         }
         case MENU_STATE_LEVEL_SELECTION:
+        {
+            break;
+        }
+        case MENU_STATE_LEVEL_EDITOR:
         {
             break;
         }

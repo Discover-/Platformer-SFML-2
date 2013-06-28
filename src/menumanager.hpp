@@ -13,6 +13,7 @@ enum MenuState
     MENU_STATE_MAIN             = 1,
     MENU_STATE_LEVEL_SELECTION  = 2,
     MENU_STATE_OPTIONS          = 3,
+    MENU_STATE_LEVEL_EDITOR     = 4,
 };
 
 class MenuButton;
