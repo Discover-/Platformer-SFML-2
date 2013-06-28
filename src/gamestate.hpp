@@ -1,13 +1,13 @@
 #ifndef GAMESTATE_HPP_INCLUDED
 #define GAMESTATE_HPP_INCLUDED
 
-#include "stateManager.h"
+#include "stateManager.hpp"
 
 /// \brief State base class
 class GameState
 {
     public:
-        virtual ~GameState(){};
+        virtual ~GameState() { };
 
         ///\brief Handle the events(keypresses etc)
         virtual void handle_events() = 0;

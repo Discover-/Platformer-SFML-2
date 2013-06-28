@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include "menubutton.h"
-#include "menumanager.h"
+
+#include "menubutton.hpp"
+#include "menumanager.hpp"
 
 MenuButton::MenuButton(int _buttonId, sf::Texture _buttonTexture, sf::Vector2f position)
 {

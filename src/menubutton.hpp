@@ -1,9 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <map>
 #include <vector>
-#include "position.h"
+
+#include <SFML/Graphics.hpp>
+
+#include "position.hpp"
 
 class MenuManager;
 

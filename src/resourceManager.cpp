@@ -1,5 +1,6 @@
-#include "resourceManager.h"
 #include <iostream>
+
+#include "resourcemanager.hpp"
 
 sf::Texture& ResourceManager::getTexture(const std::string filename)
 {

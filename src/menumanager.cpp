@@ -1,8 +1,10 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
-#include "menubutton.h"
-#include "menumanager.h"
-#include "stateManager.h"
+
+#include <SFML/Graphics.hpp>
+
+#include "menubutton.hpp"
+#include "menumanager.hpp"
+#include "stateManager.hpp"
 
 MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager)
 {
@@ -23,17 +25,17 @@ void MenuManager::LoadMenus()
     std::vector<MenuButton*> menuButtons;
 
     menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 150.0f)));
+    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
 
     menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    MenuButton* menuButtonMain1 = new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 100.0f));
+    MenuButton* menuButtonMain1 = new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 200.0f));
     menuButtonMain1->AddChildButton(new MenuButton(0, menuButtonTexture, sf::Vector2f(300.0f, 100.0f)));
     menuButtonMain1->AddChildButton(new MenuButton(1, menuButtonTexture, sf::Vector2f(300.0f, 150.0f)));
     menuButtonMain1->AddChildButton(new MenuButton(2, menuButtonTexture, sf::Vector2f(300.0f, 200.0f)));
     menuButtons.push_back(menuButtonMain1);
 
     menuButtonTexture.loadFromFile("Graphics/Menu/quit.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_MAIN] = menuButtons;
 
     //! Level selection sub-menu
@@ -43,10 +45,10 @@ void MenuManager::LoadMenus()
     menuButtons.push_back(new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
 
     menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 150.0f)));
+    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
 
     menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_LEVEL_SELECTION] = menuButtons;
 
     //! Options sub-menu
@@ -56,10 +58,10 @@ void MenuManager::LoadMenus()
     menuButtons.push_back(new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
 
     menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 150.0f)));
+    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
 
     menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_OPTIONS] = menuButtons;
 }
 
@@ -156,10 +158,11 @@ void MenuManager::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
+            {
                 //Set the manager to shut down
                 m_manager->set_next_state(StateManager::GameStates::STATE_EXIT);
                 break;
-
+            }
             case sf::Event::MouseButtonPressed:
             {
                 switch (_event.mouseButton.button)
@@ -167,12 +170,11 @@ void MenuManager::handle_events()
                     case sf::Mouse::Left:
                         MouseButtonPressed(sf::Mouse::getPosition(*m_window));
                         break;
-                        case sf::Mouse::Right:
-                            break;
+                    case sf::Mouse::Right:
+                        break;
                 }
                 break;
             }
-
             default:
                 break;
         }
@@ -217,6 +219,7 @@ void MenuManager::logic(double passed, double deltaTime)
 void MenuManager::render(double alpha)
 {
     m_window->clear();
+
     //Render all the buttons
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
@@ -236,5 +239,6 @@ void MenuManager::render(double alpha)
             }
         }
     }
+
     m_window->display();
 }

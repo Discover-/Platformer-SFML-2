@@ -1,9 +1,12 @@
 #include <SFML/Graphics.hpp>
-#include "game.h"
-#include "stateManager.h"
+
+#include "game.hpp"
+#include "stateManager.hpp"
 
 Game::Game(sf::RenderWindow* window, StateManager* manager)
 {
+    m_manager = nullptr;
+    m_window = nullptr;
     m_window = window;
     m_manager = manager;
 
@@ -32,7 +35,7 @@ void Game::logic(double passed, double deltaTime)
 {
     //Just to show what kind of things logic should handle, other examples are movement etc
     //don't forget to step in deltaTime sized chunks when working with physics
-    if ( m_color.r > 0 )
+    if (m_color.r > 0)
     {
         m_color.r--;
         m_color.g++;

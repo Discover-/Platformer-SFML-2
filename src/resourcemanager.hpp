@@ -1,9 +1,12 @@
 #ifndef RESOURCEMANAGER_HPP_INCLUDED
 #define RESOURCEMANAGER_HPP_INCLUDED
+
 #include <map>
+#include <string>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <string>
+
 #include <memory>
 
 class ResourceManager

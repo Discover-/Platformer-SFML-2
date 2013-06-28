@@ -1,9 +1,15 @@
-#include "stateManager.h"
-#include "gameState.h"
+#include "stateManager.hpp"
+#include "gameState.hpp"
+#include "game.hpp"
+#include "menumanager.hpp"
 
-//Include the states
-#include "game.h"
-#include "menumanager.h"
+StateManager::StateManager()
+{
+    m_window = 0;
+    stateID = 0;
+    nextState = 0;
+    m_currentState = 0;
+}
 
 void StateManager::clean()
 {
@@ -23,7 +29,7 @@ void StateManager::mainLoop()
     double currentTime = clock.getElapsedTime().asSeconds();
     double accumulator = 0.0;
 
-    while ( stateID != STATE_EXIT )
+    while (stateID != STATE_EXIT)
     {
         //Change state when needed
         change_state();
@@ -31,24 +37,22 @@ void StateManager::mainLoop()
         double newTime = clock.getElapsedTime().asSeconds();
         double frameTime = newTime - currentTime;
 
-        if ( frameTime > 0.25 )
-        {
-            frameTime = 0.25;	  //max frame time to avoid spiral of death
-        }
+        if (frameTime > 0.25)
+            frameTime = 0.25; //max frame time to avoid spiral of death
 
         currentTime = newTime;
         accumulator += frameTime;
 
-        while ( accumulator >= dt )
+        while (accumulator >= dt)
         {
             m_currentState->handle_events();
-            m_currentState->logic( t, dt );
+            m_currentState->logic(t, dt);
             t += dt;
             accumulator -= dt;
         }
 
         const double alpha = accumulator / dt;
-        m_currentState->render( alpha );
+        m_currentState->render(alpha);
     }
 
     //End of the line, let's clean our mess and shut down
@@ -57,7 +61,7 @@ void StateManager::mainLoop()
 }
 
 //State status manager
-   void StateManager::set_next_state( int newState )
+void StateManager::set_next_state(int newState)
 {
     //If the user doesn't want to exit
     if (nextState != STATE_EXIT)
@@ -71,17 +75,17 @@ void StateManager::mainLoop()
 void StateManager::change_state()
 {
     //If the state needs to be changed
-    if ( nextState != STATE_NULL)
+    if (nextState != STATE_NULL)
     {
         //Delete the current state
-        if ( nextState != STATE_EXIT)
+        if (nextState != STATE_EXIT)
         {
             delete m_currentState;
             m_currentState = nullptr;
         }
 
         //Change the state
-        switch ( nextState)
+        switch (nextState)
         {
             /*case STATE_INTRO:
                 delete m_currentState;
@@ -94,7 +98,8 @@ void StateManager::change_state()
                 m_currentState = new Game(m_window, this);
                 break;
         }
-         stateID = nextState;
-         nextState = STATE_NULL;
+
+        stateID = nextState;
+        nextState = STATE_NULL;
     }
 }

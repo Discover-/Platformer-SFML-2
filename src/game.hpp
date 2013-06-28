@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "gameState.h"
+
+#include "gameState.hpp"
 
 class Game : public GameState
 {
@@ -13,9 +14,7 @@ class Game : public GameState
         void render(double alpha);
 
     private:
-
-        StateManager* m_manager = nullptr;
-        sf::RenderWindow* m_window = nullptr;
-
+        StateManager* m_manager;
+        sf::RenderWindow* m_window;
         sf::Color m_color; //Just to show the logic function
 };

@@ -1,9 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <map>
 #include <vector>
-#include "gameState.h"
+
+#include <SFML/Graphics.hpp>
+
+#include "gameState.hpp"
 
 enum MenuState
 {
