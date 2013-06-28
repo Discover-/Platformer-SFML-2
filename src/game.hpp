@@ -17,5 +17,4 @@ class Game : public GameState
         StateManager* m_manager;
         sf::RenderWindow* m_window;
         sf::Color m_color; //Just to show the logic function
-        double m_lastUpdate;
 };

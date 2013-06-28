@@ -2,7 +2,6 @@
 
 #include "game.hpp"
 #include "statemanager.hpp"
-#include <cmath>
 
 Game::Game(sf::RenderWindow* window, StateManager* manager)
 {
@@ -12,8 +11,6 @@ Game::Game(sf::RenderWindow* window, StateManager* manager)
     m_manager = manager;
 
     m_color.r = 255;
-
-    m_lastUpdate = 0;
 }
 
 void Game::handle_events()
