@@ -27,21 +27,26 @@
 *.dll
 
 # Build directories
-Platformer-SFML-2/x64/
-Platformer-SFML-2/Platformer-SFML-2/x64/
-Platformer-SFML-2/Platformer-SFML-2/Libraries/
+Libraries/
 x64/
 Debug/
 Release/
 build/
 release/
+bin/
+obj/
 
 # Project files
 *.vcxproj
 *.vcxproj.filters
 *.suo
 *.sln
+*.cbp
+*.depend
 
 # Log files
 log
 *.log
+
+# Temporary files
+*~
