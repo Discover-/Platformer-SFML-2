@@ -22,3 +22,26 @@
 *.pdb
 *.sdf
 *.opensdf
+
+# dll's
+*.dll
+
+# Build directories
+Platformer-SFML-2/x64/
+Platformer-SFML-2/Platformer-SFML-2/x64/
+Platformer-SFML-2/Platformer-SFML-2/Libraries/
+x64/
+Debug/
+Release/
+build/
+release/
+
+# Project files
+*.vcxproj
+*.vcxproj.filters
+*.suo
+*.sln
+
+# Log files
+log
+*.log
