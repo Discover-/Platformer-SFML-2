@@ -12,10 +12,10 @@ class MenuManager;
 class MenuButton : public Position
 {
     public:
-        MenuButton(int _buttonId, sf::Texture _buttonTexture, sf::Vector2f position);
+        MenuButton(int _buttonId, std::string _textureFilename, sf::Vector2f position);
         ~MenuButton();
 
-        sf::Texture GetButtonTexture() { return buttonTexture; }
+        std::string GetTextureFilename() { return textureFilename; }
 
         std::vector<MenuButton*>& GetChildButtons() { return childButtons; }
         void SetChildButtons(std::vector<MenuButton*> _childButtons) { childButtons = _childButtons; }
@@ -29,7 +29,7 @@ class MenuButton : public Position
 
     private:
         std::vector<MenuButton*> childButtons;
-        sf::Texture buttonTexture;
+        std::string textureFilename;
         bool isCollapsed;
         int buttonId;
 };

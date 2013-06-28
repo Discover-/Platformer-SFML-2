@@ -22,8 +22,8 @@ void Game::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
-                //Set the manager to shut down
-                m_manager->set_next_state(StateManager::GameStates::STATE_EXIT);
+                //! Set the manager to shut down
+                m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
                 break;
             default:
                 break;
@@ -33,12 +33,17 @@ void Game::handle_events()
 
 void Game::logic(double passed, double deltaTime)
 {
-    //Just to show what kind of things logic should handle, other examples are movement etc
-    //don't forget to step in deltaTime sized chunks when working with physics
+    //! Just to show what kind of things logic should handle, other examples are movement etc
+    //! don't forget to step in deltaTime sized chunks when working with physics
     if (m_color.r > 1)
     {
         m_color.r -= 2;
         m_color.g += 2;
+    }
+    else
+    {
+        m_color.r = 255;
+        m_color.g = 0;
     }
 }
 

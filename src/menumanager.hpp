@@ -35,7 +35,6 @@ class MenuManager : public GameState
         std::vector<MenuButton*>& GetMenuButtons(MenuState menuState) { return menus[menuState]; }
 
     private:
-
         StateManager* m_manager;
         sf::RenderWindow* m_window;
 

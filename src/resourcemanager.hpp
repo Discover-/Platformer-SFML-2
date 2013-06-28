@@ -7,15 +7,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#include <memory>
+#include <memory> //? Waar is deze include voor nodig?
 
 class ResourceManager
 {
     public:
         /// \brief Load a texture if it isn't loaded yet and/or give a reference to the texture
         sf::Texture& getTexture(const std::string filename);
+
         /// \brief Load a SoundBuffer if it isn't loaded yet and/or give a reference to the SoundBuffer
         sf::SoundBuffer& getSoundBuffer(const std::string filename);
+
         /// \brief Load a music if it isn't loaded yet and/or give a reference to the music
         sf::Music& getMusic(const std::string filename);
 
@@ -26,7 +28,7 @@ class ResourceManager
         /// \brief Soundbuffers
         std::map <const std::string, std::shared_ptr<sf::SoundBuffer> > m_soundBuffers;
 
-        /// \brief Musics(these can be played and stopped directly by a state, so there is always only one instance of a certain music)
+        /// \brief Musics (these can be played and stopped directly by a state, so there is always only one instance of a certain music)
         std::map <const std::string, std::shared_ptr<sf::Music> > m_musics;
 };
 

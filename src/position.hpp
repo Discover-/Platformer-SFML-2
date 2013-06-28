@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POSITION_HPP_INCLUDED
+#define POSITION_HPP_INCLUDED
 
 #include <SFML/Graphics.hpp>
 
@@ -17,3 +18,5 @@ struct Position
     private:
         float positionX, positionY;
 };
+
+#endif // POSITION_HPP_INCLUDED

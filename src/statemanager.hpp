@@ -20,11 +20,11 @@ class StateManager
         ///\brief A list of all the states. Edit this for your own needs, see change_state for more details
         enum GameStates
         {
-            STATE_NULL,
-            STATE_INTRO,
-            STATE_MENU,
-            STATE_GAME,
-            STATE_EXIT
+            GAME_STATE_NULL,
+            GAME_STATE_INTRO,
+            GAME_STATE_MENU,
+            GAME_STATE_GAME,
+            GAME_STATE_EXIT
         };
 
         StateManager();

@@ -19,49 +19,34 @@ MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager)
 
 void MenuManager::LoadMenus()
 {
-    sf::Texture menuButtonTexture;
-
     //! Main Menu
     std::vector<MenuButton*> menuButtons;
 
-    menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
 
-    menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    MenuButton* menuButtonMain1 = new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 200.0f));
-    menuButtonMain1->AddChildButton(new MenuButton(0, menuButtonTexture, sf::Vector2f(300.0f, 100.0f)));
-    menuButtonMain1->AddChildButton(new MenuButton(1, menuButtonTexture, sf::Vector2f(300.0f, 150.0f)));
-    menuButtonMain1->AddChildButton(new MenuButton(2, menuButtonTexture, sf::Vector2f(300.0f, 200.0f)));
+    MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f));
+    menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 100.0f)));
+    menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 150.0f)));
+    menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f)));
     menuButtons.push_back(menuButtonMain1);
 
-    menuButtonTexture.loadFromFile("Graphics/Menu/quit.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/quit.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_MAIN] = menuButtons;
 
     //! Level selection sub-menu
     menuButtons.clear();
 
-    menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
-
-    menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
-
-    menuButtonTexture.loadFromFile("Graphics/Menu/play.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_LEVEL_SELECTION] = menuButtons;
 
     //! Options sub-menu
     menuButtons.clear();
 
-    menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    menuButtons.push_back(new MenuButton(0, menuButtonTexture, sf::Vector2f(100.0f, 100.0f)));
-
-    menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    menuButtons.push_back(new MenuButton(1, menuButtonTexture, sf::Vector2f(100.0f, 200.0f)));
-
-    menuButtonTexture.loadFromFile("Graphics/Menu/options.png");
-    menuButtons.push_back(new MenuButton(2, menuButtonTexture, sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_OPTIONS] = menuButtons;
 }
 
@@ -75,7 +60,7 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
 
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
-        sf::FloatRect buttonRect = sf::Sprite((*itr)->GetButtonTexture()).getGlobalBounds();
+        sf::FloatRect buttonRect = sf::Sprite(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename())).getGlobalBounds();
 
         if (!(mousePos.y >= (*itr)->GetPositionY() + buttonRect.height || mousePos.x >= (*itr)->GetPositionX() + buttonRect.width || mousePos.y + 16.0f <= (*itr)->GetPositionY() || mousePos.x + 16.0f <= (*itr)->GetPositionX()))
         {
@@ -101,7 +86,7 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                         }
                         case 2: //! Exit Game(tell the statemanager to shut down)
                         {
-                            m_manager->set_next_state(StateManager::GameStates::STATE_EXIT);
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
                             break;
                         }
                         default:
@@ -116,7 +101,7 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                     {
                         case 0: //!
                         {
-                            m_manager->set_next_state(StateManager::GameStates::STATE_GAME);
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
                             break;
                         }
                         case 1: //!
@@ -160,7 +145,7 @@ void MenuManager::handle_events()
             case sf::Event::Closed:
             {
                 //Set the manager to shut down
-                m_manager->set_next_state(StateManager::GameStates::STATE_EXIT);
+                m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
                 break;
             }
             case sf::Event::MouseButtonPressed:
@@ -195,7 +180,6 @@ void MenuManager::logic(double passed, double deltaTime)
         nextMenuState = MENU_STATE_NONE;
     }
 
-
     switch (currMenuState)
     {
         case MENU_STATE_MAIN:
@@ -220,10 +204,9 @@ void MenuManager::render(double alpha)
 {
     m_window->clear();
 
-    //Render all the buttons
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
-        sf::Sprite spriteButton((*itr)->GetButtonTexture());
+        sf::Sprite spriteButton(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename()));
 
         //! We center the images by substracting 50% of the width from the X position and 50% of the height from the Y position.
         spriteButton.setPosition((*itr)->GetPositionX() - spriteButton.getGlobalBounds().width / 2.0f, (*itr)->GetPositionY() - spriteButton.getGlobalBounds().height / 2.0f);
@@ -233,7 +216,7 @@ void MenuManager::render(double alpha)
         {
             for (std::vector<MenuButton*>::iterator itr2 = (*itr)->GetChildButtons().begin(); itr2 != (*itr)->GetChildButtons().end(); ++itr2)
             {
-                sf::Sprite childButton((*itr2)->GetButtonTexture());
+                sf::Sprite childButton(m_manager->resourceManager.getTexture((*itr2)->GetTextureFilename()));
                 childButton.setPosition((*itr2)->GetPositionX() - childButton.getGlobalBounds().width / 2.0f, (*itr2)->GetPositionY() - childButton.getGlobalBounds().height / 2.0f);
                 m_window->draw(childButton);
             }

@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
 
+#include <string>
+
 #include "menubutton.hpp"
 #include "menumanager.hpp"
 
-MenuButton::MenuButton(int _buttonId, sf::Texture _buttonTexture, sf::Vector2f position)
+MenuButton::MenuButton(int _buttonId, std::string _textureFilename, sf::Vector2f position)
 {
     buttonId = _buttonId;
-    buttonTexture = _buttonTexture;
+    textureFilename = _textureFilename;
     SetPosition(position.x, position.y);
     isCollapsed = false;
 }
