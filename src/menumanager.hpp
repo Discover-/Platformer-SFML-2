@@ -29,8 +29,6 @@ class MenuManager : public GameState
         void LoadMenus();
         void MouseButtonPressed(sf::Vector2i mousePos);
 
-        void SetCurrentMenuState(MenuState newMenuState) { currMenuState = newMenuState; }
-
         std::map<MenuState, std::vector<MenuButton*> >& GetMenus() { return menus; }
         std::vector<MenuButton*>& GetMenuButtons(MenuState menuState) { return menus[menuState]; }
 
@@ -39,6 +37,6 @@ class MenuManager : public GameState
         sf::RenderWindow* m_window;
 
     private:
-        MenuState currMenuState, nextMenuState;
+        MenuState currMenuState, nextMenuState, prevMenuState;
         std::map<MenuState /* menuState */, std::vector<MenuButton*> /* buttons */ > menus;
 };

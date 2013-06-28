@@ -13,6 +13,7 @@ MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager)
 
     nextMenuState = MENU_STATE_NONE;
     currMenuState = MENU_STATE_MAIN;
+    prevMenuState = MENU_STATE_MAIN;
 
     LoadMenus();
 }
@@ -22,34 +23,35 @@ void MenuManager::LoadMenus()
     //! Main Menu
     std::vector<MenuButton*> menuButtons;
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
-
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(100.0f, 100.0f)));
     //! Temporarily disabled the child buttons because we don't need them at the moment. They'll become useful when we
     //! start working on stuff like a level editor.
     //MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f));
     //menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(300.0f, 100.0f)));
     //menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(300.0f, 150.0f)));
     //menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(300.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
-
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/quit.png", sf::Vector2f(100.0f, 300.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/quit.png", sf::Vector2f(100.0f, 300.0f)));
     menus[MENU_STATE_MAIN] = menuButtons; //! Play, Options, Quit
 
     //! Level selection sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/level_1.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/level_2.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/level_3.png", sf::Vector2f(100.0f, 300.0f)));
-    menus[MENU_STATE_LEVEL_SELECTION] = menuButtons;
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/level_1.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/level_2.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/level_3.png", sf::Vector2f(100.0f, 300.0f)));
+    menus[MENU_STATE_LEVEL_SELECTION] = menuButtons; //! Levels 1, 2, 3
 
     //! Options sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(100.0f, 100.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(100.0f, 200.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(100.0f, 300.0f)));
-    menus[MENU_STATE_OPTIONS] = menuButtons;
+    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(100.0f, 0.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/volume.png", sf::Vector2f(100.0f, 100.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/herp.png", sf::Vector2f(100.0f, 200.0f)));
+    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/derp.png", sf::Vector2f(100.0f, 300.0f)));
+    menus[MENU_STATE_OPTIONS] = menuButtons; //! Volume, Herp, Derp
 }
 
 void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
@@ -76,17 +78,22 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 {
                     switch ((*itr)->GetButtonId())
                     {
-                        case 0: //! Play Game
+                        case 0: //! Back
+                        {
+                            nextMenuState = prevMenuState;
+                            break;
+                        }
+                        case 1: //! Play Game
                         {
                             nextMenuState = MENU_STATE_LEVEL_SELECTION;
                             break;
                         }
-                        case 1: //! Options
+                        case 2: //! Options
                         {
                             nextMenuState = MENU_STATE_OPTIONS;
                             break;
                         }
-                        case 2: //! Exit Game(tell the statemanager to shut down)
+                        case 3: //! Exit Game(tell the statemanager to shut down)
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
                             break;
@@ -101,17 +108,22 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 {
                     switch ((*itr)->GetButtonId())
                     {
-                        case 0: //! Volume
+                        case 0: //! Back
+                        {
+                            nextMenuState = prevMenuState;
+                            break;
+                        }
+                        case 1: //! Volume
                         {
                             std::cout << "Volume" << std::endl;
                             break;
                         }
-                        case 1: //! Herp
+                        case 2: //! Herp
                         {
                             std::cout << "Herp" << std::endl;
                             break;
                         }
-                        case 2: //! Derp
+                        case 3: //! Derp
                         {
                             std::cout << "Derp" << std::endl;
                             break;
@@ -126,17 +138,22 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 {
                     switch ((*itr)->GetButtonId())
                     {
-                        case 0: //! Level 1
+                        case 0: //! Back
+                        {
+                            nextMenuState = prevMenuState;
+                            break;
+                        }
+                        case 1: //! Level 1
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
                             break;
                         }
-                        case 1: //! Level 2
+                        case 2: //! Level 2
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
                             break;
                         }
-                        case 2: //! Level 3
+                        case 3: //! Level 3
                         {
                             m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
                             break;
@@ -183,6 +200,15 @@ void MenuManager::handle_events()
                 }
                 break;
             }
+            case sf::Event::KeyReleased:
+            {
+                switch (_event.key.code)
+                {
+                    case sf::Keyboard::F4:
+                        nextMenuState = prevMenuState;
+                        break;
+                }
+            }
             default:
                 break;
         }
@@ -199,6 +225,7 @@ void MenuManager::logic(double passed, double deltaTime)
 
     if (nextMenuState != MENU_STATE_NONE)
     {
+        prevMenuState = currMenuState;
         currMenuState = nextMenuState;
         nextMenuState = MENU_STATE_NONE;
     }
