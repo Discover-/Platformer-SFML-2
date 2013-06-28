@@ -35,10 +35,10 @@ void Game::logic(double passed, double deltaTime)
 {
     //Just to show what kind of things logic should handle, other examples are movement etc
     //don't forget to step in deltaTime sized chunks when working with physics
-    if (m_color.r > 0)
+    if (m_color.r > 1)
     {
-        m_color.r--;
-        m_color.g++;
+        m_color.r -= 2;
+        m_color.g += 2;
     }
 }
 

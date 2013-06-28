@@ -11,7 +11,8 @@ class GameState
 
         ///\brief Handle the events(keypresses etc)
         virtual void handle_events() = 0;
-        ///\brief Do the logic(physics etc.), gets the time passed since the last logic update, consume this in deltaTime sized chunks
+        ///\brief Do the logic(physics etc.), gets the total time passed, consume this in deltaTime sized chunks
+        ///\note THE TOTAL TIME PASSED, *NOT* the time from the last logic call
         virtual void logic(double passed, double deltaTime) = 0;
 
         ///\brief Draw function(interpolate and render everything on the window given at creation)

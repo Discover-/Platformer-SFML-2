@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gameState.hpp"
+#include "gamestate.hpp"
 
 enum MenuState
 {

@@ -1,5 +1,5 @@
 #include "statemanager.hpp"
-#include "gameState.hpp"
+#include "gamestate.hpp"
 #include "game.hpp"
 #include "menumanager.hpp"
 
@@ -24,14 +24,14 @@ void StateManager::mainLoop()
     sf::Clock clock;
 
     double t = 0.0;
-    const double dt = 0.01;
+    const double dt = 1 / TICKS_PER_SECOND;
 
     double currentTime = clock.getElapsedTime().asSeconds();
     double accumulator = 0.0;
 
     while (stateID != STATE_EXIT)
     {
-        //Change state when needed
+        //Change state if needed
         change_state();
 
         double newTime = clock.getElapsedTime().asSeconds();
