@@ -1,4 +1,4 @@
-#include "stateManager.hpp"
+#include "statemanager.hpp"
 #include "gameState.hpp"
 #include "game.hpp"
 #include "menumanager.hpp"

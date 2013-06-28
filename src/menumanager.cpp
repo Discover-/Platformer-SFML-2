@@ -4,7 +4,7 @@
 
 #include "menubutton.hpp"
 #include "menumanager.hpp"
-#include "stateManager.hpp"
+#include "statemanager.hpp"
 
 MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager)
 {

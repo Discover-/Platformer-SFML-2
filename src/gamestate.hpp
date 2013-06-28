@@ -1,7 +1,7 @@
 #ifndef GAMESTATE_HPP_INCLUDED
 #define GAMESTATE_HPP_INCLUDED
 
-#include "stateManager.hpp"
+#include "statemanager.hpp"
 
 /// \brief State base class
 class GameState

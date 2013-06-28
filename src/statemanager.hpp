@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-#include "resourceManager.hpp"
+#include "resourcemanager.hpp"
 
 class GameState;
 class Game;

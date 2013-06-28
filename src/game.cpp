@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "game.hpp"
-#include "stateManager.hpp"
+#include "statemanager.hpp"
 
 Game::Game(sf::RenderWindow* window, StateManager* manager)
 {
