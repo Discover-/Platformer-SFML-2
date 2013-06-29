@@ -15,7 +15,7 @@ class LevelEditor : public GameState
 
         void MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick);
 
-        void SetSelectedTileFilename(std::string filename) { selectedTileFilename = filename; }
+        void SetSelectedTileFilename(std::string filename, bool _selectionRespectsGrid = true) { selectedTileFilename = filename; selectionRespectsGrid = _selectionRespectsGrid; }
         std::string GetSelectedTileFilename() { return selectedTileFilename; }
         bool HasSelectedTile() { return selectedTileFilename != ""; }
 
@@ -33,6 +33,7 @@ class LevelEditor : public GameState
         StateManager* m_manager;
         sf::RenderWindow* m_window;
         std::string selectedTileFilename;
+        bool selectionRespectsGrid;
         std::vector<std::pair<sf::Vector2f, std::string> > sprites;
         bool enabledGrid;
         sf::RectangleShape grid[20][12];

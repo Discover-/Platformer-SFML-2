@@ -13,6 +13,7 @@ LevelEditor::LevelEditor(sf::RenderWindow* window, StateManager* manager)
     m_window = window;
     m_manager = manager;
     selectedTileFilename = "";
+    selectionRespectsGrid = true;
     enabledGrid = true;
     justReselectedTile = false;
     justPlacedNewTile = false;
@@ -67,6 +68,7 @@ void LevelEditor::handle_events()
                 switch (_event.key.code)
                 {
                     case sf::Keyboard::F4:
+                        enabledGrid = !enabledGrid;
                         break;
                 }
             }
@@ -98,8 +100,11 @@ sf::Vector2f LevelEditor::GetPositionForSelectedTile()
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-    if (enabledGrid && selectedTileFilename != "")
+    if (enabledGrid && selectedTileFilename != "" && selectionRespectsGrid)
     {
+        if (selectedTileFilename == "Graphics/Menu/collision_pointer.png")
+            return sf::Vector2f(float(mousePos.x), float(mousePos.y));
+
         sf::RectangleShape closestGrid = grid[0][0];
 
         for (int i = 0; i < 12; ++i)
@@ -205,6 +210,9 @@ void LevelEditor::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
                 {
                     justReselectedTile = true;
                     selectedTileFilename = (*itr).second;
+
+                    if ((*itr).second == "Graphics/Menu/collision_pointer.png")
+                        selectionRespectsGrid = false;
                 }
 
                 itr = sprites.erase(itr);

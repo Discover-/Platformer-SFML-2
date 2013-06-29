@@ -55,9 +55,10 @@ void MenuManager::LoadMenus()
 
     menuButtons.push_back(new MenuButton(0, "Graphics/Menu/save.png", sf::Vector2f(75.0f, 50.0f)));
     MenuButton* tilesButton = new MenuButton(1, "Graphics/Menu/tiles.png", sf::Vector2f(200.0f, 50.0f));
-    tilesButton->AddChildButton(new MenuButton(0, "Graphics/Menu/block1.png", sf::Vector2f(75.0f, 150.0f)));
-    tilesButton->AddChildButton(new MenuButton(1, "Graphics/Menu/block2.png", sf::Vector2f(200.0f, 150.0f)));
-    tilesButton->AddChildButton(new MenuButton(2, "Graphics/Menu/block3.png", sf::Vector2f(300.0f, 150.0f)));
+    tilesButton->AddChildButton(new MenuButton(0, "Graphics/Menu/block1.png", sf::Vector2f(50.0f, 125.0f)));
+    tilesButton->AddChildButton(new MenuButton(1, "Graphics/Menu/block2.png", sf::Vector2f(100.0f, 125.0f)));
+    tilesButton->AddChildButton(new MenuButton(2, "Graphics/Menu/block3.png", sf::Vector2f(150.0f, 125.0f)));
+    tilesButton->AddChildButton(new MenuButton(3, "Graphics/Menu/collision_pointer.png", sf::Vector2f(200.0f, 125.0f)));
     menuButtons.push_back(tilesButton);
     menuButtons.push_back(new MenuButton(2, "Graphics/Menu/enable_grid.png", sf::Vector2f(400.0f, 50.0f)));
     menus[MENU_STATE_LEVEL_EDITOR] = menuButtons; //! Save, Blocks 1, 2, 3
@@ -231,9 +232,20 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
             {
                 for (std::vector<MenuButton*>::iterator itr2 = (*itr)->GetChildButtons().begin(); itr2 != (*itr)->GetChildButtons().end(); ++itr2)
                 {
-                    sf::FloatRect buttonRect = sf::Sprite(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename())).getGlobalBounds();
+                    sf::Sprite childButtonSprite = sf::Sprite(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename()));
+                    sf::FloatRect childButtonRect = childButtonSprite.getGlobalBounds();
 
-                    if (!(mousePos.y >= (*itr2)->GetPositionY() + buttonRect.height || mousePos.x >= (*itr2)->GetPositionX() + buttonRect.width || mousePos.y + 16.0f <= (*itr2)->GetPositionY() || mousePos.x + 16.0f <= (*itr2)->GetPositionX()))
+                    //if (currMenuState == MENU_STATE_LEVEL_EDITOR)
+                    //{
+                    //    childButtonRect.height /= 2.0f;
+                    //    childButtonRect.width /= 2.0f;
+                    //}
+
+                    //sf::Vector2f childButtonScale = childButtonSprite.getScale();
+                    //float scaleX = childButtonScale.x;
+                    //float scaleY = childButtonScale.y;
+
+                    if (!(mousePos.y >= (*itr2)->GetPositionY() + childButtonRect.height || mousePos.x >= (*itr2)->GetPositionX() + childButtonRect.width || mousePos.y + 16.0f <= (*itr2)->GetPositionY() || mousePos.x + 16.0f <= (*itr2)->GetPositionX()))
                     {
                         foundCollision = true;
 
@@ -258,12 +270,13 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                                     case 0: //! Block 1
                                     case 1: //! Block 2
                                     case 2: //! Block 3
+                                    case 3: //! Collision Pointer
                                     {
                                         //! TODO: This is hacky. There is no way (in terms of code) on how we decide whether 'this' is the side or main running state (of course
                                         //! this can be implemented, the question is which is the best way.. :')).
                                         if (GameState* sideState = m_manager->GetCurrentRunningState())
                                             if (!((LevelEditor*)sideState)->HasSelectedTile())
-                                                ((LevelEditor*)sideState)->SetSelectedTileFilename((*itr2)->GetTextureFilename());
+                                                ((LevelEditor*)sideState)->SetSelectedTileFilename((*itr2)->GetTextureFilename(), (*itr2)->GetButtonId() != 3);
                                         break;
                                     }
                                     default:
@@ -406,6 +419,7 @@ void MenuManager::render(double alpha, bool onlyDraw /* = false */)
             {
                 sf::Sprite childButton(m_manager->resourceManager.getTexture((*itr2)->GetTextureFilename()));
                 childButton.setPosition((*itr2)->GetPositionX() - childButton.getGlobalBounds().width / 2.0f, (*itr2)->GetPositionY() - childButton.getGlobalBounds().height / 2.0f);
+                childButton.setScale(0.75f, 0.75f);
                 m_window->draw(childButton);
             }
         }
