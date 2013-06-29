@@ -18,6 +18,7 @@ LevelEditor::LevelEditor(sf::RenderWindow* window, StateManager* manager)
     justReselectedTile = false;
     justPlacedNewTile = false;
     movedCursorOutOfNewTile = true;
+    testingLevelOut = false;
 
     sf::RectangleShape gridShape(sf::Vector2f(50.0f, 50.0f));
     gridShape.setFillColor(sf::Color::Transparent);
@@ -67,8 +68,15 @@ void LevelEditor::handle_events()
             {
                 switch (_event.key.code)
                 {
-                    case sf::Keyboard::F4:
+                    case sf::Keyboard::F1:
+                    case sf::Keyboard::F2:
+                        //! Handled in Unit::Update
+                        break;
+                    case sf::Keyboard::F3:
                         enabledGrid = !enabledGrid;
+                        break;
+                    case sf::Keyboard::F4:
+                        testingLevelOut = !testingLevelOut;
                         break;
                 }
             }
@@ -133,7 +141,17 @@ sf::Vector2f LevelEditor::GetPositionForSelectedTile()
 
 void LevelEditor::logic(double passed, double deltaTime)
 {
+    if (testingLevelOut)
+    {
+        if (!player)
+        {
+            sf::RectangleShape bodyShape(sf::Vector2f(75.0f, 75.0f));
+            bodyShape.setFillColor(sf::Color::Green);
+            player = new Player(m_window, sf::Vector2f(500.0f, 300.0f), bodyShape, m_manager, this);
+        }
 
+        player->Update();
+    }
 }
 
 void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
@@ -179,6 +197,13 @@ void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
         }
 
         m_window->draw(sprite);
+    }
+
+    if (testingLevelOut && player)
+    {
+        sf::RectangleShape rectShape = player->GetBodyShape();
+        rectShape.setPosition(player->GetPosition());
+        m_window->draw(rectShape);
     }
 
     if (!onlyDraw)

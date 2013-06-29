@@ -53,14 +53,15 @@ void MenuManager::LoadMenus()
     //! Level Editor sub-menu
     menuButtons.clear();
 
-    menuButtons.push_back(new MenuButton(0, "Graphics/Menu/save.png", sf::Vector2f(75.0f, 50.0f)));
-    MenuButton* tilesButton = new MenuButton(1, "Graphics/Menu/tiles.png", sf::Vector2f(200.0f, 50.0f));
+    //menuButtons.push_back(new MenuButton(0, "Graphics/Menu/save.png", sf::Vector2f(75.0f, 50.0f)));
+    MenuButton* tilesButton = new MenuButton(0, "Graphics/Menu/tiles.png", sf::Vector2f(200.0f, 50.0f));
     tilesButton->AddChildButton(new MenuButton(0, "Graphics/Menu/block1.png", sf::Vector2f(50.0f, 125.0f)));
     tilesButton->AddChildButton(new MenuButton(1, "Graphics/Menu/block2.png", sf::Vector2f(100.0f, 125.0f)));
     tilesButton->AddChildButton(new MenuButton(2, "Graphics/Menu/block3.png", sf::Vector2f(150.0f, 125.0f)));
     tilesButton->AddChildButton(new MenuButton(3, "Graphics/Menu/collision_pointer.png", sf::Vector2f(200.0f, 125.0f)));
     menuButtons.push_back(tilesButton);
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/enable_grid.png", sf::Vector2f(400.0f, 50.0f)));
+    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/enable_grid.png", sf::Vector2f(400.0f, 50.0f)));
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/save.png", sf::Vector2f(700.0f, 50.0f)));
     menus[MENU_STATE_LEVEL_EDITOR] = menuButtons; //! Save, Blocks 1, 2, 3
 }
 
@@ -188,24 +189,23 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                 {
                     switch ((*itr)->GetButtonId())
                     {
-                        case 0: //! Save
+                        case 0: //! Tiles
                         {
-                            //if (GameState* sideState = m_manager->GetSideRunningState())
-                            //    if (((LevelEditor*)sideState)->
                             break;
                         }
-                        case 1: //! Tiles
-                        {
-
-                            break;
-                        }
-                        case 2: //! Enable Grid
+                        case 1: //! Enable Grid
                         {
                             if (GameState* sideState = m_manager->GetSideRunningState())
                             {
                                 bool enabled = ((LevelEditor*)sideState)->IsGridEnabled();
                                 ((LevelEditor*)sideState)->SetEnabledGrid(false);
                             }
+                            break;
+                        }
+                        case 2: //! Save
+                        {
+                            if (GameState* sideState = m_manager->GetSideRunningState())
+                                ((LevelEditor*)sideState)->testingLevelOut = true;
                             break;
                         }
                         default:

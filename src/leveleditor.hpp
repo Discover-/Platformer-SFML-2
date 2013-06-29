@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "gamestate.hpp"
+#include "player.hpp"
 
 class LevelEditor : public GameState
 {
@@ -20,6 +21,7 @@ class LevelEditor : public GameState
         bool HasSelectedTile() { return selectedTileFilename != ""; }
 
         void AddSprite(sf::Vector2f pos, std::string filename) { sprites.push_back(std::make_pair(pos, filename)); }
+        std::vector<std::pair<sf::Vector2f, std::string> >& GetSprites() { return sprites; }
 
         void SetEnabledGrid(bool val);
         bool IsGridEnabled();
@@ -28,6 +30,7 @@ class LevelEditor : public GameState
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
         bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile;
+        bool testingLevelOut;
 
     private:
         StateManager* m_manager;
@@ -37,4 +40,5 @@ class LevelEditor : public GameState
         std::vector<std::pair<sf::Vector2f, std::string> > sprites;
         bool enabledGrid;
         sf::RectangleShape grid[20][12];
+        Player* player;
 };

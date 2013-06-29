@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "gamestate.hpp"
+#include "player.hpp"
 
 class Game : public GameState
 {
@@ -16,5 +17,6 @@ class Game : public GameState
     private:
         StateManager* m_manager;
         sf::RenderWindow* m_window;
+        Player* player;
         sf::Color m_color; //Just to show the logic function
 };

@@ -11,6 +11,7 @@ Game::Game(sf::RenderWindow* window, StateManager* manager)
     m_manager = manager;
 
     m_color.r = 255;
+    player = NULL;
 }
 
 void Game::handle_events()
@@ -45,12 +46,28 @@ void Game::logic(double passed, double deltaTime)
         m_color.r = 255;
         m_color.g = 0;
     }
+
+    if (!player)
+    {
+        sf::RectangleShape bodyShape(sf::Vector2f(75.0f, 75.0f));
+        bodyShape.setFillColor(sf::Color::Green);
+        player = new Player(m_window, sf::Vector2f(500.0f, 300.0f), bodyShape, m_manager);
+    }
+
+    player->Update();
 }
 
 void Game::render(double alpha, bool onlyDraw /* = false */)
 {
     if (!onlyDraw)
         m_window->clear(m_color);
+
+    if (player)
+    {
+        sf::RectangleShape rectShape = player->GetBodyShape();
+        rectShape.setPosition(player->GetPosition());
+        m_window->draw(rectShape);
+    }
 
     if (!onlyDraw)
         m_window->display();
