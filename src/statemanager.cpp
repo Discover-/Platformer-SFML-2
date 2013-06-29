@@ -7,8 +7,8 @@
 StateManager::StateManager()
 {
     m_window = 0;
-    stateID = 0;
-    nextState = 0;
+    stateID = GAME_STATE_NULL;
+    nextState = GAME_STATE_NULL;
     m_currentState = 0;
     m_sideRunningState = 0;
 }
@@ -79,7 +79,7 @@ void StateManager::mainLoop()
 }
 
 //State status manager
-void StateManager::set_next_state(int newState)
+void StateManager::set_next_state(GameStates newState)
 {
     //If the user doesn't want to exit
     if (nextState != GAME_STATE_EXIT)

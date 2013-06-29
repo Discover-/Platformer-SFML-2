@@ -5,14 +5,16 @@
 #include "menubutton.hpp"
 #include "menumanager.hpp"
 #include "statemanager.hpp"
+#include "gamestate.hpp"
+#include "leveleditor.hpp"
 
 MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager, MenuState menuState /* = MENU_STATE_MAIN */)
 {
     m_manager = manager;
     m_window = renderWindow;
 
-    nextMenuState = MENU_STATE_NONE;
     currMenuState = menuState;
+    nextMenuState = MENU_STATE_NONE;
     prevMenuState = MENU_STATE_MAIN;
 
     LoadMenus();
@@ -25,12 +27,6 @@ void MenuManager::LoadMenus()
 
     menuButtons.push_back(new MenuButton(0, "Graphics/Menu/back.png", sf::Vector2f(300.0f, 25.0f)));
     menuButtons.push_back(new MenuButton(1, "Graphics/Menu/play.png", sf::Vector2f(300.0f, 100.0f)));
-    //! Temporarily disabled the child buttons because we don't need them at the moment. They'll become useful when we
-    //! start working on stuff like a level editor.
-    //MenuButton* menuButtonMain1 = new MenuButton(0, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f));
-    //menuButtonMain1->AddChildButton(new MenuButton(0, "Graphics/Menu/volume.png", sf::Vector2f(300.0f, 100.0f)));
-    //menuButtonMain1->AddChildButton(new MenuButton(1, "Graphics/Menu/herp.png", sf::Vector2f(300.0f, 150.0f)));
-    //menuButtonMain1->AddChildButton(new MenuButton(2, "Graphics/Menu/derp.png", sf::Vector2f(300.0f, 200.0f)));
     menuButtons.push_back(new MenuButton(2, "Graphics/Menu/options.png", sf::Vector2f(300.0f, 200.0f)));
     menuButtons.push_back(new MenuButton(3, "Graphics/Menu/level_editor.png", sf::Vector2f(300.0f, 300.0f)));
     menuButtons.push_back(new MenuButton(4, "Graphics/Menu/quit.png", sf::Vector2f(300.0f, 400.0f)));
@@ -58,9 +54,11 @@ void MenuManager::LoadMenus()
     menuButtons.clear();
 
     menuButtons.push_back(new MenuButton(0, "Graphics/Menu/save.png", sf::Vector2f(75.0f, 50.0f)));
-    menuButtons.push_back(new MenuButton(1, "Graphics/Menu/block1.png", sf::Vector2f(200.0f, 50.0f)));
-    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/block2.png", sf::Vector2f(300.0f, 50.0f)));
-    menuButtons.push_back(new MenuButton(3, "Graphics/Menu/block3.png", sf::Vector2f(400.0f, 50.0f)));
+    MenuButton* tilesButton = new MenuButton(1, "Graphics/Menu/tiles.png", sf::Vector2f(200.0f, 50.0f));
+    tilesButton->AddChildButton(new MenuButton(0, "Graphics/Menu/block1.png", sf::Vector2f(75.0f, 150.0f)));
+    tilesButton->AddChildButton(new MenuButton(1, "Graphics/Menu/block2.png", sf::Vector2f(200.0f, 150.0f)));
+    tilesButton->AddChildButton(new MenuButton(2, "Graphics/Menu/block3.png", sf::Vector2f(300.0f, 150.0f)));
+    menuButtons.push_back(tilesButton);
     menus[MENU_STATE_LEVEL_EDITOR] = menuButtons; //! Save, Blocks 1, 2, 3
 }
 
@@ -72,12 +70,16 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
         return;
     }
 
+    bool foundCollision = false;
+
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
         sf::FloatRect buttonRect = sf::Sprite(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename())).getGlobalBounds();
 
         if (!(mousePos.y >= (*itr)->GetPositionY() + buttonRect.height || mousePos.x >= (*itr)->GetPositionX() + buttonRect.width || mousePos.y + 16.0f <= (*itr)->GetPositionY() || mousePos.x + 16.0f <= (*itr)->GetPositionX()))
         {
+            foundCollision = true;
+
             //! This will make the child buttons roll out (if any).
             if ((*itr)->HasChildButtons())
                 (*itr)->SetIsCollapsed(!(*itr)->IsCollapsed());
@@ -186,20 +188,11 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                     {
                         case 0: //! Save
                         {
-
+                            //if (GameState* sideState = m_manager->GetSideRunningState())
+                            //    if (((LevelEditor*)sideState)->
                             break;
                         }
-                        case 1: //! Block 1
-                        {
-
-                            break;
-                        }
-                        case 2: //! Block 2
-                        {
-
-                            break;
-                        }
-                        case 3: //! Block 3
+                        case 1: //! Tiles
                         {
 
                             break;
@@ -216,6 +209,78 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
             }
 
             break;
+        }
+    }
+
+    //! If we didn't collide with any of the main buttons, search for collisions with the child buttons that are collapsed.
+    if (!foundCollision)
+    {
+        for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
+        {
+            if ((*itr)->HasChildButtons() && (*itr)->IsCollapsed())
+            {
+                for (std::vector<MenuButton*>::iterator itr2 = (*itr)->GetChildButtons().begin(); itr2 != (*itr)->GetChildButtons().end(); ++itr2)
+                {
+                    sf::FloatRect buttonRect = sf::Sprite(m_manager->resourceManager.getTexture((*itr)->GetTextureFilename())).getGlobalBounds();
+
+                    if (!(mousePos.y >= (*itr2)->GetPositionY() + buttonRect.height || mousePos.x >= (*itr2)->GetPositionX() + buttonRect.width || mousePos.y + 16.0f <= (*itr2)->GetPositionY() || mousePos.x + 16.0f <= (*itr2)->GetPositionX()))
+                    {
+                        foundCollision = true;
+
+                        switch (currMenuState)
+                        {
+                            case MENU_STATE_MAIN:
+                            {
+                                break;
+                            }
+                            case MENU_STATE_OPTIONS:
+                            {
+                                break;
+                            }
+                            case MENU_STATE_LEVEL_SELECTION:
+                            {
+                                break;
+                            }
+                            case MENU_STATE_LEVEL_EDITOR:
+                            {
+                                switch ((*itr2)->GetButtonId())
+                                {
+                                    case 0: //! Block 1
+                                    case 1: //! Block 2
+                                    case 2: //! Block 3
+                                    {
+                                        //! TODO: This is hacky. There is no way (in terms of code) on how we decide whether 'this' is the side or main running state (of course
+                                        //! this can be implemented, the question is which is the best way.. :')).
+                                        if (GameState* sideState = m_manager->GetCurrentRunningState())
+                                            if (!((LevelEditor*)sideState)->HasSelectedTile())
+                                                ((LevelEditor*)sideState)->SetSelectedTileFilename((*itr2)->GetTextureFilename());
+                                        break;
+                                    }
+                                    default:
+                                        std::cout << "MenuManager::MouseButtonPressed: Unsupported child button id " << (*itr2)->GetButtonId() << ", menu " << currMenuState << std::endl;
+                                        break;
+                                }
+                                break;
+                            }
+                            default:
+                                std::cout << "MenuManager::MouseButtonPressed: Unsupported menustate " << currMenuState << " in child collision check" << std::endl;
+                                break;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if (currMenuState == MENU_STATE_LEVEL_EDITOR && !foundCollision)
+    {
+        if (GameState* sideState = m_manager->GetCurrentRunningState())
+        {
+            sf::Vector2f mousePosFloat(float(mousePos.x), float(mousePos.y));
+            ((LevelEditor*)sideState)->AddSprite(mousePosFloat, ((LevelEditor*)sideState)->GetSelectedTileFilename());
+            ((LevelEditor*)sideState)->SetSelectedTileFilename("");
         }
     }
 }

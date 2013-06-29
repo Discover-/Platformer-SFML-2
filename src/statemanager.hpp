@@ -34,9 +34,12 @@ class StateManager
         void start() { mainLoop(); };
 
         ///\brief Call this from a state when you want to set a different state(this will delete the current state, make sure the destructor is prepared)
-        void set_next_state(int newState);
+        void set_next_state(GameStates newState);
 
         ResourceManager resourceManager;
+
+        GameState* GetSideRunningState() { return m_sideRunningState; };
+        GameState* GetCurrentRunningState() { return m_currentState; };
 
     protected:
         ///\brief State changer
@@ -52,8 +55,8 @@ class StateManager
         sf::RenderWindow* m_window;
 
         //State variables
-        int stateID;
-        int nextState;
+        GameStates stateID;
+        GameStates nextState;
 
         //Game state object
         GameState* m_currentState, *m_sideRunningState;

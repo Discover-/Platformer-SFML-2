@@ -13,7 +13,17 @@ class LevelEditor : public GameState
         void logic(double passed, double deltaTime);
         void render(double alpha, bool onlyDraw = false);
 
+        void MouseButtonPressed(sf::Vector2i mousePos);
+
+        void SetSelectedTileFilename(std::string filename) { selectedTileFilename = filename; }
+        std::string GetSelectedTileFilename() { return selectedTileFilename; }
+        bool HasSelectedTile() { return selectedTileFilename != ""; }
+
+        void AddSprite(sf::Vector2f pos, std::string filename) { sprites.push_back(std::make_pair(pos, filename)); }
+
     private:
         StateManager* m_manager;
         sf::RenderWindow* m_window;
+        std::string selectedTileFilename;
+        std::vector<std::pair<sf::Vector2f, std::string> > sprites;
 };
