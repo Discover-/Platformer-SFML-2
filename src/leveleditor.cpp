@@ -73,8 +73,8 @@ void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
     if (selectedTileFilename != "")
     {
         sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
-        selectedTile.setPosition(mousePos.x, mousePos.y);
-        selectedTile.setColor(sf::Color(255, 255, 128));
+        selectedTile.setPosition(float(mousePos.x), float(mousePos.y));
+        selectedTile.setColor(sf::Color(255, 255, 255, 100));
         m_window->draw(selectedTile);
     }
 

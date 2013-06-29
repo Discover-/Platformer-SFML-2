@@ -278,9 +278,14 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
     {
         if (GameState* sideState = m_manager->GetCurrentRunningState())
         {
-            sf::Vector2f mousePosFloat(float(mousePos.x), float(mousePos.y));
-            ((LevelEditor*)sideState)->AddSprite(mousePosFloat, ((LevelEditor*)sideState)->GetSelectedTileFilename());
-            ((LevelEditor*)sideState)->SetSelectedTileFilename("");
+            std::string selectedFileName = ((LevelEditor*)sideState)->GetSelectedTileFilename();
+
+            if (selectedFileName != "")
+            {
+                sf::Vector2f mousePosFloat(float(mousePos.x), float(mousePos.y));
+                ((LevelEditor*)sideState)->AddSprite(mousePosFloat, selectedFileName);
+                ((LevelEditor*)sideState)->SetSelectedTileFilename("");
+            }
         }
     }
 }
