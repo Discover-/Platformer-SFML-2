@@ -12,7 +12,7 @@ class Game : public GameState
 
         void handle_events();
         void logic(double passed, double deltaTime);
-        void render(double alpha, bool onlyDraw = false);
+        void render(double alpha);
 
     private:
         StateManager* m_manager;

@@ -400,10 +400,9 @@ void MenuManager::logic(double passed, double deltaTime)
     }
 }
 
-void MenuManager::render(double alpha, bool onlyDraw /* = false */)
+void MenuManager::render(double alpha)
 {
-    if (!onlyDraw)
-        m_window->clear();
+    m_window->clear();
 
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
@@ -425,6 +424,5 @@ void MenuManager::render(double alpha, bool onlyDraw /* = false */)
         }
     }
 
-    if (!onlyDraw)
-        m_window->display();
+    m_window->display();
 }

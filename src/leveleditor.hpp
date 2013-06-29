@@ -4,6 +4,7 @@
 
 #include "gamestate.hpp"
 #include "player.hpp"
+#include "menumanager.hpp"
 
 class LevelEditor : public GameState
 {
@@ -12,7 +13,7 @@ class LevelEditor : public GameState
 
         void handle_events();
         void logic(double passed, double deltaTime);
-        void render(double alpha, bool onlyDraw = false);
+        void render(double alpha);
 
         void MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick);
 
@@ -41,4 +42,6 @@ class LevelEditor : public GameState
         bool enabledGrid;
         sf::RectangleShape grid[20][12];
         Player* player;
+
+        MenuManager m_menuManager;
 };

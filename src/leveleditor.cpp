@@ -7,11 +7,10 @@
 #include "menumanager.hpp"
 
 LevelEditor::LevelEditor(sf::RenderWindow* window, StateManager* manager)
+:m_window(window),
+m_manager(manager),
+m_menuManager(m_window, m_manager, MENU_STATE_LEVEL_EDITOR)
 {
-    m_manager = nullptr;
-    m_window = nullptr;
-    m_window = window;
-    m_manager = manager;
     selectedTileFilename = "";
     selectionRespectsGrid = true;
     enabledGrid = true;
@@ -52,10 +51,7 @@ void LevelEditor::handle_events()
                 switch (_event.mouseButton.button)
                 {
                     case sf::Mouse::Left:
-                        //! TODO: Hacky...
-                        if (GameState* sideState = m_manager->GetSideRunningState())
-                            ((MenuManager*)sideState)->MouseButtonPressed(sf::Mouse::getPosition(*m_window));
-
+                        m_menuManager.MouseButtonPressed(sf::Mouse::getPosition(*m_window));
                         MouseButtonPressed(sf::Mouse::getPosition(*m_window), true);
                         break;
                     case sf::Mouse::Right:
@@ -154,12 +150,11 @@ void LevelEditor::logic(double passed, double deltaTime)
     }
 }
 
-void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
+void LevelEditor::render(double alpha)
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-    if (!onlyDraw)
-        m_window->clear(sf::Color::Cyan);
+    m_window->clear(sf::Color::Cyan);
 
     sf::RectangleShape backgroundImage(sf::Vector2f(1000.0f, 600.0f));
     backgroundImage.setFillColor(sf::Color::Cyan);
@@ -206,8 +201,7 @@ void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
         m_window->draw(rectShape);
     }
 
-    if (!onlyDraw)
-        m_window->display();
+    m_window->display();
 }
 
 void LevelEditor::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)

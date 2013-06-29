@@ -38,7 +38,6 @@ class StateManager
 
         ResourceManager resourceManager;
 
-        GameState* GetSideRunningState() { return m_sideRunningState; };
         GameState* GetCurrentRunningState() { return m_currentState; };
 
     protected:
@@ -59,7 +58,7 @@ class StateManager
         GameStates nextState;
 
         //Game state object
-        GameState* m_currentState, *m_sideRunningState;
+        GameState* m_currentState;
 };
 
 #endif // STATEMANAGER_HPP_INCLUDED

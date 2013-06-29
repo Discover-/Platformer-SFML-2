@@ -25,7 +25,7 @@ class MenuManager : public GameState
 
         void handle_events();
         void logic(double passed, double deltaTime);
-        void render(double alpha, bool onlyDraw = false);
+        void render(double alpha);
 
         void LoadMenus();
         void MouseButtonPressed(sf::Vector2i mousePos);

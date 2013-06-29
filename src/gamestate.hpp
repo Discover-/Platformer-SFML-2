@@ -19,7 +19,7 @@ class GameState
         ///A note on the interpolation:
         ///The render state = currentstate * alpha - previousstate * ( 1 - alpha )
         ///Example: renderPos = currentPos * alpha - previousPos * ( 1 - alpha )
-        virtual void render(double alpha, bool onlyDraw = false) = 0;
+        virtual void render(double alpha) = 0;
 
     protected:
         StateManager* m_manager;

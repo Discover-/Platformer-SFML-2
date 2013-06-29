@@ -57,10 +57,9 @@ void Game::logic(double passed, double deltaTime)
     player->Update();
 }
 
-void Game::render(double alpha, bool onlyDraw /* = false */)
+void Game::render(double alpha)
 {
-    if (!onlyDraw)
-        m_window->clear(m_color);
+    m_window->clear(m_color);
 
     if (player)
     {
@@ -69,6 +68,5 @@ void Game::render(double alpha, bool onlyDraw /* = false */)
         m_window->draw(rectShape);
     }
 
-    if (!onlyDraw)
-        m_window->display();
+    m_window->display();
 }
