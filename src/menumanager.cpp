@@ -59,6 +59,7 @@ void MenuManager::LoadMenus()
     tilesButton->AddChildButton(new MenuButton(1, "Graphics/Menu/block2.png", sf::Vector2f(200.0f, 150.0f)));
     tilesButton->AddChildButton(new MenuButton(2, "Graphics/Menu/block3.png", sf::Vector2f(300.0f, 150.0f)));
     menuButtons.push_back(tilesButton);
+    menuButtons.push_back(new MenuButton(2, "Graphics/Menu/enable_grid.png", sf::Vector2f(400.0f, 50.0f)));
     menus[MENU_STATE_LEVEL_EDITOR] = menuButtons; //! Save, Blocks 1, 2, 3
 }
 
@@ -197,6 +198,15 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
 
                             break;
                         }
+                        case 2: //! Enable Grid
+                        {
+                            if (GameState* sideState = m_manager->GetSideRunningState())
+                            {
+                                bool enabled = ((LevelEditor*)sideState)->IsGridEnabled();
+                                ((LevelEditor*)sideState)->SetEnabledGrid(false);
+                            }
+                            break;
+                        }
                         default:
                             std::cout << "MenuManager::MouseButtonPressed: Unsupported button id " << (*itr)->GetButtonId() << ", menu " << currMenuState << std::endl;
                             break;
@@ -278,12 +288,19 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
     {
         if (GameState* sideState = m_manager->GetCurrentRunningState())
         {
+            if (((LevelEditor*)sideState)->justReselectedTile)
+            {
+                ((LevelEditor*)sideState)->justReselectedTile = false;
+                return;
+            }
+
             std::string selectedFileName = ((LevelEditor*)sideState)->GetSelectedTileFilename();
 
             if (selectedFileName != "")
             {
-                sf::Vector2f mousePosFloat(float(mousePos.x), float(mousePos.y));
-                ((LevelEditor*)sideState)->AddSprite(mousePosFloat, selectedFileName);
+                ((LevelEditor*)sideState)->justPlacedNewTile = true;
+                ((LevelEditor*)sideState)->movedCursorOutOfNewTile = false;
+                ((LevelEditor*)sideState)->AddSprite(((LevelEditor*)sideState)->GetPositionForSelectedTile(), selectedFileName);
                 ((LevelEditor*)sideState)->SetSelectedTileFilename("");
             }
         }

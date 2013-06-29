@@ -61,7 +61,7 @@ void StateManager::mainLoop()
             accumulator -= dt;
         }
 
-        if (m_sideRunningState)
+        if (m_sideRunningState != NULL)
             m_window->clear();
 
         m_currentState->render(accumulator / dt, m_sideRunningState != NULL);
@@ -98,9 +98,13 @@ void StateManager::change_state()
         if (nextState != GAME_STATE_EXIT)
         {
             delete m_currentState;
-            delete m_sideRunningState;
             m_currentState = nullptr;
-            m_sideRunningState = nullptr;
+
+            if (m_sideRunningState != NULL)
+            {
+                m_sideRunningState = nullptr;
+                delete m_sideRunningState;
+            }
         }
 
         //! Change the state

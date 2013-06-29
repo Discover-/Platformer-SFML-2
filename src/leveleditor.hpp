@@ -13,7 +13,7 @@ class LevelEditor : public GameState
         void logic(double passed, double deltaTime);
         void render(double alpha, bool onlyDraw = false);
 
-        void MouseButtonPressed(sf::Vector2i mousePos);
+        void MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick);
 
         void SetSelectedTileFilename(std::string filename) { selectedTileFilename = filename; }
         std::string GetSelectedTileFilename() { return selectedTileFilename; }
@@ -21,9 +21,19 @@ class LevelEditor : public GameState
 
         void AddSprite(sf::Vector2f pos, std::string filename) { sprites.push_back(std::make_pair(pos, filename)); }
 
+        void SetEnabledGrid(bool val);
+        bool IsGridEnabled();
+
+        sf::Vector2f GetPositionForSelectedTile();
+        bool IsSpotTakenBySprite(sf::Vector2f position);
+
+        bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile;
+
     private:
         StateManager* m_manager;
         sf::RenderWindow* m_window;
         std::string selectedTileFilename;
         std::vector<std::pair<sf::Vector2f, std::string> > sprites;
+        bool enabledGrid;
+        sf::RectangleShape grid[20][12];
 };
