@@ -10,12 +10,14 @@ StateManager::StateManager()
     stateID = 0;
     nextState = 0;
     m_currentState = 0;
+    m_sideRunningState = 0;
 }
 
 void StateManager::clean()
 {
     delete m_window;
     delete m_currentState; //! Make sure the destructor of the state is well-written
+    delete m_sideRunningState;
 }
 
 void StateManager::mainLoop()
@@ -48,11 +50,27 @@ void StateManager::mainLoop()
         {
             m_currentState->handle_events();
             m_currentState->logic(t, dt);
+
+            if (m_sideRunningState)
+            {
+                m_sideRunningState->handle_events();
+                m_sideRunningState->logic(t, dt);
+            }
+
             t += dt;
             accumulator -= dt;
         }
 
-        m_currentState->render(accumulator / dt);
+        if (m_sideRunningState)
+            m_window->clear();
+
+        m_currentState->render(accumulator / dt, m_sideRunningState != NULL);
+
+        if (m_sideRunningState)
+        {
+            m_sideRunningState->render(accumulator / dt, true);
+            m_window->display();
+        }
     }
 
     //! End of the line, let's clean our mess and shut down
@@ -80,7 +98,9 @@ void StateManager::change_state()
         if (nextState != GAME_STATE_EXIT)
         {
             delete m_currentState;
+            delete m_sideRunningState;
             m_currentState = nullptr;
+            m_sideRunningState = nullptr;
         }
 
         //! Change the state
@@ -98,6 +118,7 @@ void StateManager::change_state()
                 break;
             case GAME_STATE_LEVEL_EDITOR:
                 m_currentState = new LevelEditor(m_window, this);
+                m_sideRunningState = new MenuManager(m_window, this, MENU_STATE_LEVEL_EDITOR);
                 break;
         }
 

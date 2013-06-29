@@ -6,13 +6,13 @@
 #include "menumanager.hpp"
 #include "statemanager.hpp"
 
-MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager)
+MenuManager::MenuManager(sf::RenderWindow* renderWindow, StateManager* manager, MenuState menuState /* = MENU_STATE_MAIN */)
 {
     m_manager = manager;
     m_window = renderWindow;
 
     nextMenuState = MENU_STATE_NONE;
-    currMenuState = MENU_STATE_MAIN;
+    currMenuState = menuState;
     prevMenuState = MENU_STATE_MAIN;
 
     LoadMenus();
@@ -105,8 +105,8 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                         }
                         case 3: //! Level Editor
                         {
-                            //m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
-                            nextMenuState = MENU_STATE_LEVEL_EDITOR;
+                            m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
+                            //nextMenuState = MENU_STATE_LEVEL_EDITOR;
                             break;
                         }
                         case 4: //! Exit Game
@@ -300,9 +300,10 @@ void MenuManager::logic(double passed, double deltaTime)
     }
 }
 
-void MenuManager::render(double alpha)
+void MenuManager::render(double alpha, bool onlyDraw /* = false */)
 {
-    m_window->clear();
+    if (!onlyDraw)
+        m_window->clear();
 
     for (std::vector<MenuButton*>::iterator itr = menus[currMenuState].begin(); itr != menus[currMenuState].end(); ++itr)
     {
@@ -323,5 +324,6 @@ void MenuManager::render(double alpha)
         }
     }
 
-    m_window->display();
+    if (!onlyDraw)
+        m_window->display();
 }

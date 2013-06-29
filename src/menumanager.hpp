@@ -21,14 +21,15 @@ class MenuButton;
 class MenuManager : public GameState
 {
     public:
-        MenuManager(sf::RenderWindow* renderWindow, StateManager* manager);
+        MenuManager(sf::RenderWindow* renderWindow, StateManager* manager, MenuState menuState = MENU_STATE_MAIN);
 
         void handle_events();
         void logic(double passed, double deltaTime);
-        void render(double alpha);
+        void render(double alpha, bool onlyDraw = false);
 
         void LoadMenus();
         void MouseButtonPressed(sf::Vector2i mousePos);
+        void SetNextMenuState(MenuState menuState) { nextMenuState = menuState; }
 
         std::map<MenuState, std::vector<MenuButton*> >& GetMenus() { return menus; }
         std::vector<MenuButton*>& GetMenuButtons(MenuState menuState) { return menus[menuState]; }

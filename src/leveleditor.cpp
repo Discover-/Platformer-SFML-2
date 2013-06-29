@@ -34,8 +34,17 @@ void LevelEditor::logic(double passed, double deltaTime)
 
 }
 
-void LevelEditor::render(double alpha)
+void LevelEditor::render(double alpha, bool onlyDraw /* = false */)
 {
-    m_window->clear(sf::Color::Cyan);
-    m_window->display();
+    if (!onlyDraw)
+        m_window->clear(sf::Color::Cyan);
+    else
+    {
+        sf::RectangleShape backgroundImage(sf::Vector2f(500.0f, 300.0f));
+        backgroundImage.setFillColor(sf::Color::Cyan);
+        m_window->draw(backgroundImage);
+    }
+
+    if (!onlyDraw)
+        m_window->display();
 }

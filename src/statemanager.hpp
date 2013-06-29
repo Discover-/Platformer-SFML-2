@@ -56,7 +56,7 @@ class StateManager
         int nextState;
 
         //Game state object
-        GameState* m_currentState;
+        GameState* m_currentState, *m_sideRunningState;
 };
 
 #endif // STATEMANAGER_HPP_INCLUDED

@@ -47,8 +47,11 @@ void Game::logic(double passed, double deltaTime)
     }
 }
 
-void Game::render(double alpha)
+void Game::render(double alpha, bool onlyDraw /* = false */)
 {
-    m_window->clear(m_color);
-    m_window->display();
+    if (!onlyDraw)
+        m_window->clear(m_color);
+
+    if (!onlyDraw)
+        m_window->display();
 }
