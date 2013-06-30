@@ -1,17 +1,17 @@
 #include "collapsablebutton.hpp"
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(CollapsableButton*) /* = nullptr */, bool _collapsed /* = true */)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(CollapsableButton*) /* = nullptr */, bool _collapsed /* = true */)
 :collapsed(_collapsed),
 callback(_callback)
 {
     setPosition(position);
-    setTexture(texture);
+    setTexture(_texture, true);
 }
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = true */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = true */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
 {
     setPosition(position);
-    setTexture(texture);
+    setTexture(_texture, true);
 }
 
 bool CollapsableButton::handle_event(sf::Event _event)
@@ -71,16 +71,27 @@ void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) 
             target.draw(*it, states);
 
     //Draw the collapsablebutton itself, I know it's a little hacky
-    if (getTexture())
+    if (sf::Texture const* texture = getTexture())
     {
         states.transform *= getTransform();
-        states.texture = getTexture();
+        states.texture = texture;
         sf::Vertex vertices[4];
         sf::FloatRect bounds = getLocalBounds();
         vertices[0].position = sf::Vector2f(0, 0);
         vertices[1].position = sf::Vector2f(0, bounds.height);
         vertices[2].position = sf::Vector2f(bounds.width, bounds.height);
         vertices[3].position = sf::Vector2f(bounds.width, 0);
+
+        float left   = static_cast<float>(getTextureRect().left);
+        float right  = left + getTextureRect().width;
+        float top    = static_cast<float>(getTextureRect().top);
+        float bottom = top + getTextureRect().height;
+
+        vertices[0].texCoords = sf::Vector2f(left, top);
+        vertices[1].texCoords = sf::Vector2f(left, bottom);
+        vertices[2].texCoords = sf::Vector2f(right, bottom);
+        vertices[3].texCoords = sf::Vector2f(right, top);
+
         target.draw(vertices, 4, sf::Quads, states);
     }
 }

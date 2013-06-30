@@ -16,11 +16,11 @@ class CollapsableButton : public MenuItem, public sf::Sprite
         ///Callback is the function that is called when the button is activated(clicked)
         ///Position is, of course, the position of the button
         ///\note If the function required to call is a non-static class member, use the other constructor instead
-        CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(CollapsableButton*) = nullptr, bool collapsed = true);
+        CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(CollapsableButton*) = nullptr, bool collapsed = true);
 
         ///\brief Constructor with callback for non-static member functions of a class
         ///Basically, a static redirect-function should be given as _callback, which converts classPointer into a pointer of its own type, so the non-static function can be called(see example in MainMenu(mainmenu.hpp))
-        CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool collapsed = true);
+        CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool collapsed = true);
 
         ///\brief Check the event on the button and on the child items if expanded(not collapsed).
         bool handle_event(sf::Event _event);

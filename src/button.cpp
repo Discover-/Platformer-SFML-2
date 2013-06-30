@@ -1,16 +1,15 @@
 #include "button.hpp"
-#include "statemanager.hpp"
 
-Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(Button*) /* = nullptr */) : callback(_callback), m_manager(manager), memberCallback(nullptr), classPointer(nullptr)
+Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */) : callback(_callback), memberCallback(nullptr), classPointer(nullptr)
 {
     setPosition(position);
-    setTexture(m_manager->resourceManager.getTexture(texturFilename), true);
+    setTexture(_texture, true);
 }
 
-Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(void*, Button*), void* _classPointer) : callback(nullptr), m_manager(manager), memberCallback(_callback), classPointer(_classPointer)
+Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(void*, Button*), void* _classPointer) : callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
 {
     setPosition(position);
-    setTexture(m_manager->resourceManager.getTexture(texturFilename));
+    setTexture(_texture, true);
 }
 
 bool Button::handle_event(sf::Event _event)
