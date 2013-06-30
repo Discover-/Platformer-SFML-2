@@ -4,10 +4,10 @@ MainMenu::MainMenu(sf::RenderWindow* renderWindow, StateManager* manager)
 :m_manager(manager),
 m_window(renderWindow),
 /*Create the buttons*/
-m_button_play(sf::Vector2f(300.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/play.png"), &play, this),
-m_button_options(sf::Vector2f(300.0f, 200.0f), m_manager->resourceManager.getTexture("Graphics/Menu/options.png"), &MainMenu::options, this),
-m_button_levelEditor(sf::Vector2f(300.0f, 300.0f), m_manager->resourceManager.getTexture("Graphics/Menu/level_editor.png"), &MainMenu::levelEditor, this),
-m_button_exit(sf::Vector2f(300.0f, 400.0f), m_manager->resourceManager.getTexture("Graphics/Menu/quit.png"), &MainMenu::exit, this)
+m_button_play(sf::Vector2f(300.0f, 100.0f), "Graphics/Menu/play.png", m_manager, &play, this),
+m_button_options(sf::Vector2f(300.0f, 200.0f), "Graphics/Menu/options.png", m_manager, &MainMenu::options, this),
+m_button_levelEditor(sf::Vector2f(300.0f, 300.0f), "Graphics/Menu/level_editor.png", m_manager, &MainMenu::levelEditor, this),
+m_button_exit(sf::Vector2f(300.0f, 400.0f), "Graphics/Menu/quit.png", m_manager, &MainMenu::exit, this)
 {
     m_menu.items.push_back(&m_button_play);
     m_menu.items.push_back(&m_button_options);
