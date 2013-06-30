@@ -1,5 +1,10 @@
 #include "collapsablebutton.hpp"
 
+CollapsableButton::CollapsableButton(): callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
+{
+
+}
+
 CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(CollapsableButton*) /* = nullptr */, bool _collapsed /* = true */)
 :collapsed(_collapsed),
 callback(_callback)
@@ -12,6 +17,20 @@ CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _textur
 {
     setPosition(position);
     setTexture(_texture, true);
+}
+
+void CollapsableButton::setCallback(void (*_callback)(CollapsableButton*))
+{
+    callback = _callback;
+    memberCallback = nullptr;
+    classPointer = nullptr;
+}
+
+void CollapsableButton::setCallback(void (*_callback)(void*, CollapsableButton*), void* _classPointer)
+{
+    memberCallback = _callback;
+    classPointer = _classPointer;
+    callback = nullptr;
 }
 
 bool CollapsableButton::handle_event(sf::Event _event)
@@ -43,7 +62,7 @@ bool CollapsableButton::handle_event(sf::Event _event)
                             callback(this);
                         }
                     }
-                    else
+                    else if (memberCallback != nullptr)
                     {
                         //The callback function is a non-static member function, some tricks are needed
                         memberCallback(classPointer, this);
@@ -59,6 +78,10 @@ bool CollapsableButton::handle_event(sf::Event _event)
                         handled = true;
                 }
             }
+            break;
+
+        default:
+            break;
     }
 
     return handled;

@@ -1,41 +1,29 @@
 #ifndef MAINMENU_HPP_INCLUDED
 #define MAINMENU_HPP_INCLUDED
 
-#include <SFML/Graphics.hpp>
-
 #include "menu.hpp"
 #include "button.hpp"
 #include "gamestate.hpp"
+#include "levelselectionmenu.hpp"
 
 ///\brief Main menu class.
-///See GameState(gamestate.hpp) for more details
-class MainMenu : public GameState
+///See Menu(menu.hpp) for details
+///The callback functions for the buttons have to be set if you want to use them
+class MainMenu : public Menu
 {
     public:
-        MainMenu(sf::RenderWindow* renderWindow, StateManager* manager);
+        ///\brief Default constructor
+        MainMenu();
 
-        void handle_events();
-        void logic(double passed, double deltaTime);
-        void render(double alpha);
+        ///\brief Constructor taking a pointer to a ResourceManager as argument
+        ///Loads the default textures for the buttons and sets them
+        MainMenu(ResourceManager* resourceManager);
 
-        StateManager* m_manager;
-
-    private:
-        sf::RenderWindow* m_window;
-
-        //Callback functions for the menuitems
-        static void play(void* inst, Button* button);
-        static void options(void* inst, Button* button);
-        static void levelEditor(void* inst, Button* button);
-        static void exit(void* inst, Button* button);
-
-        //The menu and items
-        Menu m_menu;
-        Button m_button_play;
-        Button m_button_options;
-        Button m_button_levelEditor;
-        Button m_button_exit;
-
+        //The items, can and probably have to be edited by the owner of the LevelSelectionMenu(callbacks, anyone?)
+        Button button_play;
+        Button button_options;
+        Button button_levelEditor;
+        Button button_exit;
 };
 
 #endif // MAINMENU_HPP_INCLUDED

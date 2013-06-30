@@ -1,5 +1,10 @@
 #include "button.hpp"
 
+Button::Button(): callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
+{
+
+}
+
 Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */) : callback(_callback), memberCallback(nullptr), classPointer(nullptr)
 {
     setPosition(position);
@@ -10,6 +15,20 @@ Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(
 {
     setPosition(position);
     setTexture(_texture, true);
+}
+
+void Button::setCallback(void (*_callback)(Button*))
+{
+    callback = _callback;
+    memberCallback = nullptr;
+    classPointer = nullptr;
+}
+
+void Button::setCallback(void (*_callback)(void*, Button*), void* _classPointer)
+{
+    memberCallback = _callback;
+    classPointer = _classPointer;
+    callback = nullptr;
 }
 
 bool Button::handle_event(sf::Event _event)
@@ -34,7 +53,7 @@ bool Button::handle_event(sf::Event _event)
                             callback(this);
                         }
                     }
-                    else
+                    else if (memberCallback != nullptr)
                     {
                         //The callback function is a non-static member function, some tricks are needed
                         memberCallback(classPointer, this);
