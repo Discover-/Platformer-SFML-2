@@ -1,5 +1,5 @@
 #include "player.hpp"
-#include "leveleditor.hpp"
+#include "leveleditorstate.hpp"
 
 Player::Player(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* manager, GameState* _gameState) :
 Unit(_window, position, body, manager)
@@ -17,7 +17,7 @@ void Player::Update()
     std::vector<std::pair<sf::Vector2f, std::string> > sprites;
     
     if (gameState)
-        sprites = ((LevelEditor*)gameState)->GetSprites();
+        sprites = ((LevelEditorState*)gameState)->GetSprites();
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         if (!CollidesWithGameobjects(sprites, GetPositionX() - 5.0f, GetPositionY()))

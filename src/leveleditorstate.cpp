@@ -1,16 +1,20 @@
-#include <SFML/Graphics.hpp>
+#include "leveleditorstate.hpp"
 
-#include <iostream>
-
-#include "leveleditor.hpp"
-#include "statemanager.hpp"
-#include "menumanager.hpp"
-
-LevelEditor::LevelEditor(sf::RenderWindow* window, StateManager* manager)
-:m_window(window),
-m_manager(manager),
-m_menuManager(m_window, m_manager, MENU_STATE_LEVEL_EDITOR)
+LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
 {
+    m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
+    m_levelEditorMenu->button_save.setCallback(&save, this);
+    m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
+    //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
+
+    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(20.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block1.png")));
+    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(120.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block2.png")));
+    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(220.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block3.png")));
+
+    for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = m_levelEditorMenu->button_tiles.items.begin(); itr != m_levelEditorMenu->button_tiles.items.end(); ++itr)
+        if (MenuItem* menuItem = (*itr).first)
+            ((Button*)menuItem)->setCallback(&setSelectedTile, this, (*itr).second);
+
     selectedTileFilename = "";
     selectionRespectsGrid = true;
     enabledGrid = true;
@@ -35,12 +39,14 @@ m_menuManager(m_window, m_manager, MENU_STATE_LEVEL_EDITOR)
     }
 }
 
-void LevelEditor::handle_events()
+void LevelEditorState::handle_events()
 {
     sf::Event _event;
 
     while (m_window->pollEvent(_event))
     {
+        m_levelEditorMenu->handle_event(_event);
+
         switch (_event.type)
         {
             case sf::Event::Closed:
@@ -51,7 +57,6 @@ void LevelEditor::handle_events()
                 switch (_event.mouseButton.button)
                 {
                     case sf::Mouse::Left:
-                        m_menuManager.MouseButtonPressed(sf::Mouse::getPosition(*m_window));
                         MouseButtonPressed(sf::Mouse::getPosition(*m_window), true);
                         break;
                     case sf::Mouse::Right:
@@ -91,7 +96,7 @@ float GetDistance(float x1, float y1, float x2, float y2)
     return (dist > 0 ? dist : 0);
 }
 
-bool LevelEditor::IsSpotTakenBySprite(sf::Vector2f position)
+bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
 {
     for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
         if ((*itr).first == position)
@@ -100,7 +105,7 @@ bool LevelEditor::IsSpotTakenBySprite(sf::Vector2f position)
     return false;
 }
 
-sf::Vector2f LevelEditor::GetPositionForSelectedTile()
+sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
@@ -135,7 +140,7 @@ sf::Vector2f LevelEditor::GetPositionForSelectedTile()
         return sf::Vector2f(float(mousePos.x), float(mousePos.y));
 }
 
-void LevelEditor::logic(double passed, double deltaTime)
+void LevelEditorState::logic(double passed, double deltaTime)
 {
     if (testingLevelOut)
     {
@@ -150,11 +155,12 @@ void LevelEditor::logic(double passed, double deltaTime)
     }
 }
 
-void LevelEditor::render(double alpha)
+void LevelEditorState::render(double alpha)
 {
+    m_window->clear(sf::Color::Cyan);
+
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-    m_window->clear(sf::Color::Cyan);
 
     sf::RectangleShape backgroundImage(sf::Vector2f(1000.0f, 600.0f));
     backgroundImage.setFillColor(sf::Color::Cyan);
@@ -201,15 +207,12 @@ void LevelEditor::render(double alpha)
         m_window->draw(rectShape);
     }
 
+    m_window->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
     m_window->display();
 }
 
-void LevelEditor::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
+void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
 {
-    //! Temporarily for testing...
-    //if (mousePos.x > 300)
-    //    enabledGrid = !enabledGrid;
-
     if (leftMouseClick && justPlacedNewTile)
     {
         justPlacedNewTile = false;
@@ -243,12 +246,26 @@ void LevelEditor::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
     }
 }
 
-void LevelEditor::SetEnabledGrid(bool val)
+void LevelEditorState::save(void* inst, Button* button)
 {
-    enabledGrid = false;
+    LevelEditorState* self = (LevelEditorState*) inst;
+    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
 }
 
-bool LevelEditor::IsGridEnabled()
+//void LevelEditorState::tiles(void* inst, CollapsableButton* button)
+//{
+//    LevelEditorState* self = (LevelEditorState*) inst;
+//    self->m_levelEditorMenu->button_tiles.collapsed = !self->m_levelEditorMenu->button_tiles.collapsed;
+//}
+
+void LevelEditorState::toggleGrid(void* inst, Button* button)
 {
-    return enabledGrid;
+    LevelEditorState* self = (LevelEditorState*) inst;
+    self->enabledGrid = !self->enabledGrid;
+}
+
+void LevelEditorState::setSelectedTile(void* inst, Button* button, std::string filename)
+{
+    LevelEditorState* self = (LevelEditorState*) inst;
+    self->SetSelectedTileFilename(filename);
 }

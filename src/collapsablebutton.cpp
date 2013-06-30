@@ -1,3 +1,5 @@
+#include <string>
+
 #include "collapsablebutton.hpp"
 
 CollapsableButton::CollapsableButton(): callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
@@ -13,7 +15,7 @@ callback(_callback)
     setTexture(_texture, true);
 }
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = true */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = false */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
 {
     setPosition(position);
     setTexture(_texture, true);
@@ -39,8 +41,8 @@ bool CollapsableButton::handle_event(sf::Event _event)
 
     //Check the event on all the child items, if collapsed
     if (collapsed)
-        for (MenuItem* it : items)
-            if (it->handle_event(_event) == true)
+        for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = items.begin(); itr != items.end(); ++itr)
+            if ((*itr).first->handle_event(_event) == true)
                 if (!handled)
                     handled = true;
 
@@ -67,11 +69,9 @@ bool CollapsableButton::handle_event(sf::Event _event)
                         //The callback function is a non-static member function, some tricks are needed
                         memberCallback(classPointer, this);
                     }
+
                     //Also, expand or collapse
-                    if (collapsed)
-                        collapsed = false;
-                    else
-                        collapsed = true;
+                    collapsed = !collapsed;
 
                     //Now the event is handled
                     if (!handled)
@@ -89,9 +89,9 @@ bool CollapsableButton::handle_event(sf::Event _event)
 
 void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    if (!collapsed)
-        for (MenuItem* it : items)
-            target.draw(*it, states);
+    if (collapsed)
+        for (std::list<std::pair<MenuItem*, std::string> >::const_iterator itr = items.begin(); itr != items.end(); ++itr)
+            target.draw(*(*itr).first, states);
 
     //Draw the collapsablebutton itself, I know it's a little hacky
     if (sf::Texture const* texture = getTexture())

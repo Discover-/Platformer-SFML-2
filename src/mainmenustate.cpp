@@ -62,8 +62,7 @@ void MainMenuState::exit(void* inst, Button* button)
     self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
 }
 
-
-//!BEGIN LEVELSELECTIONMENU
+//! BEGIN LEVELSELECTIONMENU
 void MainMenuState::backToMain(void* inst, Button* button)
 {
     MainMenuState* self = (MainMenuState*) inst;

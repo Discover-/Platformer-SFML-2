@@ -2,7 +2,7 @@
 #include "gamestate.hpp"
 #include "game.hpp"
 #include "mainmenustate.hpp"
-#include "leveleditor.hpp"
+#include "leveleditorstate.hpp"
 
 StateManager::StateManager()
 {
@@ -98,7 +98,7 @@ void StateManager::change_state()
                 m_currentState = new Game(m_window, this);
                 break;
             case GAME_STATE_LEVEL_EDITOR:
-                m_currentState = new LevelEditor(m_window, this);
+                m_currentState = new LevelEditorState(m_window, this);
                 break;
         }
 

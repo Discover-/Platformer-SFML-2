@@ -1,6 +1,6 @@
 #include "statemanager.hpp"
 #include "unit.hpp"
-#include "leveleditor.hpp"
+#include "leveleditorstate.hpp"
 
 Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* _manager, GameState* _gameState /* = NULL */)
 {
@@ -21,7 +21,7 @@ void Unit::Update()
     std::vector<std::pair<sf::Vector2f, std::string> > sprites;
     
     if (gameState)
-        sprites = ((LevelEditor*)gameState)->GetSprites();
+        sprites = ((LevelEditorState*)gameState)->GetSprites();
 
     if (isJumping)
     {

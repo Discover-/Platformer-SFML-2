@@ -1,15 +1,16 @@
-#pragma once
+#ifndef LEVELEDITORSTATE_HPP_INCLUDED
+#define LEVELEDITORSTATE_HPP_INCLUDED
 
-#include <vector>
-
+#include "mainmenu.hpp"
+#include "button.hpp"
 #include "gamestate.hpp"
+#include "leveleditormenu.hpp"
 #include "player.hpp"
-#include "menumanager.hpp"
 
-class LevelEditor : public GameState
+class LevelEditorState : public GameState
 {
     public:
-        LevelEditor(sf::RenderWindow* renderWindow, StateManager* manager);
+        LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager);
 
         void handle_events();
         void logic(double passed, double deltaTime);
@@ -24,24 +25,29 @@ class LevelEditor : public GameState
         void AddSprite(sf::Vector2f pos, std::string filename) { sprites.push_back(std::make_pair(pos, filename)); }
         std::vector<std::pair<sf::Vector2f, std::string> >& GetSprites() { return sprites; }
 
-        void SetEnabledGrid(bool val);
-        bool IsGridEnabled();
-
         sf::Vector2f GetPositionForSelectedTile();
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
-        bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile;
-        bool testingLevelOut;
+        //bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile, testingLevelOut;
+
+        static void save(void* inst, Button* button);
+        //static void tiles(void* inst, CollapsableButton* button);
+        static void toggleGrid(void* inst, Button* button);
+        static void setSelectedTile(void* inst, Button* button, std::string filename);
 
     private:
-        StateManager* m_manager;
         sf::RenderWindow* m_window;
+        StateManager* m_manager;
+        LevelEditorMenu* m_levelEditorMenu;
+
         std::string selectedTileFilename;
         bool selectionRespectsGrid;
         std::vector<std::pair<sf::Vector2f, std::string> > sprites;
         bool enabledGrid;
         sf::RectangleShape grid[20][12];
         Player* player;
-
-        MenuManager m_menuManager;
+        bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile, testingLevelOut;
 };
+
+
+#endif // LEVELEDITORSTATE_HPP_INCLUDED

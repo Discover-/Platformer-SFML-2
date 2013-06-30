@@ -2,7 +2,7 @@
 
 Button::Button(): callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
 {
-
+    stringParam = "";
 }
 
 Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */) : callback(_callback), memberCallback(nullptr), classPointer(nullptr)
@@ -31,6 +31,14 @@ void Button::setCallback(void (*_callback)(void*, Button*), void* _classPointer)
     callback = nullptr;
 }
 
+void Button::setCallback(void (*_callback)(void*, Button*), void* _classPointer, std::string _stringParam)
+{
+    memberCallback = _callback;
+    classPointer = _classPointer;
+    callback = nullptr;
+    stringParam = _stringParam;
+}
+
 bool Button::handle_event(sf::Event _event)
 {
     bool handled = false;
@@ -56,7 +64,10 @@ bool Button::handle_event(sf::Event _event)
                     else if (memberCallback != nullptr)
                     {
                         //The callback function is a non-static member function, some tricks are needed
-                        memberCallback(classPointer, this);
+                        if (stringParam != "")
+                            memberCallbackStringParam(classPointer, this, stringParam);
+                        else
+                            memberCallback(classPointer, this);
                     }
                 }
             }
