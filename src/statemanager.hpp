@@ -23,6 +23,8 @@ class StateManager
             GAME_STATE_NULL,
             GAME_STATE_INTRO,
             GAME_STATE_MENU,
+            GAME_STATE_OPTIONS,
+            GAME_STATE_LEVEL_SELECTION,
             GAME_STATE_GAME,
             GAME_STATE_LEVEL_EDITOR,
             GAME_STATE_EXIT

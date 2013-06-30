@@ -18,6 +18,6 @@ void Menu::draw(sf::RenderTarget &target, sf::RenderStates states) const
     //Draw all the items to target
     for (MenuItem* it : items)
     {
-        target.draw(*it);
+        target.draw(*it, states);
     }
 }

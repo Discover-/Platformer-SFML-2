@@ -195,17 +195,17 @@ void MenuManager::MouseButtonPressed(sf::Vector2i mousePos)
                         }
                         case 1: //! Enable Grid
                         {
-                            if (GameState* sideState = m_manager->GetSideRunningState())
+                            /*if (GameState* sideState = m_manager->GetSideRunningState())
                             {
                                 bool enabled = ((LevelEditor*)sideState)->IsGridEnabled();
                                 ((LevelEditor*)sideState)->SetEnabledGrid(false);
-                            }
+                            }*/
                             break;
                         }
                         case 2: //! Save
                         {
-                            if (GameState* sideState = m_manager->GetSideRunningState())
-                                ((LevelEditor*)sideState)->testingLevelOut = true;
+                            /*if (GameState* sideState = m_manager->GetSideRunningState())
+                                ((LevelEditor*)sideState)->testingLevelOut = true;*/
                             break;
                         }
                         default:

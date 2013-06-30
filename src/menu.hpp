@@ -2,6 +2,7 @@
 #define MENU_HPP_INCLUDED
 
 #include "menuitem.hpp"
+#include <list>
 
 ///A menu which can manage MenuItems
 class Menu : public sf::Drawable
@@ -14,7 +15,7 @@ class Menu : public sf::Drawable
         void draw (sf::RenderTarget &target, sf::RenderStates states) const;
 
         ///\brief The items
-        std::vector<MenuItem*> items;
+        std::list<MenuItem*> items;
 };
 
 #endif // MENU_HPP_INCLUDED

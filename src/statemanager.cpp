@@ -1,7 +1,7 @@
 #include "statemanager.hpp"
 #include "gamestate.hpp"
 #include "game.hpp"
-#include "menumanager.hpp"
+#include "mainmenu.hpp"
 #include "leveleditor.hpp"
 
 StateManager::StateManager()
@@ -10,14 +10,12 @@ StateManager::StateManager()
     stateID = GAME_STATE_NULL;
     nextState = GAME_STATE_NULL;
     m_currentState = 0;
-    m_sideRunningState = 0;
 }
 
 void StateManager::clean()
 {
     delete m_window;
     delete m_currentState; //! Make sure the destructor of the state is well-written
-    delete m_sideRunningState;
 }
 
 void StateManager::mainLoop()
@@ -51,26 +49,11 @@ void StateManager::mainLoop()
             m_currentState->handle_events();
             m_currentState->logic(t, dt);
 
-            if (m_sideRunningState)
-            {
-                m_sideRunningState->handle_events();
-                m_sideRunningState->logic(t, dt);
-            }
-
             t += dt;
             accumulator -= dt;
         }
 
-        if (m_sideRunningState != NULL)
-            m_window->clear();
-
-        m_currentState->render(accumulator / dt, m_sideRunningState != NULL);
-
-        if (m_sideRunningState)
-        {
-            m_sideRunningState->render(accumulator / dt, true);
-            m_window->display();
-        }
+        m_currentState->render(accumulator / dt);
     }
 
     //! End of the line, let's clean our mess and shut down
@@ -99,12 +82,6 @@ void StateManager::change_state()
         {
             delete m_currentState;
             m_currentState = nullptr;
-
-            if (m_sideRunningState != NULL)
-            {
-                m_sideRunningState = nullptr;
-                delete m_sideRunningState;
-            }
         }
 
         //! Change the state
@@ -115,7 +92,7 @@ void StateManager::change_state()
                 m_currentState = new Intro(m_window, this);
                 break;*/
             case GAME_STATE_MENU:
-                m_currentState = new MenuManager(m_window, this);
+                m_currentState = new MainMenu(m_window, this);
                 break;
             case GAME_STATE_GAME:
                 m_currentState = new Game(m_window, this);
