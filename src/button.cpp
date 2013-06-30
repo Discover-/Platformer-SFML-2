@@ -1,36 +1,30 @@
 #include "button.hpp"
 #include "statemanager.hpp"
 
-Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(Button*) /* = nullptr */)
-:callback(_callback),
-m_manager(manager),
-memberCallback(nullptr),
-classPointer(nullptr)
+Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(Button*) /* = nullptr */) : callback(_callback), m_manager(manager), memberCallback(nullptr), classPointer(nullptr)
 {
-    this->setPosition(position);
-    this->setTexture(m_manager->resourceManager.getTexture(texturFilename), true);
+    setPosition(position);
+    setTexture(m_manager->resourceManager.getTexture(texturFilename), true);
 }
 
-Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(void*, Button*), void* _classPointer)
-:callback(nullptr),
-m_manager(manager),
-memberCallback(_callback),
-classPointer(_classPointer)
+Button::Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(void*, Button*), void* _classPointer) : callback(nullptr), m_manager(manager), memberCallback(_callback), classPointer(_classPointer)
 {
-    this->setPosition(position);
-    this->setTexture(m_manager->resourceManager.getTexture(texturFilename));
+    setPosition(position);
+    setTexture(m_manager->resourceManager.getTexture(texturFilename));
 }
 
-bool Button::handle_event(sf::Event event)
+bool Button::handle_event(sf::Event _event)
 {
     bool handled = false;
-    switch(event.type)
+
+    switch (_event.type)
     {
         case sf::Event::MouseButtonReleased:
-            if (event.mouseButton.button == sf::Mouse::Button::Left)
+        {
+            if (_event.mouseButton.button == sf::Mouse::Button::Left)
             {
                 //Now check if the pointer was in the button
-                if ( event.mouseButton.x > this->getPosition().x && event.mouseButton.x < this->getPosition().x + this->getGlobalBounds().width && event.mouseButton.y > this->getPosition().y && event.mouseButton.y < this->getPosition().y + this->getGlobalBounds().height)
+                if (_event.mouseButton.x > getPosition().x && _event.mouseButton.x < getPosition().x + getGlobalBounds().width && _event.mouseButton.y > getPosition().y && _event.mouseButton.y < getPosition().y + getGlobalBounds().height)
                 {
                     //The button was clicked. Now call it's callback function
                     if (classPointer == nullptr)
@@ -48,17 +42,20 @@ bool Button::handle_event(sf::Event event)
                     }
                 }
             }
+            break;
+        }
     }
+
     return handled;
 }
 
 void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     //Draw the button itself, I know it's a little hacky
-    if (this->getTexture())
+    if (sf::Texture const* texture = getTexture())
     {
         states.transform *= getTransform();
-        states.texture = this->getTexture();
+        states.texture = texture;
         sf::Vertex vertices[4];
         sf::FloatRect bounds = getLocalBounds();
         vertices[0].position = sf::Vector2f(0, 0);

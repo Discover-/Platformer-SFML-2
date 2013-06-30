@@ -23,7 +23,7 @@ class CollapsableButton : public MenuItem, public sf::Sprite
         CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool collapsed = true);
 
         ///\brief Check the event on the button and on the child items if expanded(not collapsed).
-        bool handle_event(sf::Event event);
+        bool handle_event(sf::Event _event);
 
         ///\brief Draw the button and child items if expanded(not collapsed) on target
         void draw(sf::RenderTarget &target, sf::RenderStates states) const;

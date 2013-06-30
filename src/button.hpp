@@ -18,9 +18,8 @@ class Button : public MenuItem, public sf::Sprite
         ///Basically, a static redirect-function should be given as _callback, which converts classPointer into a pointer of its own type, so the non-static function can be called(see example in MainMenu(mainmenu.hpp))
         Button(sf::Vector2f position, std::string texturFilename, StateManager* manager, void (*_callback)(void*, Button*), void* _classPointer);
 
-        bool handle_event(sf::Event event);
-
-        void draw (sf::RenderTarget &target, sf::RenderStates states) const;
+        bool handle_event(sf::Event _event);
+        void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
         ///Callback function, called when the button is activated, and a pointer to the activated button is given
         void (*callback)(Button*);

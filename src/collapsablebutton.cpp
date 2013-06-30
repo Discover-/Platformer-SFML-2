@@ -4,42 +4,35 @@ CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture texture,
 :collapsed(_collapsed),
 callback(_callback)
 {
-    this->setPosition(position);
-    this->setTexture(texture);
+    setPosition(position);
+    setTexture(texture);
 }
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = true */)
-:collapsed(_collapsed),
-callback(nullptr),
-memberCallback(_callback),
-classPointer(_classPointer)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = true */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
 {
-    this->setPosition(position);
-    this->setTexture(texture);
+    setPosition(position);
+    setTexture(texture);
 }
 
-bool CollapsableButton::handle_event(sf::Event event)
+bool CollapsableButton::handle_event(sf::Event _event)
 {
     bool handled = false;
+
     //Check the event on all the child items, if collapsed
     if (collapsed)
-    {
         for (MenuItem* it : items)
-        {
-            if (it->handle_event(event) == true)
+            if (it->handle_event(_event) == true)
                 if (!handled)
                     handled = true;
-        }
-    }
 
     //Check the event on the CollapsableButton
-    switch(event.type)
+    switch (_event.type)
     {
         case sf::Event::MouseButtonReleased:
-            if (event.mouseButton.button == sf::Mouse::Button::Left)
+            if (_event.mouseButton.button == sf::Mouse::Button::Left)
             {
                 //Now check if the pointer was in the button
-                if ( event.mouseButton.x > this->getPosition().x && event.mouseButton.x < this->getPosition().x + this->getGlobalBounds().width && event.mouseButton.y > this->getPosition().y && event.mouseButton.y < this->getPosition().y + this->getGlobalBounds().height)
+                if (_event.mouseButton.x > getPosition().x && _event.mouseButton.x < getPosition().x + getGlobalBounds().width && _event.mouseButton.y > getPosition().y && _event.mouseButton.y < getPosition().y + getGlobalBounds().height)
                 {
                     //The button was clicked. Now call it's callback function
                     if (classPointer == nullptr)
@@ -74,15 +67,11 @@ bool CollapsableButton::handle_event(sf::Event event)
 void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (!collapsed)
-    {
         for (MenuItem* it : items)
-        {
             target.draw(*it, states);
-        }
-    }
 
     //Draw the collapsablebutton itself, I know it's a little hacky
-    if (this->getTexture())
+    if (getTexture())
     {
         states.transform *= getTransform();
         states.texture = getTexture();
