@@ -1,9 +1,8 @@
 #include "button.hpp"
 
-Button::Button(sf::Vector2f position, sf::Texture texture, void (*callback)())
-:m_callback(nullptr)
+Button::Button(sf::Vector2f position, sf::Texture texture, void (*_callback)(Button*) /* = nullptr */)
+:callback(_callback)
 {
-    m_callback = callback;
     this->setPosition(position);
     this->setTexture(texture);
 }
@@ -20,7 +19,7 @@ bool Button::handle_event(sf::Event event)
                 if ( event.mouseButton.x > this->getPosition().x && event.mouseButton.x < this->getPosition().x + this->getGlobalBounds().width && event.mouseButton.y > this->getPosition().y && event.mouseButton.y < this->getPosition().y + this->getGlobalBounds().height)
                 {
                     //The button was clicked. Now call it's callback function
-                    m_callback();
+                    callback(this);
                 }
             }
     }

@@ -3,7 +3,8 @@
 bool Menu::handle_event(sf::Event event)
 {
     bool handled = false;
-    for (Button* it : buttons)
+    //Check the event on all the items
+    for (MenuItem* it : items)
     {
         if (it->handle_event(event) == true)
             if (!handled)
@@ -14,8 +15,8 @@ bool Menu::handle_event(sf::Event event)
 
 void Menu::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    //Draw all the buttons to target
-    for (Button* it : buttons)
+    //Draw all the items to target
+    for (MenuItem* it : items)
     {
         target.draw(*it);
     }
