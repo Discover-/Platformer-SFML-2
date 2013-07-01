@@ -106,8 +106,8 @@ float GetDistance(float x1, float y1, float x2, float y2)
 
 bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
 {
-    for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
-        if ((*itr).first == position)
+    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+        if ((*itr).position == position)
             return true;
 
     return false;
@@ -119,9 +119,6 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
     if (enabledGrid && selectedTileFilename != "" && selectionRespectsGrid)
     {
-        if (selectedTileFilename == "Graphics/Menu/collision_pointer.png")
-            return sf::Vector2f(float(mousePos.x), float(mousePos.y));
-
         sf::RectangleShape closestGrid = grid[0][0];
 
         for (int i = 0; i < 12; ++i)
@@ -181,22 +178,35 @@ void LevelEditorState::render(double alpha)
     if (selectedTileFilename != "")
     {
         sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
-        selectedTile.setPosition(GetPositionForSelectedTile());
+
+        bool forceIgnoreGrid = false;
+
+        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+        {
+            if ((*itr).filename == selectedTileFilename)
+            {
+                forceIgnoreGrid = (*itr).forceIgnoreGrid;
+                break;
+            }
+        }
+
+        selectedTile.setPosition(forceIgnoreGrid ? sf::Vector2f(sf::Mouse::getPosition()) : GetPositionForSelectedTile());
+
         selectedTile.setColor(sf::Color(255, 255, 255, 100));
         m_window->draw(selectedTile);
     }
 
     bool foundHoverOverTile = false;
 
-    for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
     {
-        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).second));
-        sprite.setPosition((*itr).first.x, (*itr).first.y);
+        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
+        sprite.setPosition((*itr).position.x, (*itr).position.y);
         sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
         if (selectedTileFilename == "")
         {
-            if (!(mousePos.y >= (*itr).first.y + spriteRect.height || mousePos.x >= (*itr).first.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).first.y || mousePos.x + 16.0f <= (*itr).first.x))
+            if (!(mousePos.y >= (*itr).position.y + spriteRect.height || mousePos.x >= (*itr).position.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).position.y || mousePos.x + 16.0f <= (*itr).position.x))
             {
                 if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
                 {
@@ -226,20 +236,18 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 {
     if (selectedTileFilename == "" || !leftMouseClick)
     {
-        for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); )
+        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); )
         {
-            sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).second));
+            sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
             sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
-            if (!(mousePos.y >= (*itr).first.y + spriteRect.height || mousePos.x >= (*itr).first.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).first.y || mousePos.x + 16.0f <= (*itr).first.x))
+            if (!(mousePos.y >= (*itr).position.y + spriteRect.height || mousePos.x >= (*itr).position.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).position.y || mousePos.x + 16.0f <= (*itr).position.x))
             {
                 if (leftMouseClick)
                 {
                     justReselectedTile = true;
-                    selectedTileFilename = (*itr).second;
-
-                    if ((*itr).second == "Graphics/Menu/collision_pointer.png")
-                        selectionRespectsGrid = false;
+                    selectedTileFilename = (*itr).filename;
+                    selectionRespectsGrid = !(*itr).forceIgnoreGrid;;
                 }
 
                 itr = sprites.erase(itr);
@@ -258,10 +266,17 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             return;
         }
 
-        movedCursorOutOfNewTile = false;
-        sprites.push_back(std::make_pair(GetPositionForSelectedTile(), selectedTileFilename));
+        SpriteInfo spriteInfo;
+        spriteInfo.filename = selectedTileFilename;
+        spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
+        spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
+        spriteInfo.position = GetPositionForSelectedTile();
+        spriteInfo.priorityInDrawing = selectedTileFilename == "Graphics/Menu/collision_pointer.png"; //! NYI!
+        sprites.push_back(spriteInfo);
+
         selectedTileFilename = "";
         selectionRespectsGrid = true;
+        movedCursorOutOfNewTile = false;
     }
 }
 

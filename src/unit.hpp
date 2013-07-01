@@ -7,6 +7,8 @@
 #include "position.hpp"
 #include "statemanager.hpp"
 
+struct SpriteInfo;
+
 class Unit : public Position
 {
     public:
@@ -27,7 +29,7 @@ class Unit : public Position
         sf::RectangleShape GetBodyShape() { return bodyShape; }
 
         bool CollidesWithGameobjects(float newPosX = 0.0f, float newPosY = 0.0f);
-        bool CollidesWithGameobjects(std::vector<std::pair<sf::Vector2f, std::string> > sprites, float newPosX = 0.0f, float newPosY = 0.0f);
+        bool CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPosX = 0.0f, float newPosY = 0.0f);
 
         StateManager* m_manager;
         GameState* gameState;

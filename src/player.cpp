@@ -14,7 +14,7 @@ void Player::Update()
     if (IsDead())
         return;
 
-    std::vector<std::pair<sf::Vector2f, std::string> > sprites;
+    std::vector<SpriteInfo> sprites;
     
     if (gameState)
         sprites = ((LevelEditorState*)gameState)->GetSprites();

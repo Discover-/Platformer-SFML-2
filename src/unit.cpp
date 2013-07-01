@@ -18,7 +18,7 @@ Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape 
 
 void Unit::Update()
 {
-    std::vector<std::pair<sf::Vector2f, std::string> > sprites;
+    std::vector<SpriteInfo> sprites;
     
     if (gameState)
         sprites = ((LevelEditorState*)gameState)->GetSprites();
@@ -76,7 +76,7 @@ bool Unit::CollidesWithGameobjects(float newPosX /* = 0.0f */, float newPosY /* 
     return false;
 }
 
-bool Unit::CollidesWithGameobjects(std::vector<std::pair<sf::Vector2f, std::string> > sprites, float newPosX /* = 0.0f */, float newPosY /* = 0.0f */)
+bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPosX /* = 0.0f */, float newPosY /* = 0.0f */)
 {
     if (sprites.empty())
         return CollidesWithGameobjects(newPosX, newPosY);
@@ -93,13 +93,16 @@ bool Unit::CollidesWithGameobjects(std::vector<std::pair<sf::Vector2f, std::stri
     if (positionToCheckX < 0.1f || positionToCheckY < 0.1f || positionToCheckX > 900.0f || positionToCheckY > 525.0f)
         return true;
 
-    for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
     {
-        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).second));
+        if (!(*itr).isCollidable)
+            continue;
+
+        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
         sf::FloatRect buttonRect = sprite.getGlobalBounds();
         sf::FloatRect playerRect = bodyShape.getGlobalBounds();
 
-        if (!(positionToCheckX >= (*itr).first.y + buttonRect.height || positionToCheckX >= (*itr).first.x + buttonRect.width || positionToCheckY + playerRect.height <= (*itr).first.y || positionToCheckY + playerRect.width <= (*itr).first.x))
+        if (!(positionToCheckX >= (*itr).position.y + buttonRect.height || positionToCheckX >= (*itr).position.x + buttonRect.width || positionToCheckY + playerRect.height <= (*itr).position.y || positionToCheckY + playerRect.width <= (*itr).position.x))
             return true;
     }
 

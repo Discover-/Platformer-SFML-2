@@ -7,6 +7,25 @@
 #include "leveleditormenu.hpp"
 #include "player.hpp"
 
+struct SpriteInfo
+{
+    std::string filename;
+    sf::Vector2f position;
+    bool isCollidable;
+    bool forceIgnoreGrid;
+    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course) 
+
+    bool operator == (SpriteInfo spriteInfo)
+    {
+        return spriteInfo.filename == filename && spriteInfo.position == position && spriteInfo.isCollidable == isCollidable && spriteInfo.forceIgnoreGrid == forceIgnoreGrid && spriteInfo.priorityInDrawing == priorityInDrawing;
+    }
+
+    bool operator != (SpriteInfo spriteInfo)
+    {
+        return spriteInfo.filename != filename || spriteInfo.position != position || spriteInfo.isCollidable != isCollidable || spriteInfo.forceIgnoreGrid != forceIgnoreGrid || spriteInfo.priorityInDrawing != priorityInDrawing;
+    }
+};
+
 class LevelEditorState : public GameState
 {
     public:
@@ -22,8 +41,8 @@ class LevelEditorState : public GameState
         std::string GetSelectedTileFilename() { return selectedTileFilename; }
         bool HasSelectedTile() { return selectedTileFilename != ""; }
 
-        void AddSprite(sf::Vector2f pos, std::string filename) { sprites.push_back(std::make_pair(pos, filename)); }
-        std::vector<std::pair<sf::Vector2f, std::string> >& GetSprites() { return sprites; }
+        void AddSprite(SpriteInfo spriteInfo) { sprites.push_back(spriteInfo); }
+        std::vector<SpriteInfo>& GetSprites() { return sprites; }
 
         sf::Vector2f GetPositionForSelectedTile();
         bool IsSpotTakenBySprite(sf::Vector2f position);
@@ -42,7 +61,7 @@ class LevelEditorState : public GameState
 
         std::string selectedTileFilename;
         bool selectionRespectsGrid;
-        std::vector<std::pair<sf::Vector2f, std::string> > sprites;
+        std::vector<SpriteInfo> sprites;
         bool enabledGrid;
         sf::RectangleShape grid[20][12];
         Player* player;
