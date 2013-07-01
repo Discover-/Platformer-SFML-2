@@ -8,10 +8,11 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
     m_levelEditorMenu->button_clear.setCallback(&clear, this);
 
-    //tile buttons
+    //! Tiles buttons
     m_levelEditorMenu->button_tiles_block1.setCallback(&setSelectedTile, this);
     m_levelEditorMenu->button_tiles_block2.setCallback(&setSelectedTile, this);
     m_levelEditorMenu->button_tiles_block3.setCallback(&setSelectedTile, this);
+    m_levelEditorMenu->button_tiles_collisionPointer.setCallback(&setSelectedTile, this);
 
     //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
 
@@ -29,6 +30,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     justReselectedTile = false;
     movedCursorOutOfNewTile = true;
     testingLevelOut = false;
+    drawingCollisionLine = false;
 
     sf::VertexArray lines(sf::LinesStrip, 5);
 
@@ -49,11 +51,21 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
             grid.push_back(lines);
         }
     }
+
+    collisionLineSelection.setPrimitiveType(sf::LinesStrip);
+    collisionLineSelection.resize(2);
+
+    for (int x = 0; x < 2; ++x)
+    {
+        collisionLineSelection[x].color = sf::Color::Red;
+        collisionLineSelection[x].position = sf::Vector2f(0.0f, 0.0f);
+    }
 }
 
 void LevelEditorState::handle_events()
 {
     sf::Event _event;
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
     while (m_window->pollEvent(_event))
     {
@@ -69,10 +81,8 @@ void LevelEditorState::handle_events()
                 switch (_event.mouseButton.button)
                 {
                     case sf::Mouse::Left:
-                        MouseButtonPressed(sf::Mouse::getPosition(*m_window), true);
-                        break;
                     case sf::Mouse::Right:
-                        MouseButtonPressed(sf::Mouse::getPosition(*m_window), false);
+                        MouseButtonPressed(mousePos, _event.mouseButton.button == sf::Mouse::Left);
                         break;
                     default:
                         break;
@@ -121,13 +131,9 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
         sf::Vector2f closestPosition = sf::Vector2f(0.0f, 0.0f);
 
         for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
-        {
-            if (IsSpotTakenBySprite(sf::Vector2f((*itr)[0].position.x, (*itr)[0].position.y)))
-                continue;
-
-            if (GetDistance(float(mousePos.x), float(mousePos.y), (*itr)[0].position.x + 25.0f, (*itr)[0].position.y + 25.0f) < GetDistance(float(mousePos.x), float(mousePos.y), closestPosition.x + 25.0f, closestPosition.y + 25.0f))
-                closestPosition = (*itr)[0].position;
-        }
+            if (!IsSpotTakenBySprite((*itr)[0].position))
+                if (GetDistance(float(mousePos.x), float(mousePos.y), (*itr)[0].position.x + 25.0f, (*itr)[0].position.y + 25.0f) < GetDistance(float(mousePos.x), float(mousePos.y), closestPosition.x + 25.0f, closestPosition.y + 25.0f))
+                    closestPosition = (*itr)[0].position;
 
         return closestPosition;
     }
@@ -153,34 +159,19 @@ void LevelEditorState::logic(double passed, double deltaTime)
 void LevelEditorState::render(double alpha)
 {
     m_window->clear(sf::Color::Cyan);
-
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
-
-    sf::RectangleShape backgroundImage(sf::Vector2f(1000.0f, 600.0f));
-    backgroundImage.setFillColor(sf::Color::Cyan);
-    m_window->draw(backgroundImage);
 
     if (enabledGrid)
         for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
             m_window->draw(*itr);
 
+    for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
+        m_window->draw(*itr);
+
     if (selectedTileFilename != "")
     {
         sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
-
-        bool forceIgnoreGrid = false;
-
-        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
-        {
-            if ((*itr).filename == selectedTileFilename)
-            {
-                forceIgnoreGrid = (*itr).forceIgnoreGrid;
-                break;
-            }
-        }
-
-        selectedTile.setPosition(forceIgnoreGrid ? sf::Vector2f(sf::Mouse::getPosition()) : GetPositionForSelectedTile());
-
+        selectedTile.setPosition(GetPositionForSelectedTile());
         selectedTile.setColor(sf::Color(255, 255, 255, 100));
         m_window->draw(selectedTile);
     }
@@ -217,6 +208,12 @@ void LevelEditorState::render(double alpha)
         m_window->draw(rectShape);
     }
 
+    if (drawingCollisionLine)
+    {
+        collisionLineSelection[1].position = sf::Vector2f(float(mousePos.x), float(mousePos.y));
+        m_window->draw(collisionLineSelection);
+    }
+
     m_window->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
     m_window->display();
 }
@@ -225,6 +222,8 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 {
     if (selectedTileFilename == "" || !leftMouseClick)
     {
+        bool shiftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
+
         for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); )
         {
             sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
@@ -232,14 +231,67 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
             if (WillCollision(float(mousePos.x), float(mousePos.y), 16.0f, 16.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
+                bool eraseItr = true;
+
                 if (leftMouseClick)
                 {
-                    justReselectedTile = true;
-                    selectedTileFilename = (*itr).filename;
-                    selectionRespectsGrid = !(*itr).forceIgnoreGrid;;
+                    if ((*itr).filename == "Graphics/Menu/collision_pointer.png")
+                    {
+                        eraseItr = false;
+
+                        if (!drawingCollisionLine)
+                        {
+                            if (shiftPressed)
+                            {
+                                drawingCollisionLine = true;
+                                collisionLineSelection[0].position = sf::Vector2f((*itr).position.x + 10.0f, (*itr).position.y + 10.0f);
+                            }
+                            else
+                            {
+                                justReselectedTile = true;
+                                selectedTileFilename = (*itr).filename;
+                                selectionRespectsGrid = !(*itr).forceIgnoreGrid;
+                            }       
+                        }
+                        else
+                        {
+                            drawingCollisionLine = shiftPressed;
+                            sf::VertexArray lines(sf::LinesStrip, 2);
+                            lines[0].position = collisionLineSelection[0].position;
+                            lines[1].position = sf::Vector2f((*itr).position.x + 10.0f, (*itr).position.y + 10.0f);
+
+                            if (shiftPressed)
+                                collisionLineSelection[0] = collisionLineSelection[1];
+
+                            for (int x = 0; x < 2; ++x)
+                            {
+                                lines[x].color = sf::Color::Red;
+
+                                if (!shiftPressed)
+                                    collisionLineSelection[x].position = sf::Vector2f(0.0f, 0.0f);
+                            }
+
+                            collisionLines.push_back(lines);
+
+                            CollidableObject collidableObject;
+                            collidableObject.position = lines[0].position;
+                            collidableObject.collideFromTopOnly = true;
+                            collidableObject.width = std::max(lines[0].position.x, lines[1].position.x) - std::min(lines[0].position.x, lines[1].position.x);
+                            collidableObject.height = 5.0f;
+                            collidableObjects.push_back(collidableObject);
+                        }
+                    }
+                    else
+                    {
+                        justReselectedTile = true;
+                        selectedTileFilename = (*itr).filename;
+                        selectionRespectsGrid = !(*itr).forceIgnoreGrid;
+                    }
                 }
 
-                itr = sprites.erase(itr);
+                if (eraseItr)
+                    itr = sprites.erase(itr);
+
                 break;
             }
             else
@@ -260,7 +312,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
         spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
         spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
         spriteInfo.position = GetPositionForSelectedTile();
-        spriteInfo.priorityInDrawing = selectedTileFilename == "Graphics/Menu/collision_pointer.png"; //! NYI!
+        spriteInfo.priorityInDrawing = false; //! NYI!
         sprites.push_back(spriteInfo);
 
         if (!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)))
@@ -293,10 +345,16 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
     //Check which button called, so we can determine which block we should set
     if (button == &self->m_levelEditorMenu->button_tiles_block1)
         self->SetSelectedTileFilename("Graphics/Menu/block1.png");
-    if (button == &self->m_levelEditorMenu->button_tiles_block2)
+    else if (button == &self->m_levelEditorMenu->button_tiles_block2)
         self->SetSelectedTileFilename("Graphics/Menu/block2.png");
-    if (button == &self->m_levelEditorMenu->button_tiles_block3)
+    else if (button == &self->m_levelEditorMenu->button_tiles_block3)
         self->SetSelectedTileFilename("Graphics/Menu/block3.png");
+    else if (button == &self->m_levelEditorMenu->button_tiles_collisionPointer)
+        self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png");
+    else
+        return;
+
+    self->selectionRespectsGrid = button->respectsGridWhenSelected;
 }
 
 void LevelEditorState::clear(void* inst, Button* button)

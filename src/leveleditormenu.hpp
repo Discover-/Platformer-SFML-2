@@ -31,6 +31,7 @@ class LevelEditorMenu : public Menu
         Button button_tiles_block1;
         Button button_tiles_block2;
         Button button_tiles_block3;
+        Button button_tiles_collisionPointer;
 };
 
 #endif // LEVELEDITORMENU_HPP_INCLUDED

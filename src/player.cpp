@@ -15,10 +15,10 @@ void Player::Update()
     if (IsDead())
         return;
 
-    std::vector<SpriteInfo> sprites;
+    std::vector<CollidableObject> sprites;
     
     if (gameState)
-        sprites = ((LevelEditorState*)gameState)->GetSprites();
+        sprites = ((LevelEditorState*)gameState)->GetCollidableObjects();
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         if (!CollidesWithGameobjects(sprites, GetPositionX() - 5.0f, GetPositionY()))

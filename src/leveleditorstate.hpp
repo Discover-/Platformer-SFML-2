@@ -25,6 +25,7 @@ class LevelEditorState : public GameState
 
         void AddSprite(SpriteInfo spriteInfo) { sprites.push_back(spriteInfo); }
         std::vector<SpriteInfo>& GetSprites() { return sprites; }
+        std::vector<CollidableObject>& GetCollidableObjects() { return collidableObjects; }
 
         sf::Vector2f GetPositionForSelectedTile();
         bool IsSpotTakenBySprite(sf::Vector2f position);
@@ -43,13 +44,14 @@ class LevelEditorState : public GameState
         LevelEditorMenu* m_levelEditorMenu;
 
         std::string selectedTileFilename;
-        bool selectionRespectsGrid;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
         std::vector<SpriteInfo> sprites;
-        bool enabledGrid;
+        std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;
+        std::vector<sf::VertexArray> collisionLines;
+        sf::VertexArray collisionLineSelection;
+        bool drawingCollisionLine;
         Player* player;
-        bool justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
 };
-
 
 #endif // LEVELEDITORSTATE_HPP_INCLUDED

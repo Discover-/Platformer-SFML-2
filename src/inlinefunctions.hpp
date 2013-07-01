@@ -60,4 +60,12 @@ struct SpriteInfo
     }
 };
 
+struct CollidableObject
+{
+    sf::Vector2f position;
+    float height;
+    float width;
+    bool collideFromTopOnly;
+};
+
 #endif // INLINEFUNCTIONS_HPP_INCLUDED
