@@ -41,8 +41,8 @@ bool CollapsableButton::handle_event(sf::Event _event)
 
     //Check the event on all the child items, if collapsed
     if (collapsed)
-        for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = items.begin(); itr != items.end(); ++itr)
-            if ((*itr).first->handle_event(_event) == true)
+        for (MenuItem* itr : items)
+            if (itr->handle_event(_event) == true)
                 if (!handled)
                     handled = true;
 
@@ -90,8 +90,8 @@ bool CollapsableButton::handle_event(sf::Event _event)
 void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (collapsed)
-        for (std::list<std::pair<MenuItem*, std::string> >::const_iterator itr = items.begin(); itr != items.end(); ++itr)
-            target.draw(*(*itr).first, states);
+        for (MenuItem* itr : items)
+            target.draw(*itr, states);
 
     //Draw the collapsablebutton itself, I know it's a little hacky
     if (sf::Texture const* texture = getTexture())

@@ -7,6 +7,12 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_levelEditorMenu->button_save.setCallback(&save, this);
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
     m_levelEditorMenu->button_clear.setCallback(&clear, this);
+
+    //tile buttons
+    m_levelEditorMenu->button_tiles_block1.setCallback(&setSelectedTile, this);
+    m_levelEditorMenu->button_tiles_block2.setCallback(&setSelectedTile, this);
+    m_levelEditorMenu->button_tiles_block3.setCallback(&setSelectedTile, this);
+
     //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
 
     //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(20.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block1.png")));
@@ -286,9 +292,16 @@ void LevelEditorState::toggleGrid(void* inst, Button* button)
     ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
 }
 
-void LevelEditorState::setSelectedTile(void* inst, Button* button, std::string filename)
+void LevelEditorState::setSelectedTile(void* inst, Button* button)
 {
-    ((LevelEditorState*)inst)->SetSelectedTileFilename(filename);
+    LevelEditorState* self = ((LevelEditorState*)inst);
+    //Check which button called, so we can determine which block we should set
+    if (button == &self->m_levelEditorMenu->button_tiles_block1)
+        self->SetSelectedTileFilename("Graphics/Menu/block1.png");
+    if (button == &self->m_levelEditorMenu->button_tiles_block2)
+        self->SetSelectedTileFilename("Graphics/Menu/block2.png");
+    if (button == &self->m_levelEditorMenu->button_tiles_block3)
+        self->SetSelectedTileFilename("Graphics/Menu/block3.png");
 }
 
 void LevelEditorState::clear(void* inst, Button* button)

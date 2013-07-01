@@ -34,7 +34,7 @@ class LevelEditorState : public GameState
         static void save(void* inst, Button* button);
         //static void tiles(void* inst, CollapsableButton* button);
         static void toggleGrid(void* inst, Button* button);
-        static void setSelectedTile(void* inst, Button* button, std::string filename);
+        static void setSelectedTile(void* inst, Button* button);
         static void clear(void* inst, Button* button);
 
     private:

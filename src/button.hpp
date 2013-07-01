@@ -25,9 +25,6 @@ class Button : public MenuItem, public sf::Sprite
         ///\brief Set the callback for non-static member function
         void setCallback(void (*_callback)(void*, Button*), void* _classPointer);
 
-        ///\brief Set the callback for non-static member function
-        void setCallback(void (*_callback)(void*, Button*), void* _classPointer, std::string stringParam);
-
         ///\brief Check the given event.
         ///Returns true if handled
         bool handle_event(sf::Event _event);
@@ -41,9 +38,7 @@ class Button : public MenuItem, public sf::Sprite
         ///Callback function for non-static member functions, some tricks are needed
         ///Basically, a static redirect-function is given at construct, which converts classPointer into a pointer of its own type, so the non-static function can be called(see example in MainMenu(mainmenu.hpp))
         void (*memberCallback)(void*, Button*);
-        void (*memberCallbackStringParam)(void*, Button*, std::string);
         void* classPointer;
-        std::string stringParam;
 };
 
 #endif // BUTTON_HPP_INCLUDED

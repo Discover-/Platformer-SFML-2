@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 enum GameStates
 {
@@ -47,7 +47,7 @@ struct SpriteInfo
     sf::Vector2f position;
     bool isCollidable;
     bool forceIgnoreGrid;
-    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course) 
+    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course)
 
     bool operator == (SpriteInfo spriteInfo)
     {

@@ -26,6 +26,11 @@ class LevelEditorMenu : public Menu
         CollapsableButton button_tiles;
         Button button_toggleGrid;
         Button button_clear;
+
+        //Buttons for button_tiles
+        Button button_tiles_block1;
+        Button button_tiles_block2;
+        Button button_tiles_block3;
 };
 
 #endif // LEVELEDITORMENU_HPP_INCLUDED
