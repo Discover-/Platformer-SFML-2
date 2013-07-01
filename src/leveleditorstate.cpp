@@ -274,9 +274,12 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
         spriteInfo.priorityInDrawing = selectedTileFilename == "Graphics/Menu/collision_pointer.png"; //! NYI!
         sprites.push_back(spriteInfo);
 
-        selectedTileFilename = "";
-        selectionRespectsGrid = true;
-        movedCursorOutOfNewTile = false;
+        if (!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)))
+        {
+            selectedTileFilename = "";
+            selectionRespectsGrid = true;
+            movedCursorOutOfNewTile = false;
+        }
     }
 }
 
