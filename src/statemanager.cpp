@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "statemanager.hpp"
 #include "gamestate.hpp"
 #include "game.hpp"
@@ -100,6 +102,9 @@ void StateManager::change_state()
             case GAME_STATE_LEVEL_EDITOR:
                 m_currentState = new LevelEditorState(m_window, this);
                 break;
+            default:
+                std::cout << "Unknown nextState in StateManager::change_state(): " << nextState << std::endl;
+                return;
         }
 
         stateID = nextState;

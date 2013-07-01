@@ -62,6 +62,8 @@ bool Button::handle_event(sf::Event _event)
             }
             break;
         }
+        default:
+            break;
     }
 
     return handled;

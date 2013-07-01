@@ -74,6 +74,8 @@ void LevelEditorState::handle_events()
                     case sf::Mouse::Right:
                         MouseButtonPressed(sf::Mouse::getPosition(*m_window), false);
                         break;
+                    default:
+                        break;
                 }
                 break;
             }
@@ -91,14 +93,7 @@ void LevelEditorState::handle_events()
                     case sf::Keyboard::F4:
                         testingLevelOut = !testingLevelOut;
                         break;
-                    case sf::Keyboard::F7:
-                        selectedTileFilename = "Graphics/Menu/block1.png";
-                        break;
-                    case sf::Keyboard::F8:
-                        selectedTileFilename = "Graphics/Menu/block2.png";
-                        break;
-                    case sf::Keyboard::F9:
-                        selectedTileFilename = "Graphics/Menu/block3.png";
+                    default:
                         break;
                 }
             }

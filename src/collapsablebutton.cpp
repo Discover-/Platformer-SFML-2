@@ -50,6 +50,7 @@ bool CollapsableButton::handle_event(sf::Event _event)
     switch (_event.type)
     {
         case sf::Event::MouseButtonReleased:
+        {
             if (_event.mouseButton.button == sf::Mouse::Button::Left)
             {
                 //Now check if the pointer was in the button
@@ -79,7 +80,7 @@ bool CollapsableButton::handle_event(sf::Event _event)
                 }
             }
             break;
-
+        }
         default:
             break;
     }
