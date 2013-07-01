@@ -24,18 +24,23 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     movedCursorOutOfNewTile = true;
     testingLevelOut = false;
 
-    sf::RectangleShape gridShape(sf::Vector2f(50.0f, 50.0f));
-    gridShape.setFillColor(sf::Color::Transparent);
-    gridShape.setOutlineColor(sf::Color::Black);
-    //gridShape.setOutlineColor(sf::Color(255, 255, 255, 10));
-    gridShape.setOutlineThickness(1.0f);
+    sf::VertexArray lines(sf::LinesStrip, 5);
 
     for (int i = 0; i < 12; ++i)
     {
         for (int j = 0; j < 20; ++j)
         {
-            gridShape.setPosition(j * 50.0f, i * 50.0f);
-            grid[j][i] = gridShape;
+            //! Draw the lines in a rectangle formation.
+            lines[0].position = sf::Vector2f(j * 50.0f, i * 50.0f);
+            lines[1].position = sf::Vector2f(j * 50.0f, i * 50.0f + 50.0f);
+            lines[2].position = sf::Vector2f(j * 50.0f + 50.0f, i * 50.0f + 50.0f);
+            lines[3].position = sf::Vector2f(j * 50.0f + 50.0f, i * 50.0f);
+            lines[4].position = lines[0].position; //! Point back to the start point.
+
+            for (int x = 0; x < 5; ++x) //! Set '5' to '4' for a pretty neat effect :)
+                lines[x].color = sf::Color::Black;
+
+            grid.push_back(lines);
         }
     }
 }
@@ -112,27 +117,18 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
     if (enabledGrid && selectedTileFilename != "" && selectionRespectsGrid)
     {
-        sf::RectangleShape closestGrid = grid[0][0];
+        sf::Vector2f closestPosition = sf::Vector2f(0.0f, 0.0f);
 
-        for (int i = 0; i < 12; ++i)
+        for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
         {
-            for (int j = 0; j < 20; ++j)
-            {
-                sf::Vector2f gridPos = grid[j][i].getPosition();
+            if (IsSpotTakenBySprite(sf::Vector2f((*itr)[0].position.x, (*itr)[0].position.y)))
+                continue;
 
-                if (IsSpotTakenBySprite(gridPos))
-                    continue;
-
-                sf::Vector2f closestGridPos = closestGrid.getPosition();
-
-                //! We add 25.0f because that's 50% of the width and height of the grid block, which means we therefore target the center of that grid
-                //! spot so the closestGrid variable only changes when we actually enter a grid block with our cursor.
-                if (GetDistance(float(mousePos.x), float(mousePos.y), gridPos.x + 25.0f, gridPos.y + 25.0f) < GetDistance(float(mousePos.x), float(mousePos.y), closestGridPos.x + 25.0f, closestGridPos.y + 25.0f))
-                    closestGrid = grid[j][i];
-            }
+            if (GetDistance(float(mousePos.x), float(mousePos.y), (*itr)[0].position.x + 25.0f, (*itr)[0].position.y + 25.0f) < GetDistance(float(mousePos.x), float(mousePos.y), closestPosition.x + 25.0f, closestPosition.y + 25.0f))
+                closestPosition = (*itr)[0].position;
         }
 
-        return closestGrid.getPosition();
+        return closestPosition;
     }
     else
         return sf::Vector2f(float(mousePos.x), float(mousePos.y));
@@ -164,9 +160,8 @@ void LevelEditorState::render(double alpha)
     m_window->draw(backgroundImage);
 
     if (enabledGrid)
-        for (int i = 0; i < 12; ++i)
-            for (int j = 0; j < 20; ++j)
-                m_window->draw(grid[j][i]);
+        for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
+            m_window->draw(*itr);
 
     if (selectedTileFilename != "")
     {

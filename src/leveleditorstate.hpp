@@ -46,7 +46,7 @@ class LevelEditorState : public GameState
         bool selectionRespectsGrid;
         std::vector<SpriteInfo> sprites;
         bool enabledGrid;
-        sf::RectangleShape grid[20][12];
+        std::vector<sf::VertexArray> grid;
         Player* player;
         bool justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
 };
