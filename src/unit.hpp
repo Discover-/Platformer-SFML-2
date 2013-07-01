@@ -12,7 +12,7 @@ class Unit : public Position
 {
     public:
         Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* manager, GameState* _gameState = NULL);
-        ~Unit();
+        virtual ~Unit();
 
         virtual void Update();
 

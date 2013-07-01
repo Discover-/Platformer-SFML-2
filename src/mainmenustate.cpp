@@ -18,6 +18,11 @@ currentSubMenu(&m_mainMenu)
     m_levelSelectionMenu.button_level1.setCallback(&level1, this);
 }
 
+MainMenuState::~MainMenuState()
+{
+    //delete currentSubMenu;
+}
+
 void MainMenuState::handle_events()
 {
     sf::Event _event;

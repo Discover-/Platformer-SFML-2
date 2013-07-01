@@ -15,6 +15,11 @@ Game::Game(sf::RenderWindow* window, StateManager* manager)
     player = NULL;
 }
 
+Game::~Game()
+{
+    delete player;
+}
+
 void Game::handle_events()
 {
     sf::Event _event;

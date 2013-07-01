@@ -16,6 +16,11 @@ Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape 
     fallSpeed = 0;
 }
 
+Unit::~Unit()
+{
+
+}
+
 void Unit::Update()
 {
     std::vector<CollidableObject> sprites;

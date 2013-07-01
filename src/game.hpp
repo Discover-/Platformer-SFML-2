@@ -9,6 +9,7 @@ class Game : public GameState
 {
     public:
         Game(sf::RenderWindow* renderWindow, StateManager* manager);
+        ~Game();
 
         void handle_events();
         void logic(double passed, double deltaTime);

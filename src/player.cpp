@@ -8,6 +8,11 @@ Unit(_window, position, body, manager)
     gameState = _gameState;
 }
 
+Player::~Player()
+{
+
+}
+
 void Player::Update()
 {
     Unit::Update();

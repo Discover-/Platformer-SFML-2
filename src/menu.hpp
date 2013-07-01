@@ -8,6 +8,8 @@
 class Menu : public sf::Drawable
 {
     public:
+        ~Menu();
+
         ///\brief Check the events on the items
         ///Returns true if one of the items could handle it
         bool handle_event(sf::Event _event);

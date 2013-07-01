@@ -69,8 +69,8 @@ LevelEditorState::~LevelEditorState()
 {
     delete m_tileSetWindow;
     delete m_levelEditorMenu;
+    delete player;
 }
-
 
 void LevelEditorState::handle_events()
 {

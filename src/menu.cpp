@@ -1,5 +1,11 @@
 #include "menu.hpp"
 
+Menu::~Menu()
+{
+    //for (std::list<MenuItem*>::iterator itr = items.begin(); itr != items.end(); ++itr)
+    //    delete *itr;
+}
+
 bool Menu::handle_event(sf::Event _event)
 {
     bool handled = false;
