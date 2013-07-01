@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "resourcemanager.hpp"
+#include "inlinefunctions.hpp"
 
 class GameState;
 class Game;
@@ -17,19 +18,6 @@ class Game;
 class StateManager
 {
     public:
-        ///\brief A list of all the states. Edit this for your own needs, see change_state for more details
-        enum GameStates
-        {
-            GAME_STATE_NULL,
-            GAME_STATE_INTRO,
-            GAME_STATE_MENU,
-            GAME_STATE_OPTIONS,
-            GAME_STATE_LEVEL_SELECTION,
-            GAME_STATE_GAME,
-            GAME_STATE_LEVEL_EDITOR,
-            GAME_STATE_EXIT
-        };
-
         StateManager();
 
         ///\brief Starts the StateManager, this function will return when STATE_EXIT is called(end of the line)

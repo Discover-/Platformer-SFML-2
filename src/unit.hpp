@@ -6,8 +6,7 @@
 
 #include "position.hpp"
 #include "statemanager.hpp"
-
-struct SpriteInfo;
+#include "inlinefunctions.hpp"
 
 class Unit : public Position
 {

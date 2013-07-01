@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "leveleditorstate.hpp"
+#include "inlinefunctions.hpp"
 
 Player::Player(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* manager, GameState* _gameState) :
 Unit(_window, position, body, manager)

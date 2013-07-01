@@ -102,7 +102,7 @@ bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPos
         sf::FloatRect tileRect = sprite.getGlobalBounds();
         sf::FloatRect playerRect = bodyShape.getGlobalBounds();
 
-        if (!(positionToCheckY >= (*itr).position.y + tileRect.height || positionToCheckX >= (*itr).position.x + tileRect.width || positionToCheckY + playerRect.height <= (*itr).position.y || positionToCheckX + playerRect.width <= (*itr).position.x))
+        if (WillCollision(positionToCheckY, positionToCheckY, playerRect.height, playerRect.width, (*itr).position.x, (*itr).position.y, tileRect.height, tileRect.width))
             return true;
     }
 

@@ -1,4 +1,5 @@
 #include "leveleditorstate.hpp"
+#include "inlinefunctions.hpp"
 
 LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
 {
@@ -49,7 +50,7 @@ void LevelEditorState::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
-                m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+                m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
             case sf::Event::MouseButtonPressed:
             {
@@ -93,15 +94,6 @@ void LevelEditorState::handle_events()
                 break;
         }
     }
-}
-
-//! TODO: Make this inlin and spare functions like these in some place...
-float GetDistance(float x1, float y1, float x2, float y2)
-{
-    float dx = x1 - x2;
-    float dy = y1 - y2;
-    float dist = sqrt((dx * dx) + (dy * dy));
-    return (dist > 0 ? dist : 0);
 }
 
 bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
@@ -206,7 +198,7 @@ void LevelEditorState::render(double alpha)
 
         if (selectedTileFilename == "")
         {
-            if (!(mousePos.y >= (*itr).position.y + spriteRect.height || mousePos.x >= (*itr).position.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).position.y || mousePos.x + 16.0f <= (*itr).position.x))
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 16.0f, 16.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
                 if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
                 {
@@ -241,7 +233,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
             sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
-            if (!(mousePos.y >= (*itr).position.y + spriteRect.height || mousePos.x >= (*itr).position.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).position.y || mousePos.x + 16.0f <= (*itr).position.x))
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 16.0f, 16.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
                 if (leftMouseClick)
                 {
@@ -285,7 +277,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
 void LevelEditorState::save(void* inst, Button* button)
 {
-    ((LevelEditorState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+    ((LevelEditorState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
 }
 
 //void LevelEditorState::tiles(void* inst, CollapsableButton* button)

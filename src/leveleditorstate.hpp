@@ -6,25 +6,7 @@
 #include "gamestate.hpp"
 #include "leveleditormenu.hpp"
 #include "player.hpp"
-
-struct SpriteInfo
-{
-    std::string filename;
-    sf::Vector2f position;
-    bool isCollidable;
-    bool forceIgnoreGrid;
-    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course) 
-
-    bool operator == (SpriteInfo spriteInfo)
-    {
-        return spriteInfo.filename == filename && spriteInfo.position == position && spriteInfo.isCollidable == isCollidable && spriteInfo.forceIgnoreGrid == forceIgnoreGrid && spriteInfo.priorityInDrawing == priorityInDrawing;
-    }
-
-    bool operator != (SpriteInfo spriteInfo)
-    {
-        return spriteInfo.filename != filename || spriteInfo.position != position || spriteInfo.isCollidable != isCollidable || spriteInfo.forceIgnoreGrid != forceIgnoreGrid || spriteInfo.priorityInDrawing != priorityInDrawing;
-    }
-};
+#include "inlinefunctions.hpp"
 
 class LevelEditorState : public GameState
 {

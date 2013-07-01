@@ -2,6 +2,7 @@
 
 #include "game.hpp"
 #include "statemanager.hpp"
+#include "inlinefunctions.hpp"
 
 Game::Game(sf::RenderWindow* window, StateManager* manager)
 {
@@ -24,7 +25,7 @@ void Game::handle_events()
         {
             case sf::Event::Closed:
                 //! Set the manager to shut down
-                m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+                m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
             default:
                 break;

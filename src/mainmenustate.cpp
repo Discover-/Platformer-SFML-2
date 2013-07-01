@@ -45,17 +45,17 @@ void MainMenuState::play(void* inst, Button* button)
 
 void MainMenuState::options(void* inst, Button* button)
 {
-    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_OPTIONS);
+    ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_OPTIONS);
 }
 
 void MainMenuState::levelEditor(void* inst, Button* button)
 {
-    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
+    ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_LEVEL_EDITOR);
 }
 
 void MainMenuState::exit(void* inst, Button* button)
 {
-    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+    ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
 }
 
 //! BEGIN LEVELSELECTIONMENU
@@ -66,5 +66,5 @@ void MainMenuState::backToMain(void* inst, Button* button)
 
 void MainMenuState::level1(void* inst, Button* button)
 {
-    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+    ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_GAME);
 }
