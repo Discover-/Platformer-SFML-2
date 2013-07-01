@@ -12,6 +12,7 @@ class LevelEditorState : public GameState
 {
     public:
         LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager);
+        ~LevelEditorState();
 
         void handle_events();
         void logic(double passed, double deltaTime);
@@ -42,6 +43,7 @@ class LevelEditorState : public GameState
         sf::RenderWindow* m_window;
         StateManager* m_manager;
         LevelEditorMenu* m_levelEditorMenu;
+        sf::RenderWindow* m_tileSetWindow;
 
         std::string selectedTileFilename;
         bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine;

@@ -23,6 +23,7 @@ void StateManager::clean()
 void StateManager::mainLoop()
 {
     m_window = new sf::RenderWindow(sf::VideoMode(1000, 600), "Platformer C++ SFML", sf::Style::Close);
+    m_window->setPosition(sf::Vector2i(300, 150));
 
     sf::Clock clock;
 

@@ -3,6 +3,9 @@
 
 LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
 {
+    m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(500, 300), "Platformer C++ SFML: Tileset", sf::Style::Close);
+    m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
+
     m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
     m_levelEditorMenu->button_save.setCallback(&save, this);
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
@@ -62,6 +65,13 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     }
 }
 
+LevelEditorState::~LevelEditorState()
+{
+    delete m_tileSetWindow;
+    delete m_levelEditorMenu;
+}
+
+
 void LevelEditorState::handle_events()
 {
     sf::Event _event;
@@ -69,8 +79,6 @@ void LevelEditorState::handle_events()
 
     while (m_window->pollEvent(_event))
     {
-        m_levelEditorMenu->handle_event(_event);
-
         switch (_event.type)
         {
             case sf::Event::Closed:
@@ -117,6 +125,21 @@ void LevelEditorState::handle_events()
                         break;
                 }
             }
+            default:
+                break;
+        }
+    }
+
+    while (m_tileSetWindow->pollEvent(_event))
+    {
+        m_levelEditorMenu->handle_event(_event);
+
+        switch (_event.type)
+        {
+            case sf::Event::Closed:
+                m_tileSetWindow->close();
+                m_manager->set_next_state(GAME_STATE_MENU);
+                break;
             default:
                 break;
         }
@@ -169,6 +192,8 @@ void LevelEditorState::logic(double passed, double deltaTime)
 void LevelEditorState::render(double alpha)
 {
     m_window->clear(sf::Color::Cyan);
+    m_tileSetWindow->clear(sf::Color::Cyan);
+
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
     if (enabledGrid)
@@ -224,8 +249,9 @@ void LevelEditorState::render(double alpha)
         m_window->draw(collisionLineSelection);
     }
 
-    m_window->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
+    m_tileSetWindow->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
     m_window->display();
+    m_tileSetWindow->display();
 }
 
 void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
@@ -362,7 +388,8 @@ void LevelEditorState::toggleGrid(void* inst, Button* button)
 void LevelEditorState::setSelectedTile(void* inst, Button* button)
 {
     LevelEditorState* self = ((LevelEditorState*)inst);
-    //Check which button called, so we can determine which block we should set
+
+    //! Check which button called, so we can determine which block we should set
     if (button == &self->m_levelEditorMenu->button_tiles_block1)
         self->SetSelectedTileFilename("Graphics/Menu/block1.png");
     else if (button == &self->m_levelEditorMenu->button_tiles_block2)
