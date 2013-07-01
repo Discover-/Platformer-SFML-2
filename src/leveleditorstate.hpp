@@ -28,7 +28,7 @@ class LevelEditorState : public GameState
         sf::Vector2f GetPositionForSelectedTile();
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
-        //bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile, testingLevelOut;
+        //bool justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
 
         static void save(void* inst, Button* button);
         //static void tiles(void* inst, CollapsableButton* button);
@@ -46,7 +46,7 @@ class LevelEditorState : public GameState
         bool enabledGrid;
         sf::RectangleShape grid[20][12];
         Player* player;
-        bool justReselectedTile, justPlacedNewTile, movedCursorOutOfNewTile, testingLevelOut;
+        bool justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
 };
 
 

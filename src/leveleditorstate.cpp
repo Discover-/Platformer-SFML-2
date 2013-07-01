@@ -11,15 +11,14 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(120.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block2.png")));
     //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(220.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block3.png")));
 
-    for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = m_levelEditorMenu->button_tiles.items.begin(); itr != m_levelEditorMenu->button_tiles.items.end(); ++itr)
-        if (MenuItem* menuItem = (*itr).first)
-            ((Button*)menuItem)->setCallback(&setSelectedTile, this, (*itr).second);
+    //for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = m_levelEditorMenu->button_tiles.items.begin(); itr != m_levelEditorMenu->button_tiles.items.end(); ++itr)
+    //    if (MenuItem* menuItem = (*itr).first)
+    //        ((Button*)menuItem)->setCallback(&setSelectedTile, this, (*itr).second);
 
     selectedTileFilename = "";
     selectionRespectsGrid = true;
     enabledGrid = true;
     justReselectedTile = false;
-    justPlacedNewTile = false;
     movedCursorOutOfNewTile = true;
     testingLevelOut = false;
 
@@ -78,6 +77,15 @@ void LevelEditorState::handle_events()
                         break;
                     case sf::Keyboard::F4:
                         testingLevelOut = !testingLevelOut;
+                        break;
+                    case sf::Keyboard::F7:
+                        selectedTileFilename = "Graphics/Menu/block1.png";
+                        break;
+                    case sf::Keyboard::F8:
+                        selectedTileFilename = "Graphics/Menu/block2.png";
+                        break;
+                    case sf::Keyboard::F9:
+                        selectedTileFilename = "Graphics/Menu/block3.png";
                         break;
                 }
             }
@@ -161,7 +169,6 @@ void LevelEditorState::render(double alpha)
 
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-
     sf::RectangleShape backgroundImage(sf::Vector2f(1000.0f, 600.0f));
     backgroundImage.setFillColor(sf::Color::Cyan);
     m_window->draw(backgroundImage);
@@ -213,12 +220,6 @@ void LevelEditorState::render(double alpha)
 
 void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
 {
-    if (leftMouseClick && justPlacedNewTile)
-    {
-        justPlacedNewTile = false;
-        return;
-    }
-
     if (selectedTileFilename == "" || !leftMouseClick)
     {
         for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); )
@@ -243,6 +244,20 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             else
                 ++itr;
         }
+    }
+
+    if (selectedTileFilename != "")
+    {
+        if (justReselectedTile)
+        {
+            justReselectedTile = false;
+            return;
+        }
+
+        movedCursorOutOfNewTile = false;
+        sprites.push_back(std::make_pair(GetPositionForSelectedTile(), selectedTileFilename));
+        selectedTileFilename = "";
+        selectionRespectsGrid = true;
     }
 }
 
