@@ -44,13 +44,12 @@ class LevelEditorState : public GameState
         LevelEditorMenu* m_levelEditorMenu;
 
         std::string selectedTileFilename;
-        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine;
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;
         std::vector<sf::VertexArray> collisionLines;
         sf::VertexArray collisionLineSelection;
-        bool drawingCollisionLine;
         Player* player;
 };
 

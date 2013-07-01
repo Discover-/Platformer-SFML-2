@@ -103,6 +103,16 @@ void LevelEditorState::handle_events()
                     case sf::Keyboard::F4:
                         testingLevelOut = !testingLevelOut;
                         break;
+                    case sf::Keyboard::Escape:
+                        if (selectedTileFilename != "")
+                        {
+                            justReselectedTile = false;
+                            selectedTileFilename = "";
+                            selectionRespectsGrid = true;
+                        }
+                        else if (drawingCollisionLine)
+                            drawingCollisionLine = false;
+                        break;
                     default:
                         break;
                 }
