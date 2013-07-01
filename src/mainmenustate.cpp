@@ -40,37 +40,31 @@ void MainMenuState::render(double alpha)
 
 void MainMenuState::play(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->currentSubMenu = &self->m_levelSelectionMenu;
+    ((MainMenuState*)inst)->currentSubMenu = &((MainMenuState*)inst)->m_levelSelectionMenu;
 }
 
 void MainMenuState::options(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_OPTIONS);
+    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_OPTIONS);
 }
 
 void MainMenuState::levelEditor(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
+    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_LEVEL_EDITOR);
 }
 
 void MainMenuState::exit(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
 }
 
 //! BEGIN LEVELSELECTIONMENU
 void MainMenuState::backToMain(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->currentSubMenu = &self->m_mainMenu;
+    ((MainMenuState*)inst)->currentSubMenu = &((MainMenuState*)inst)->m_mainMenu;
 }
 
 void MainMenuState::level1(void* inst, Button* button)
 {
-    MainMenuState* self = (MainMenuState*) inst;
-    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
+    ((MainMenuState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_GAME);
 }

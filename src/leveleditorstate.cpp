@@ -186,19 +186,23 @@ void LevelEditorState::render(double alpha)
         m_window->draw(selectedTile);
     }
 
+    bool foundHoverOverTile = false;
+
     for (std::vector<std::pair<sf::Vector2f, std::string> >::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
     {
         sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).second));
         sprite.setPosition((*itr).first.x, (*itr).first.y);
-
         sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
         if (selectedTileFilename == "")
         {
             if (!(mousePos.y >= (*itr).first.y + spriteRect.height || mousePos.x >= (*itr).first.x + spriteRect.width || mousePos.y + 16.0f <= (*itr).first.y || mousePos.x + 16.0f <= (*itr).first.x))
             {
-                if ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back())
+                if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
+                {
+                    foundHoverOverTile = true;
                     sprite.setColor(sf::Color(255, 255, 255, 100));
+                }
             }
             else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
                 movedCursorOutOfNewTile = true;
@@ -263,24 +267,20 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
 void LevelEditorState::save(void* inst, Button* button)
 {
-    LevelEditorState* self = (LevelEditorState*) inst;
-    self->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
+    ((LevelEditorState*)inst)->m_manager->set_next_state(StateManager::GameStates::GAME_STATE_EXIT);
 }
 
 //void LevelEditorState::tiles(void* inst, CollapsableButton* button)
 //{
-//    LevelEditorState* self = (LevelEditorState*) inst;
-//    self->m_levelEditorMenu->button_tiles.collapsed = !self->m_levelEditorMenu->button_tiles.collapsed;
+//    ((LevelEditorState*)inst)->m_levelEditorMenu->button_tiles.collapsed = !self->m_levelEditorMenu->button_tiles.collapsed;
 //}
 
 void LevelEditorState::toggleGrid(void* inst, Button* button)
 {
-    LevelEditorState* self = (LevelEditorState*) inst;
-    self->enabledGrid = !self->enabledGrid;
+    ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
 }
 
 void LevelEditorState::setSelectedTile(void* inst, Button* button, std::string filename)
 {
-    LevelEditorState* self = (LevelEditorState*) inst;
-    self->SetSelectedTileFilename(filename);
+    ((LevelEditorState*)inst)->SetSelectedTileFilename(filename);
 }
