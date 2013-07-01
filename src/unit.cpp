@@ -113,6 +113,9 @@ bool Unit::CollidesWithGameobjects(std::vector<CollidableObject> sprites, float 
 
 void Unit::Jump()
 {
+    if (isFalling)
+        return;
+
     isJumping = true;
     fallSpeed = 0;
     jumpSpeed = 15;
