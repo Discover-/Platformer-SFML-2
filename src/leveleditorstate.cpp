@@ -6,6 +6,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
     m_levelEditorMenu->button_save.setCallback(&save, this);
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
+    m_levelEditorMenu->button_clear.setCallback(&clear, this);
     //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
 
     //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(20.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block1.png")));
@@ -293,4 +294,9 @@ void LevelEditorState::toggleGrid(void* inst, Button* button)
 void LevelEditorState::setSelectedTile(void* inst, Button* button, std::string filename)
 {
     ((LevelEditorState*)inst)->SetSelectedTileFilename(filename);
+}
+
+void LevelEditorState::clear(void* inst, Button* button)
+{
+    ((LevelEditorState*)inst)->sprites.clear();
 }
