@@ -233,9 +233,19 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             {
                 bool eraseItr = true;
 
-                if (leftMouseClick)
+                if ((*itr).filename == "Graphics/Menu/collision_pointer.png")
                 {
-                    if ((*itr).filename == "Graphics/Menu/collision_pointer.png")
+                    if (!leftMouseClick)
+                    {
+                        for (std::vector<sf::VertexArray>::iterator itr2 = collisionLines.begin(); itr2 != collisionLines.end(); )
+                        {
+                            if (((*itr2)[0].position.x == (*itr).position.x + 10.0f && (*itr2)[0].position.y == (*itr).position.y + 10.0f) || ((*itr2)[1].position.x == (*itr).position.x + 10.0f && (*itr2)[1].position.y == (*itr).position.y + 10.0f))
+                                itr2 = collisionLines.erase(itr2);
+                            else
+                                ++itr2;
+                        }
+                    }
+                    else
                     {
                         eraseItr = false;
 
@@ -281,12 +291,12 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
                             collidableObjects.push_back(collidableObject);
                         }
                     }
-                    else
-                    {
-                        justReselectedTile = true;
-                        selectedTileFilename = (*itr).filename;
-                        selectionRespectsGrid = !(*itr).forceIgnoreGrid;
-                    }
+                }
+                else if (leftMouseClick)
+                {
+                    justReselectedTile = true;
+                    selectedTileFilename = (*itr).filename;
+                    selectionRespectsGrid = !(*itr).forceIgnoreGrid;
                 }
 
                 if (eraseItr)
