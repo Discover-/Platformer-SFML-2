@@ -196,7 +196,7 @@ void LevelEditorState::render(double alpha)
 
         if (selectedTileFilename == "")
         {
-            if (WillCollision(float(mousePos.x), float(mousePos.y), 16.0f, 16.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
                 if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
                 {
@@ -239,7 +239,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
             sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
-            if (WillCollision(float(mousePos.x), float(mousePos.y), 16.0f, 16.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
                 bool eraseItr = true;
 
