@@ -99,10 +99,10 @@ bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPos
             continue;
 
         sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
-        sf::FloatRect buttonRect = sprite.getGlobalBounds();
+        sf::FloatRect tileRect = sprite.getGlobalBounds();
         sf::FloatRect playerRect = bodyShape.getGlobalBounds();
 
-        if (!(positionToCheckX >= (*itr).position.y + buttonRect.height || positionToCheckX >= (*itr).position.x + buttonRect.width || positionToCheckY + playerRect.height <= (*itr).position.y || positionToCheckY + playerRect.width <= (*itr).position.x))
+        if (!(positionToCheckY >= (*itr).position.y + tileRect.height || positionToCheckX >= (*itr).position.x + tileRect.width || positionToCheckY + playerRect.height <= (*itr).position.y || positionToCheckX + playerRect.width <= (*itr).position.x))
             return true;
     }
 
