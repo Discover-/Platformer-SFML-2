@@ -3,7 +3,7 @@
 
 LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
 {
-    m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(500, 300), "Platformer C++ SFML: Tileset", sf::Style::Close);
+    m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(500, 300), "Platformer C++ SFML: Tileset", sf::Style::Close | sf::Style::Resize);
     m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
     prevTilesetWindowPos = sf::Vector2i(0, 0);
 
@@ -156,6 +156,11 @@ void LevelEditorState::handle_events()
                 m_tileSetWindow->close();
                 m_manager->set_next_state(GAME_STATE_MENU);
                 break;
+            case sf::Event::Resized:
+            {
+                m_tileSetWindow->setView(sf::View(sf::FloatRect(0.f, 0.f, static_cast<float>(m_tileSetWindow->getSize().x), static_cast<float>(m_tileSetWindow->getSize().y))));
+                break;
+            }
             default:
                 break;
         }
@@ -265,9 +270,9 @@ void LevelEditorState::render(double alpha)
         m_window->draw(collisionLineSelection);
     }
 
-    m_tileSetWindow->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
-    m_tileSetWindow->display();
+    m_tileSetWindow->draw(*m_levelEditorMenu);
     m_window->display();
+    m_tileSetWindow->display();
 }
 
 void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
@@ -388,7 +393,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
 void LevelEditorState::save(void* inst, Button* button)
 {
-    ((LevelEditorState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
+    //((LevelEditorState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
 }
 
 //void LevelEditorState::tiles(void* inst, CollapsableButton* button)
