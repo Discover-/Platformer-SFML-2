@@ -21,7 +21,7 @@ class ResourceManager
         /// \brief Load a music if it isn't loaded yet and/or give a reference to the music
         sf::Music& getMusic(const std::string filename);
 
-        /// \brief Load a font if it isn't loaded yet and/or give a reference to the texture
+        /// \brief Load a font if it isn't loaded yet and/or give a reference to the font
         sf::Font& getFont(const std::string filename);
 
     private:

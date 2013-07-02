@@ -89,8 +89,6 @@ sf::Font& ResourceManager::getFont(const std::string filename)
 
         if (font.loadFromFile(filename))
         {
-            //The texture loaded fine, add it to the list
-            //m_textures.emplace(filename, std::make_shared(texture)); NOTE: THIS IS NOT YET IMPLEMENTED BY COMPILERS
             m_fonts.insert(std::make_pair(filename, std::shared_ptr<sf::Font>(new sf::Font(font))));
             return *m_fonts.at(filename);
         }
@@ -102,7 +100,7 @@ sf::Font& ResourceManager::getFont(const std::string filename)
     }
     else
     {
-        //The texture is already in our memory, we only have to give a reference
+        //The font is already in our memory, we only have to give a reference
         return *m_fonts.at(filename);
     }
 }

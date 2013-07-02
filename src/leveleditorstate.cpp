@@ -86,7 +86,11 @@ void LevelEditorState::handle_events()
     if (m_showPopupBox)
     {
         if (m_popUpBox->m_pressedNo)
+        {
+            m_popUpBox->m_pressedNo = false;
+            m_popUpBox->m_pressedYes = false;
             m_showPopupBox = false;
+        }
         else if (m_popUpBox->m_pressedYes)
         {
             m_tileSetWindow->close();
