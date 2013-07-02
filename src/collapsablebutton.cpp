@@ -42,9 +42,8 @@ bool CollapsableButton::handle_event(sf::Event _event)
     //Check the event on all the child items, if collapsed
     if (collapsed)
         for (MenuItem* itr : items)
-            if (itr->handle_event(_event) == true)
-                if (!handled)
-                    handled = true;
+            if (itr->handle_event(_event))
+                handled = true;
 
     //Check the event on the CollapsableButton
     switch (_event.type)
@@ -75,8 +74,7 @@ bool CollapsableButton::handle_event(sf::Event _event)
                     collapsed = !collapsed;
 
                     //Now the event is handled
-                    if (!handled)
-                        handled = true;
+                    handled = true;
                 }
             }
             break;

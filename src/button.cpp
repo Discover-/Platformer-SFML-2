@@ -61,6 +61,10 @@ bool Button::handle_event(sf::Event _event)
                         //The callback function is a non-static member function, some tricks are needed
                         memberCallback(classPointer, this);
                     }
+
+                    //Now the event is handled
+                    if (!handled)
+                        handled = true;
                 }
             }
             break;
