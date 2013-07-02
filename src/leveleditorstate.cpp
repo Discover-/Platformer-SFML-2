@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "leveleditorstate.hpp"
 #include "inlinefunctions.hpp"
 
@@ -109,6 +111,7 @@ void LevelEditorState::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
+            {
                 if (!m_showPopupBox && !m_popUpBox->m_pressedYes && !sprites.empty())
                 {
                     m_showPopupBox = true;
@@ -117,6 +120,7 @@ void LevelEditorState::handle_events()
                 else if ((!m_showPopupBox && sprites.empty()) || m_popUpBox->m_pressedYes)
                     m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
+            }
             case sf::Event::MouseButtonPressed:
             {
                 switch (_event.mouseButton.button)
@@ -191,6 +195,7 @@ void LevelEditorState::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
+            {
                 if (!m_showPopupBox && !sprites.empty())
                 {
                     m_showPopupBox = true;
@@ -202,6 +207,7 @@ void LevelEditorState::handle_events()
                     m_manager->set_next_state(GAME_STATE_MENU);
                 }
                 break;
+            }
             case sf::Event::Resized:
             {
                 m_tileSetWindow->setView(sf::View(sf::FloatRect(0.f, 0.f, static_cast<float>(m_tileSetWindow->getSize().x), static_cast<float>(m_tileSetWindow->getSize().y))));
@@ -448,11 +454,6 @@ void LevelEditorState::save(void* inst, Button* button)
     ((LevelEditorState*)inst)->m_showPopupBox = true;
 }
 
-//void LevelEditorState::tiles(void* inst, CollapsableButton* button)
-//{
-//    ((LevelEditorState*)inst)->m_levelEditorMenu->button_tiles.collapsed = !self->m_levelEditorMenu->button_tiles.collapsed;
-//}
-
 void LevelEditorState::toggleGrid(void* inst, Button* button)
 {
     ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
@@ -470,11 +471,9 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
     else if (button == &self->m_levelEditorMenu->button_tiles_block3)
         self->SetSelectedTileFilename("Graphics/Menu/block3.png");
     else if (button == &self->m_levelEditorMenu->button_tiles_collisionPointer)
-        self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png");
+        self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png", false);
     else
-        return;
-
-    self->selectionRespectsGrid = button->respectsGridWhenSelected;
+        std::cout << "Unknown/unsupported button in LevelEditorState::setSelectedTile" << std::endl;
 }
 
 void LevelEditorState::clear(void* inst, Button* button)

@@ -1,20 +1,20 @@
 #include "button.hpp"
 
-Button::Button(bool _respectsGridWhenSelected /* = true */) :
-callback(nullptr), memberCallback(nullptr), classPointer(nullptr), respectsGridWhenSelected(_respectsGridWhenSelected)
+Button::Button() :
+callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
 {
 
 }
 
-Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */, bool _respectsGridWhenSelected /* = true */) :
-callback(_callback), memberCallback(nullptr), classPointer(nullptr), respectsGridWhenSelected(_respectsGridWhenSelected)
+Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */) :
+callback(_callback), memberCallback(nullptr), classPointer(nullptr)
 {
     setPosition(position);
     setTexture(_texture, true);
 }
 
-Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(void*, Button*), void* _classPointer, bool _respectsGridWhenSelected /* = true */) :
-callback(nullptr), memberCallback(_callback), classPointer(_classPointer), respectsGridWhenSelected(_respectsGridWhenSelected)
+Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(void*, Button*), void* _classPointer) :
+callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
 {
     setPosition(position);
     setTexture(_texture, true);
