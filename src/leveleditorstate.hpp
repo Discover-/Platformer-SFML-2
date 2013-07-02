@@ -46,13 +46,14 @@ class LevelEditorState : public GameState
         sf::RenderWindow* m_tileSetWindow;
 
         std::string selectedTileFilename;
-        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow;
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;
         std::vector<sf::VertexArray> collisionLines;
         sf::VertexArray collisionLineSelection;
         Player* player;
+        sf::Vector2i prevTilesetWindowPos;
 };
 
 #endif // LEVELEDITORSTATE_HPP_INCLUDED

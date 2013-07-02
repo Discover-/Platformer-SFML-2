@@ -5,6 +5,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
 {
     m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(500, 300), "Platformer C++ SFML: Tileset", sf::Style::Close);
     m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
+    prevTilesetWindowPos = sf::Vector2i(0, 0);
 
     m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
     m_levelEditorMenu->button_save.setCallback(&save, this);
@@ -34,6 +35,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     movedCursorOutOfNewTile = true;
     testingLevelOut = false;
     drawingCollisionLine = false;
+    minimizedWindow = false;
 
     sf::VertexArray lines(sf::LinesStrip, 5);
 
@@ -128,6 +130,20 @@ void LevelEditorState::handle_events()
             default:
                 break;
         }
+    }
+
+    if (minimizedWindow && m_window->getPosition().x > -3000.0f)
+    {
+        m_tileSetWindow->setPosition(prevTilesetWindowPos);
+        prevTilesetWindowPos = sf::Vector2i(0, 0);
+    }
+
+    minimizedWindow = m_window->getPosition().x < -3000.0f;
+
+    if (minimizedWindow && prevTilesetWindowPos.x == 0)
+    {
+        prevTilesetWindowPos = m_tileSetWindow->getPosition();
+        m_tileSetWindow->setPosition(m_window->getPosition());
     }
 
     while (m_tileSetWindow->pollEvent(_event))
@@ -250,8 +266,8 @@ void LevelEditorState::render(double alpha)
     }
 
     m_tileSetWindow->draw(*m_levelEditorMenu); //! Draw the menu as last part of the level editor
-    m_window->display();
     m_tileSetWindow->display();
+    m_window->display();
 }
 
 void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
