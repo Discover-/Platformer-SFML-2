@@ -102,7 +102,6 @@ void StateManager::change_state()
                 break;
             case GAME_STATE_LEVEL_EDITOR:
                 m_currentState = new LevelEditorState(m_window, this);
-                //sf::RenderWindow window2(sf::VideoMode(500, 300), "Platformer C++ SFML - Tileset", sf::Style::Close);
                 break;
             case GAME_STATE_EXIT:
                 m_window->close();

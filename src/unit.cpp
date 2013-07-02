@@ -1,6 +1,7 @@
 #include "statemanager.hpp"
 #include "unit.hpp"
 #include "leveleditorstate.hpp"
+#include "game.hpp"
 
 Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* _manager, GameState* _gameState /* = NULL */)
 {
@@ -23,10 +24,12 @@ Unit::~Unit()
 
 void Unit::Update()
 {
-    std::vector<CollidableObject> sprites;
-    
-    if (gameState)
-        sprites = ((LevelEditorState*)gameState)->GetCollidableObjects();
+    bool levelEditor = gameState->GetState() == GAME_STATE_LEVEL_EDITOR;
+
+    if (IsDead() || (!levelEditor && ((Game*)gameState)->IsGamePaused()))
+        return;
+
+    std::vector<CollidableObject> sprites = levelEditor ? ((LevelEditorState*)gameState)->GetCollidableObjects() : ((Game*)gameState)->GetCollidableObjects();
 
     if (isJumping)
     {

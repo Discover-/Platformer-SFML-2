@@ -70,6 +70,8 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
 
     m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
     m_showPopupBox = false;
+
+    gameState = GAME_STATE_LEVEL_EDITOR;
 }
 
 LevelEditorState::~LevelEditorState()

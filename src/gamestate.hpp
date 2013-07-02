@@ -2,6 +2,7 @@
 #define GAMESTATE_HPP_INCLUDED
 
 #include "statemanager.hpp"
+#include "inlinefunctions.hpp"
 
 /// \brief State base class
 class GameState
@@ -21,8 +22,11 @@ class GameState
         ///Example: renderPos = currentPos * alpha - previousPos * ( 1 - alpha )
         virtual void render(double alpha) = 0;
 
+        GameStates GetState() { return gameState; }
+
     protected:
         StateManager* m_manager;
+        GameStates gameState;
 };
 
 #endif // GAMESTATE_HPP_INCLUDED

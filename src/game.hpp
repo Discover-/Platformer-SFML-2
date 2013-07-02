@@ -4,6 +4,8 @@
 
 #include "gamestate.hpp"
 #include "player.hpp"
+#include "button.hpp"
+#include "gameminimenu.hpp"
 
 class Game : public GameState
 {
@@ -15,9 +17,23 @@ class Game : public GameState
         void logic(double passed, double deltaTime);
         void render(double alpha);
 
+        bool IsGamePaused() { return m_PausedGame; }
+        std::vector<CollidableObject>& GetCollidableObjects() { return collidableObjects; }
+
+        static void resume(void* inst, Button* button);
+        static void backToMenu(void* inst, Button* button);
+        static void exit(void* inst, Button* button);
+
     private:
         StateManager* m_manager;
         sf::RenderWindow* m_window;
+
+        bool m_PausedGame;
+
+        GameMiniMenu* m_gameMiniMenu;
+        sf::RectangleShape m_miniMenuBackground;
+
         Player* player;
         sf::Color m_color; //Just to show the logic function
+        std::vector<CollidableObject> collidableObjects;
 };

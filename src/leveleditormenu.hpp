@@ -1,8 +1,6 @@
 #ifndef LEVELEDITORMENU_HPP_INCLUDED
 #define LEVELEDITORMENU_HPP_INCLUDED
 
-#include <string>
-
 #include "menu.hpp"
 #include "button.hpp"
 #include "gamestate.hpp"

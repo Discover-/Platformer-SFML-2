@@ -16,6 +16,8 @@ currentSubMenu(&m_mainMenu)
     //Set the callbacks for the levelSelectionMenu
     m_levelSelectionMenu.button_backToMenu.setCallback(&backToMain, this);
     m_levelSelectionMenu.button_level1.setCallback(&level1, this);
+
+    gameState = GAME_STATE_MENU;
 }
 
 MainMenuState::~MainMenuState()
