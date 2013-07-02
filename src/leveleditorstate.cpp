@@ -65,6 +65,9 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
         collisionLineSelection[x].color = sf::Color::Red;
         collisionLineSelection[x].position = sf::Vector2f(0.0f, 0.0f);
     }
+
+    m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
+    m_showPopupBox = false;
 }
 
 LevelEditorState::~LevelEditorState()
@@ -72,6 +75,7 @@ LevelEditorState::~LevelEditorState()
     delete m_tileSetWindow;
     delete m_levelEditorMenu;
     delete player;
+    delete m_popUpBox;
 }
 
 void LevelEditorState::handle_events()
@@ -79,12 +83,32 @@ void LevelEditorState::handle_events()
     sf::Event _event;
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
+    if (m_showPopupBox)
+    {
+        if (m_popUpBox->m_pressedNo)
+            m_showPopupBox = false;
+        else if (m_popUpBox->m_pressedYes)
+        {
+            m_tileSetWindow->close();
+            m_manager->set_next_state(GAME_STATE_MENU);
+        }
+    }
+
     while (m_window->pollEvent(_event))
     {
+        if (m_showPopupBox)
+            m_popUpBox->handle_events();
+
         switch (_event.type)
         {
             case sf::Event::Closed:
-                m_manager->set_next_state(GAME_STATE_EXIT);
+                if (!m_showPopupBox && !m_popUpBox->m_pressedYes && !sprites.empty())
+                {
+                    m_showPopupBox = true;
+                    break;
+                }
+                else if (m_popUpBox->m_pressedYes)
+                    m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
             case sf::Event::MouseButtonPressed:
             {
@@ -114,7 +138,10 @@ void LevelEditorState::handle_events()
                         testingLevelOut = !testingLevelOut;
                         break;
                     case sf::Keyboard::Escape:
-                        if (selectedTileFilename != "")
+                    {
+                        if (m_showPopupBox)
+                            m_showPopupBox = false;
+                        else if (selectedTileFilename != "")
                         {
                             justReselectedTile = false;
                             selectedTileFilename = "";
@@ -123,6 +150,7 @@ void LevelEditorState::handle_events()
                         else if (drawingCollisionLine)
                             drawingCollisionLine = false;
                         break;
+                    }
                     default:
                         break;
                 }
@@ -153,8 +181,16 @@ void LevelEditorState::handle_events()
         switch (_event.type)
         {
             case sf::Event::Closed:
-                m_tileSetWindow->close();
-                m_manager->set_next_state(GAME_STATE_MENU);
+                if (!m_showPopupBox && !sprites.empty())
+                {
+                    m_showPopupBox = true;
+                    break;
+                }
+                else if (sprites.empty())
+                {
+                    m_tileSetWindow->close();
+                    m_manager->set_next_state(GAME_STATE_MENU);
+                }
                 break;
             case sf::Event::Resized:
             {
@@ -197,6 +233,9 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
 void LevelEditorState::logic(double passed, double deltaTime)
 {
+    if (m_showPopupBox)
+        m_popUpBox->logic(passed, deltaTime);
+
     if (testingLevelOut)
     {
         if (!player)
@@ -269,6 +308,9 @@ void LevelEditorState::render(double alpha)
         collisionLineSelection[1].position = sf::Vector2f(float(mousePos.x), float(mousePos.y));
         m_window->draw(collisionLineSelection);
     }
+
+    if (m_showPopupBox)
+        m_popUpBox->render(alpha);
 
     m_tileSetWindow->draw(*m_levelEditorMenu);
     m_window->display();
@@ -393,7 +435,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
 void LevelEditorState::save(void* inst, Button* button)
 {
-    //((LevelEditorState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
+    ((LevelEditorState*)inst)->m_showPopupBox = true;
 }
 
 //void LevelEditorState::tiles(void* inst, CollapsableButton* button)

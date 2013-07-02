@@ -7,6 +7,7 @@
 #include "leveleditormenu.hpp"
 #include "player.hpp"
 #include "inlinefunctions.hpp"
+#include "popupbox.hpp"
 
 class LevelEditorState : public GameState
 {
@@ -44,9 +45,10 @@ class LevelEditorState : public GameState
         StateManager* m_manager;
         LevelEditorMenu* m_levelEditorMenu;
         sf::RenderWindow* m_tileSetWindow;
+        PopUpBox* m_popUpBox;
 
         std::string selectedTileFilename;
-        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_showPopupBox;
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;
