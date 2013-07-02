@@ -114,7 +114,7 @@ void LevelEditorState::handle_events()
                     m_showPopupBox = true;
                     break;
                 }
-                else if (m_popUpBox->m_pressedYes)
+                else if ((!m_showPopupBox && sprites.empty()) || m_popUpBox->m_pressedYes)
                     m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
             case sf::Event::MouseButtonPressed:
