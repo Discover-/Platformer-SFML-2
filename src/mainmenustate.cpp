@@ -30,7 +30,18 @@ void MainMenuState::handle_events()
     sf::Event _event;
 
     while (m_window->pollEvent(_event))
+    {
         currentSubMenu->handle_event(_event);
+
+        switch (_event.type)
+        {
+            case sf::Event::Closed:
+            {
+                m_manager->set_next_state(GAME_STATE_EXIT);
+                break;
+            }
+        }
+    }
 }
 
 void MainMenuState::logic(double passed, double deltaTime)
