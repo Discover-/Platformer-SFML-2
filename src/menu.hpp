@@ -14,7 +14,7 @@ class Menu : public sf::Drawable
         ///Returns true if one of the items could handle it
         bool handle_event(sf::Event _event);
         ///\brief Draw the buttons on the target
-        void draw (sf::RenderTarget &target, sf::RenderStates states) const;
+        void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
         ///\brief The items
         std::list<MenuItem*> items;

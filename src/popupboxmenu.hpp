@@ -8,9 +8,10 @@
 class PopUpBoxMenu : public Menu
 {
     public:
-        PopUpBoxMenu(sf::Vector2f positionBtnOne, sf::Vector2f positionBtnTwo);
-        PopUpBoxMenu(ResourceManager* resourceManager, sf::Vector2f positionBtnOne, sf::Vector2f positionBtnTwo);
+        PopUpBoxMenu();
+        PopUpBoxMenu(ResourceManager* resourceManager);
 
+        Button button_close;
         Button button_yes;
         Button button_no;
 };

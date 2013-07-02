@@ -17,17 +17,25 @@ class PopUpBox
         void logic(double passed, double deltaTime);
         void render(double alpha);
 
+        static void closeBox(void* inst, Button* button);
         static void yes(void* inst, Button* button);
         static void no(void* inst, Button* button);
 
-        bool m_pressedYes, m_pressedNo;
+        void resetPositions();
+
+        bool m_pressedYes, m_pressedNo, m_pressedCloseBox;
 
     private:
         StateManager* m_manager;
         sf::Text popUpBoxMessage;
-        sf::RectangleShape menuBackground;
+        sf::RectangleShape popUpBoxBackground, popUpBoxSelectBar;
         sf::RenderWindow* m_window;
         PopUpBoxMenu* m_popUpBoxMenu;
+
+        sf::Vector2f initialPosition;
+
+        bool selectedPopUpBox;
+        sf::Vector2f distSelectedBox;
 };
 
 

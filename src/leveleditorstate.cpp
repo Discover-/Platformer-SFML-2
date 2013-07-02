@@ -74,29 +74,32 @@ LevelEditorState::~LevelEditorState()
 {
     delete m_tileSetWindow;
     delete m_levelEditorMenu;
-    delete player;
     delete m_popUpBox;
+    delete player;
 }
 
 void LevelEditorState::handle_events()
 {
-    sf::Event _event;
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
     if (m_showPopupBox)
     {
-        if (m_popUpBox->m_pressedNo)
+        if (m_popUpBox->m_pressedCloseBox || m_popUpBox->m_pressedNo)
         {
+            m_popUpBox->resetPositions();
             m_popUpBox->m_pressedNo = false;
             m_popUpBox->m_pressedYes = false;
+            m_popUpBox->m_pressedCloseBox = false;
             m_showPopupBox = false;
         }
-        else if (m_popUpBox->m_pressedYes)
+        else if (!m_popUpBox->m_pressedNo && m_popUpBox->m_pressedYes)
         {
             m_tileSetWindow->close();
             m_manager->set_next_state(GAME_STATE_MENU);
         }
     }
+
+    sf::Event _event;
 
     while (m_window->pollEvent(_event))
     {
@@ -144,7 +147,10 @@ void LevelEditorState::handle_events()
                     case sf::Keyboard::Escape:
                     {
                         if (m_showPopupBox)
+                        {
                             m_showPopupBox = false;
+                            m_popUpBox->resetPositions();
+                        }
                         else if (selectedTileFilename != "")
                         {
                             justReselectedTile = false;

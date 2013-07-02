@@ -25,6 +25,13 @@ inline float GetDistance(float x1, float y1, float x2, float y2)
     return (dist > 0 ? dist : 0);
 }
 
+inline float GetDistanceXorY(float coord1, float coord2)
+{
+    float distCoords = coord1 - coord2;
+    float dist = sqrt(distCoords * distCoords);
+    return (dist > 0 ? dist : 0);
+}
+
 inline bool IsInRange(float currX, float xDest, float currY, float yDest, float distance)
 {
     return ((currX < xDest - distance && currX > xDest + distance && currY < yDest - distance && currY > yDest + distance) ||
