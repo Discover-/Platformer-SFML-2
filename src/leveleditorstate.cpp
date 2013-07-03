@@ -5,7 +5,7 @@
 
 LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
 {
-    m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(500, 300), "Platformer C++ SFML: Tileset", sf::Style::Close | sf::Style::Resize);
+    m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(590, 300), "Platformer C++ SFML - Tileset", sf::Style::Close | sf::Style::Resize);
     m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
     prevTilesetWindowPos = sf::Vector2i(0, 0);
 
@@ -15,10 +15,8 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_levelEditorMenu->button_clear.setCallback(&clear, this);
 
     //! Tiles buttons
-    m_levelEditorMenu->button_tiles_block1.setCallback(&setSelectedTile, this);
-    m_levelEditorMenu->button_tiles_block2.setCallback(&setSelectedTile, this);
-    m_levelEditorMenu->button_tiles_block3.setCallback(&setSelectedTile, this);
-    m_levelEditorMenu->button_tiles_collisionPointer.setCallback(&setSelectedTile, this);
+    for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
+        m_levelEditorMenu->button_tiles_childs[i].setCallback(&setSelectedTile, this);
 
     //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
 
@@ -467,13 +465,13 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
     LevelEditorState* self = ((LevelEditorState*)inst);
 
     //! Check which button called, so we can determine which block we should set
-    if (button == &self->m_levelEditorMenu->button_tiles_block1)
+    if (button == &self->m_levelEditorMenu->button_tiles_childs[0])
         self->SetSelectedTileFilename("Graphics/Menu/block1.png");
-    else if (button == &self->m_levelEditorMenu->button_tiles_block2)
+    else if (button == &self->m_levelEditorMenu->button_tiles_childs[1])
         self->SetSelectedTileFilename("Graphics/Menu/block2.png");
-    else if (button == &self->m_levelEditorMenu->button_tiles_block3)
+    else if (button == &self->m_levelEditorMenu->button_tiles_childs[2])
         self->SetSelectedTileFilename("Graphics/Menu/block3.png");
-    else if (button == &self->m_levelEditorMenu->button_tiles_collisionPointer)
+    else if (button == &self->m_levelEditorMenu->button_tiles_childs[3])
         self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png", false);
     else
         std::cout << "Unknown/unsupported button in LevelEditorState::setSelectedTile" << std::endl;

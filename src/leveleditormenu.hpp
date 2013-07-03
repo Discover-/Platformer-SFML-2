@@ -13,9 +13,6 @@
 class LevelEditorMenu : public Menu
 {
     public:
-        ///\brief Default constructor
-        LevelEditorMenu();
-
         ///\brief Constructor taking a pointer to a ResourceManager as argument
         ///Loads the default textures for the buttons and sets them
         LevelEditorMenu(ResourceManager* resourceManager);
@@ -26,10 +23,7 @@ class LevelEditorMenu : public Menu
         Button button_clear;
 
         //Buttons for button_tiles
-        Button button_tiles_block1;
-        Button button_tiles_block2;
-        Button button_tiles_block3;
-        Button button_tiles_collisionPointer;
+        Button button_tiles_childs[BUTTONT_TILES_CHILDS_SIZE];
 };
 
 #endif // LEVELEDITORMENU_HPP_INCLUDED

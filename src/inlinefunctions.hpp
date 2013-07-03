@@ -75,4 +75,6 @@ struct CollidableObject
     bool collideFromTopOnly;
 };
 
+#define BUTTONT_TILES_CHILDS_SIZE    4
+
 #endif // INLINEFUNCTIONS_HPP_INCLUDED

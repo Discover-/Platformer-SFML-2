@@ -8,7 +8,6 @@
 class PopUpBoxMenu : public Menu
 {
     public:
-        PopUpBoxMenu();
         PopUpBoxMenu(ResourceManager* resourceManager);
 
         Button button_close;

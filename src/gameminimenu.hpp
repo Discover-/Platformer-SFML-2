@@ -9,7 +9,6 @@
 class GameMiniMenu : public Menu
 {
     public:
-        GameMiniMenu(sf::Vector2f buttonPositions[3]);
         GameMiniMenu(ResourceManager* resourceManager, sf::Vector2f buttonPositions[3]);
 
         Button button_resume;
