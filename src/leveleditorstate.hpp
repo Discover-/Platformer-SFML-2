@@ -46,7 +46,7 @@ class LevelEditorState : public GameState
         PopUpBox* m_popUpBox;
 
         std::string selectedTileFilename;
-        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_showPopupBox;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_showPopupBox, m_placeTileWithCtrl;
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;

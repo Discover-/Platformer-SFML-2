@@ -7,14 +7,9 @@
 #include "levelselectionmenu.hpp"
 #include "collapsablebutton.hpp"
 
-///\brief Main menu class.
-///See Menu(menu.hpp) for details
-///The callback functions for the buttons have to be set if you want to use them
 class LevelEditorMenu : public Menu
 {
     public:
-        ///\brief Constructor taking a pointer to a ResourceManager as argument
-        ///Loads the default textures for the buttons and sets them
         LevelEditorMenu(ResourceManager* resourceManager);
 
         Button button_test;
@@ -23,7 +18,7 @@ class LevelEditorMenu : public Menu
         Button button_toggleGrid;
         Button button_clear;
 
-        //Buttons for button_tiles
+        //! Buttons for button_tiles
         Button button_tiles_childs[BUTTONT_TILES_CHILDS_SIZE];
 };
 

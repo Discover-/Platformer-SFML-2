@@ -65,6 +65,8 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_showPopupBox = false;
 
     gameState = GAME_STATE_LEVEL_EDITOR;
+
+    m_placeTileWithCtrl = false;
 }
 
 LevelEditorState::~LevelEditorState()
@@ -122,11 +124,22 @@ void LevelEditorState::handle_events()
                 {
                     case sf::Mouse::Left:
                     case sf::Mouse::Right:
-                        MouseButtonPressed(mousePos, _event.mouseButton.button == sf::Mouse::Left);
+                        if (selectedTileFilename != "" && (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)))
+                            m_placeTileWithCtrl = true;
+                        else
+                        {
+                            m_placeTileWithCtrl = false;
+                            MouseButtonPressed(mousePos, _event.mouseButton.button == sf::Mouse::Left);
+                        }
                         break;
                     default:
                         break;
                 }
+                break;
+            }
+            case sf::Event::MouseButtonReleased:
+            {
+                m_placeTileWithCtrl = false;
                 break;
             }
             case sf::Event::KeyReleased:
@@ -209,6 +222,27 @@ void LevelEditorState::handle_events()
                 break;
         }
     }
+
+    if (m_placeTileWithCtrl)
+    {
+        if (selectedTileFilename != "")
+        {
+            sf::Vector2f positionForSelectedTile = GetPositionForSelectedTile();
+
+            if (!(positionForSelectedTile.x < 0.0f || positionForSelectedTile.y < 0.0f))
+            {
+                SpriteInfo spriteInfo;
+                spriteInfo.filename = selectedTileFilename;
+                spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
+                spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
+                spriteInfo.position = positionForSelectedTile;
+                spriteInfo.priorityInDrawing = false; //! NYI!
+                sprites.push_back(spriteInfo);
+            }
+        }
+        else
+            m_placeTileWithCtrl = false;
+    }
 }
 
 bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
@@ -226,12 +260,19 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
     if (enabledGrid && selectedTileFilename != "" && selectionRespectsGrid)
     {
-        sf::Vector2f closestPosition = sf::Vector2f(0.0f, 0.0f);
+        sf::Vector2f closestPosition = sf::Vector2f(-50.0f, -50.0f);
 
         for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
-            if (!IsSpotTakenBySprite((*itr)[0].position))
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
+            {
+                if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr)[0].position.x, (*itr)[0].position.y, 50.0f, 50.0f))
+                    return IsSpotTakenBySprite((*itr)[0].position) ? closestPosition : sf::Vector2f((*itr)[0].position.x, (*itr)[0].position.y);
+            }
+            else if (!IsSpotTakenBySprite((*itr)[0].position))
                 if (GetDistance(float(mousePos.x), float(mousePos.y), (*itr)[0].position.x + 25.0f, (*itr)[0].position.y + 25.0f) < GetDistance(float(mousePos.x), float(mousePos.y), closestPosition.x + 25.0f, closestPosition.y + 25.0f))
                     closestPosition = (*itr)[0].position;
+        }
 
         return closestPosition;
     }
@@ -454,7 +495,7 @@ void LevelEditorState::toggleGrid(void* inst, Button* button)
 
 void LevelEditorState::setSelectedTile(void* inst, Button* button)
 {
-    LevelEditorState* self = ((LevelEditorState*)inst);
+    LevelEditorState* self = (LevelEditorState*)inst;
 
     //! Check which button called, so we can determine which block we should set
     if (button == &self->m_levelEditorMenu->button_tiles_childs[0])
