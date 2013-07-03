@@ -65,6 +65,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_showPopupBox = false;
 
     gameState = GAME_STATE_LEVEL_EDITOR;
+    gameStateAfterPopUpBox = GAME_STATE_NULL;
 
     m_placeTileWithCtrl = false;
 }
@@ -94,7 +95,7 @@ void LevelEditorState::handle_events()
         else if (!m_popUpBox->m_pressedNo && m_popUpBox->m_pressedYes)
         {
             m_tileSetWindow->close();
-            m_manager->set_next_state(GAME_STATE_MENU);
+            m_manager->set_next_state(gameStateAfterPopUpBox != GAME_STATE_NULL ? gameStateAfterPopUpBox : GAME_STATE_MENU);
         }
     }
 
@@ -111,6 +112,7 @@ void LevelEditorState::handle_events()
             {
                 if (!m_showPopupBox && !m_popUpBox->m_pressedYes && !sprites.empty())
                 {
+                    gameStateAfterPopUpBox = GAME_STATE_EXIT;
                     m_showPopupBox = true;
                     break;
                 }
@@ -124,6 +126,7 @@ void LevelEditorState::handle_events()
                 {
                     case sf::Mouse::Left:
                     case sf::Mouse::Right:
+                    {
                         if (selectedTileFilename != "" && (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)))
                             m_placeTileWithCtrl = true;
                         else
@@ -132,6 +135,7 @@ void LevelEditorState::handle_events()
                             MouseButtonPressed(mousePos, _event.mouseButton.button == sf::Mouse::Left);
                         }
                         break;
+                    }
                     default:
                         break;
                 }
@@ -204,6 +208,7 @@ void LevelEditorState::handle_events()
                 if (!m_showPopupBox && !sprites.empty())
                 {
                     m_showPopupBox = true;
+                    gameStateAfterPopUpBox = GAME_STATE_MENU;
                     break;
                 }
                 else if (sprites.empty())

@@ -54,6 +54,8 @@ class LevelEditorState : public GameState
         sf::VertexArray collisionLineSelection;
         Player* player;
         sf::Vector2i prevTilesetWindowPos;
+
+        GameStates gameStateAfterPopUpBox;
 };
 
 #endif // LEVELEDITORSTATE_HPP_INCLUDED
