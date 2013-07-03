@@ -247,6 +247,9 @@ void LevelEditorState::handle_events()
 
 bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
 {
+    if (!enabledGrid || sprites.empty())
+        return false;
+
     for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
         if ((*itr).position == position)
             return true;
