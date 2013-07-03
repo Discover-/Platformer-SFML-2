@@ -472,6 +472,7 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
 void LevelEditorState::clear(void* inst, Button* button)
 {
     ((LevelEditorState*)inst)->sprites.clear();
+    ((LevelEditorState*)inst)->collisionLines.clear();
 }
 
 void LevelEditorState::testOut(void* inst, Button* button)
