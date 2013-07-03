@@ -17,6 +17,7 @@ class LevelEditorMenu : public Menu
         ///Loads the default textures for the buttons and sets them
         LevelEditorMenu(ResourceManager* resourceManager);
 
+        Button button_test;
         Button button_save;
         CollapsableButton button_tiles;
         Button button_toggleGrid;

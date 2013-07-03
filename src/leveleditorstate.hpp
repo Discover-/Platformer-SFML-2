@@ -32,6 +32,7 @@ class LevelEditorState : public GameState
         sf::Vector2f GetPositionForSelectedTile();
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
+        static void testOut(void* inst, Button* button);
         static void save(void* inst, Button* button);
         static void toggleGrid(void* inst, Button* button);
         static void setSelectedTile(void* inst, Button* button);

@@ -10,6 +10,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     prevTilesetWindowPos = sf::Vector2i(0, 0);
 
     m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
+    m_levelEditorMenu->button_test.setCallback(&testOut, this);
     m_levelEditorMenu->button_save.setCallback(&save, this);
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
     m_levelEditorMenu->button_clear.setCallback(&clear, this);
@@ -17,12 +18,6 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     //! Tiles buttons
     for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
         m_levelEditorMenu->button_tiles_childs[i].setCallback(&setSelectedTile, this);
-
-    //m_levelEditorMenu->button_tiles.setCallback(&tiles, this); //! NOT needed (duh :p)
-
-    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(20.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block1.png")));
-    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(120.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block2.png")));
-    //m_levelEditorMenu->button_tiles.items.push_back(new Button(sf::Vector2f(220.0f, 100.0f), m_manager->resourceManager.getTexture("Graphics/Menu/block3.png")));
 
     //for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = m_levelEditorMenu->button_tiles.items.begin(); itr != m_levelEditorMenu->button_tiles.items.end(); ++itr)
     //    if (MenuItem* menuItem = (*itr).first)
@@ -144,9 +139,6 @@ void LevelEditorState::handle_events()
                         break;
                     case sf::Keyboard::F3:
                         enabledGrid = !enabledGrid;
-                        break;
-                    case sf::Keyboard::F4:
-                        testingLevelOut = !testingLevelOut;
                         break;
                     case sf::Keyboard::Escape:
                     {
@@ -480,4 +472,9 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
 void LevelEditorState::clear(void* inst, Button* button)
 {
     ((LevelEditorState*)inst)->sprites.clear();
+}
+
+void LevelEditorState::testOut(void* inst, Button* button)
+{
+    ((LevelEditorState*)inst)->testingLevelOut = !((LevelEditorState*)inst)->testingLevelOut;
 }
