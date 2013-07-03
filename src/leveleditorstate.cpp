@@ -113,6 +113,8 @@ void LevelEditorState::handle_events()
                 if (!m_showPopupBox && !m_popUpBox->m_pressedYes && !sprites.empty())
                 {
                     gameStateAfterPopUpBox = GAME_STATE_EXIT;
+                    drawingCollisionLine = false;
+                    selectedTileFilename = "";
                     m_showPopupBox = true;
                     break;
                 }
@@ -127,6 +129,9 @@ void LevelEditorState::handle_events()
                     case sf::Mouse::Left:
                     case sf::Mouse::Right:
                     {
+                        if (m_showPopupBox)
+                            break;
+
                         if (selectedTileFilename != "" && (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)))
                             m_placeTileWithCtrl = true;
                         else
@@ -143,6 +148,9 @@ void LevelEditorState::handle_events()
             }
             case sf::Event::MouseButtonReleased:
             {
+                if (m_showPopupBox)
+                    break;
+
                 m_placeTileWithCtrl = false;
                 break;
             }
@@ -155,6 +163,9 @@ void LevelEditorState::handle_events()
                         //! Handled in Unit::Update
                         break;
                     case sf::Keyboard::F3:
+                        if (m_showPopupBox)
+                            break;
+
                         enabledGrid = !enabledGrid;
                         break;
                     case sf::Keyboard::Escape:
@@ -208,6 +219,8 @@ void LevelEditorState::handle_events()
                 if (!m_showPopupBox && !sprites.empty())
                 {
                     m_showPopupBox = true;
+                    selectedTileFilename = "";
+                    drawingCollisionLine = false;
                     gameStateAfterPopUpBox = GAME_STATE_MENU;
                     break;
                 }
@@ -228,7 +241,7 @@ void LevelEditorState::handle_events()
         }
     }
 
-    if (m_placeTileWithCtrl)
+    if (!m_showPopupBox && m_placeTileWithCtrl)
     {
         if (selectedTileFilename != "")
         {
@@ -292,17 +305,19 @@ void LevelEditorState::logic(double passed, double deltaTime)
 {
     if (m_showPopupBox)
         m_popUpBox->logic(passed, deltaTime);
-
-    if (testingLevelOut)
+    else
     {
-        if (!player)
+        if (testingLevelOut)
         {
-            sf::RectangleShape bodyShape(sf::Vector2f(75.0f, 75.0f));
-            bodyShape.setFillColor(sf::Color::Green);
-            player = new Player(m_window, sf::Vector2f(500.0f, 300.0f), bodyShape, m_manager, this);
-        }
+            if (!player)
+            {
+                sf::RectangleShape bodyShape(sf::Vector2f(75.0f, 75.0f));
+                bodyShape.setFillColor(sf::Color::Green);
+                player = new Player(m_window, sf::Vector2f(500.0f, 300.0f), bodyShape, m_manager, this);
+            }
 
-        player->Update();
+            player->Update();
+        }
     }
 }
 
@@ -320,7 +335,7 @@ void LevelEditorState::render(double alpha)
     for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
         m_window->draw(*itr);
 
-    if (selectedTileFilename != "")
+    if (!m_showPopupBox && selectedTileFilename != "")
     {
         sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
         selectedTile.setPosition(GetPositionForSelectedTile());
@@ -328,29 +343,32 @@ void LevelEditorState::render(double alpha)
         m_window->draw(selectedTile);
     }
 
-    bool foundHoverOverTile = false;
-
-    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+    if (!m_showPopupBox)
     {
-        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
-        sprite.setPosition((*itr).position.x, (*itr).position.y);
-        sf::FloatRect spriteRect = sprite.getGlobalBounds();
+        bool foundHoverOverTile = false;
 
-        if (selectedTileFilename == "")
+        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
         {
-            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
-            {
-                if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
-                {
-                    foundHoverOverTile = true;
-                    sprite.setColor(sf::Color(255, 255, 255, 100));
-                }
-            }
-            else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
-                movedCursorOutOfNewTile = true;
-        }
+            sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
+            sprite.setPosition((*itr).position.x, (*itr).position.y);
+            sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
-        m_window->draw(sprite);
+            if (selectedTileFilename == "")
+            {
+                if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
+                {
+                    if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
+                    {
+                        foundHoverOverTile = true;
+                        sprite.setColor(sf::Color(255, 255, 255, 100));
+                    }
+                }
+                else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
+                    movedCursorOutOfNewTile = true;
+            }
+
+            m_window->draw(sprite);
+        }
     }
 
     if (testingLevelOut && player)
@@ -498,11 +516,17 @@ void LevelEditorState::save(void* inst, Button* button)
 
 void LevelEditorState::toggleGrid(void* inst, Button* button)
 {
+    if (((LevelEditorState*)inst)->m_showPopupBox)
+        return;
+
     ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
 }
 
 void LevelEditorState::setSelectedTile(void* inst, Button* button)
 {
+    if (((LevelEditorState*)inst)->m_showPopupBox)
+        return;
+
     LevelEditorState* self = (LevelEditorState*)inst;
 
     //! Check which button called, so we can determine which block we should set
@@ -520,11 +544,17 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
 
 void LevelEditorState::clear(void* inst, Button* button)
 {
+    if (((LevelEditorState*)inst)->m_showPopupBox)
+        return;
+
     ((LevelEditorState*)inst)->sprites.clear();
     ((LevelEditorState*)inst)->collisionLines.clear();
 }
 
 void LevelEditorState::testOut(void* inst, Button* button)
 {
+    if (((LevelEditorState*)inst)->m_showPopupBox)
+        return;
+
     ((LevelEditorState*)inst)->testingLevelOut = !((LevelEditorState*)inst)->testingLevelOut;
 }
