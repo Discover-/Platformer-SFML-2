@@ -375,6 +375,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
                             }
                             else
                             {
+                                eraseItr = true;
                                 justReselectedTile = true;
                                 selectedTileFilename = (*itr).filename;
                                 selectionRespectsGrid = !(*itr).forceIgnoreGrid;
