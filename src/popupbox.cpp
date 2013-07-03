@@ -52,7 +52,7 @@ void PopUpBox::resetPositions()
     popUpBoxMessage.setPosition(initialPosition.x, initialPosition.y + 25.0f + 10.0f);
 
     //! Re-size the image till it fits exactly. Temporarily solution, we'll eventually have to add linebreaks, but oh well. :)
-    while (popUpBoxMessage.getGlobalBounds().width > popUpBoxBackground.getGlobalBounds().width)
+    while (popUpBoxMessage.getGlobalBounds().width + 5.0f > popUpBoxBackground.getGlobalBounds().width)
         popUpBoxMessage.setScale(popUpBoxMessage.getScale().x - 0.01f, popUpBoxMessage.getScale().y - 0.01f);
 }
 
