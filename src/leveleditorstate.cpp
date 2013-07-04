@@ -277,9 +277,12 @@ bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
 
 sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 {
+    if (selectedTileFilename == "")
+        return sf::Vector2f(0.0f, 0.0f);
+
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-    if (enabledGrid && selectedTileFilename != "" && selectionRespectsGrid)
+    if (enabledGrid && selectionRespectsGrid)
     {
         sf::Vector2f closestPosition = sf::Vector2f(-50.0f, -50.0f);
 
@@ -298,7 +301,25 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
         return closestPosition;
     }
     else
-        return sf::Vector2f(float(mousePos.x), float(mousePos.y));
+    {
+        float returnPosX = float(mousePos.x);
+        float returnPosY = float(mousePos.y);
+        sf::FloatRect selectedTileRect = sf::Sprite(m_manager->resourceManager.getTexture(selectedTileFilename)).getGlobalBounds();
+
+        if (returnPosX + selectedTileRect.width > 1000.0f)
+            returnPosX = 1000.0f - selectedTileRect.width;
+
+        if (returnPosY + selectedTileRect.height > 600.0f)
+            returnPosY = 600.0f - selectedTileRect.height;
+
+        if (returnPosX < 0.0f)
+            returnPosX = 0.0f;
+
+        if (returnPosY < 0.0f)
+            returnPosY = 0.0f;
+
+        return sf::Vector2f(returnPosX, returnPosY);
+    }
 }
 
 void LevelEditorState::logic(double passed, double deltaTime)
