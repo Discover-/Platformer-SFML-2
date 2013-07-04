@@ -304,7 +304,8 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
     {
         float returnPosX = float(mousePos.x);
         float returnPosY = float(mousePos.y);
-        sf::FloatRect selectedTileRect = sf::Sprite(m_manager->resourceManager.getTexture(selectedTileFilename)).getGlobalBounds();
+        sf::Sprite selectedTileSprite(m_manager->resourceManager.getTexture(selectedTileFilename));
+        sf::FloatRect selectedTileRect = selectedTileSprite.getGlobalBounds();
 
         if (returnPosX + selectedTileRect.width > 1000.0f)
             returnPosX = 1000.0f - selectedTileRect.width;
@@ -317,6 +318,12 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
         if (returnPosY < 0.0f)
             returnPosY = 0.0f;
+
+        if (returnPosX == float(mousePos.x) && returnPosY == float(mousePos.y))
+        {
+            returnPosX -= selectedTileRect.width / 2.0f;
+            returnPosY -= selectedTileRect.height / 2.0f;
+        }
 
         return sf::Vector2f(returnPosX, returnPosY);
     }
