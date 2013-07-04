@@ -53,3 +53,5 @@ log
 *~
 
 # Resource files
+/src/Graphics
+/src/Fonts
