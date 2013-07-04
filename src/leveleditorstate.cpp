@@ -375,35 +375,34 @@ void LevelEditorState::render(double alpha)
         m_window->draw(selectedTile);
     }
 
-    if (!m_showPopupBox)
+    bool foundHoverOverTile = false;
+
+    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
     {
-        bool foundHoverOverTile = false;
+        if (!m_showCollisionLines && (*itr).filename == "Graphics/Menu/collision_pointer.png")
+            continue;
 
-        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
+        sprite.setPosition((*itr).position.x, (*itr).position.y);
+        sf::FloatRect spriteRect = sprite.getGlobalBounds();
+
+        if (selectedTileFilename == "")
         {
-            if (!m_showCollisionLines && (*itr).filename == "Graphics/Menu/collision_pointer.png")
-                continue;
-
-            sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
-            sprite.setPosition((*itr).position.x, (*itr).position.y);
-            sf::FloatRect spriteRect = sprite.getGlobalBounds();
-
-            if (selectedTileFilename == "")
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
             {
-                if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
+                if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
                 {
-                    if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
-                    {
-                        foundHoverOverTile = true;
-                        sprite.setColor(sf::Color(255, 255, 255, 100));
-                    }
-                }
-                else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
-                    movedCursorOutOfNewTile = true;
-            }
+                    foundHoverOverTile = true;
 
-            m_window->draw(sprite);
+                    if (!m_showPopupBox)
+                        sprite.setColor(sf::Color(255, 255, 255, 100));
+                }
+            }
+            else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
+                movedCursorOutOfNewTile = true;
         }
+
+        m_window->draw(sprite);
     }
 
     if (testingLevelOut && player)
