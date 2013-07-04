@@ -3,7 +3,7 @@
 #include "leveleditorstate.hpp"
 #include "inlinefunctions.hpp"
 
-LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow)
+LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow), m_popUpBox(nullptr)
 {
     m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(590, 300), "Platformer C++ SFML - Tileset", sf::Style::Close | sf::Style::Resize);
     m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
@@ -62,8 +62,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
         collisionLineSelection[x].position = sf::Vector2f(0.0f, 0.0f);
     }
 
-    m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
-    m_showPopupBox = false;
+    //m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
 
     gameState = GAME_STATE_LEVEL_EDITOR;
     gameStateAfterPopUpBox = GAME_STATE_NULL;
@@ -85,43 +84,45 @@ void LevelEditorState::handle_events()
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-    if (m_showPopupBox)
-    {
-        if (m_popUpBox->m_pressedCloseBox || m_popUpBox->m_pressedNo)
-        {
-            m_popUpBox->resetPositions();
-            m_popUpBox->m_pressedNo = false;
-            m_popUpBox->m_pressedYes = false;
-            m_popUpBox->m_pressedCloseBox = false;
-            m_showPopupBox = false;
-        }
-        else if (!m_popUpBox->m_pressedNo && m_popUpBox->m_pressedYes)
-        {
-            m_tileSetWindow->close();
-            m_manager->set_next_state(gameStateAfterPopUpBox != GAME_STATE_NULL ? gameStateAfterPopUpBox : GAME_STATE_MENU);
-        }
-    }
-
     sf::Event _event;
 
     while (m_window->pollEvent(_event))
     {
-        if (m_showPopupBox)
-            m_popUpBox->handle_events();
+        if (m_popUpBox)
+        {
+            //Check the event
+            if (m_popUpBox->handle_event(_event) == true)
+            {
+                //Handle the event(hacky, gotta add callbacks when nothing to do)
+                if (m_popUpBox->m_pressedCloseBox || m_popUpBox->m_pressedNo)
+                {
+                    delete m_popUpBox;
+                    m_popUpBox = nullptr;
+                }
+                else
+                {
+                    m_tileSetWindow->close();
+                    m_manager->set_next_state(gameStateAfterPopUpBox != GAME_STATE_NULL ? gameStateAfterPopUpBox : GAME_STATE_MENU);
+                }
+            }
+            //If a popUpbox is being shown, the levelEditor doesn't have to check for events
+            continue;
+        }
 
         switch (_event.type)
         {
             case sf::Event::Closed:
             {
-                if (!m_showPopupBox && !m_popUpBox->m_pressedYes && !sprites.empty())
+                if (!sprites.empty())
                 {
                     gameStateAfterPopUpBox = GAME_STATE_EXIT;
                     drawingCollisionLine = false;
                     selectedTileFilename = "";
-                    m_showPopupBox = true;
+                    //Create a box
+                    m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
                     break;
                 }
-                else if ((!m_showPopupBox && sprites.empty()) || m_popUpBox->m_pressedYes)
+                else if ((sprites.empty()) || m_popUpBox->m_pressedYes)
                     m_manager->set_next_state(GAME_STATE_EXIT);
                 break;
             }
@@ -132,9 +133,6 @@ void LevelEditorState::handle_events()
                     case sf::Mouse::Left:
                     case sf::Mouse::Right:
                     {
-                        if (m_showPopupBox)
-                            break;
-
                         if (selectedTileFilename != "" && (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)))
                             m_placeTileWithCtrl = true;
                         else
@@ -151,9 +149,6 @@ void LevelEditorState::handle_events()
             }
             case sf::Event::MouseButtonReleased:
             {
-                if (m_showPopupBox)
-                    break;
-
                 m_placeTileWithCtrl = false;
                 break;
             }
@@ -166,19 +161,16 @@ void LevelEditorState::handle_events()
                         //! Handled in Unit::Update
                         break;
                     case sf::Keyboard::F3:
-                        if (m_showPopupBox)
-                            break;
-
                         enabledGrid = !enabledGrid;
                         break;
                     case sf::Keyboard::Escape:
                     {
-                        if (m_showPopupBox)
+                        /*if (m_showPopupBox)
                         {
                             m_showPopupBox = false;
                             m_popUpBox->resetPositions();
                         }
-                        else if (selectedTileFilename != "")
+                        else*/ if (selectedTileFilename != "")
                         {
                             justReselectedTile = false;
                             selectedTileFilename = "";
@@ -191,6 +183,31 @@ void LevelEditorState::handle_events()
                     default:
                         break;
                 }
+                break;
+            }
+            case sf::Event::MouseMoved:
+            {
+                if (m_placeTileWithCtrl)
+                {
+                    if (selectedTileFilename != "")
+                    {
+                        sf::Vector2f positionForSelectedTile = GetPositionForSelectedTile(sf::Vector2i(_event.mouseMove.x, _event.mouseMove.y));
+
+                        if (!(positionForSelectedTile.x < 0.0f || positionForSelectedTile.y < 0.0f))
+                        {
+                            SpriteInfo spriteInfo;
+                            spriteInfo.filename = selectedTileFilename;
+                            spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
+                            spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
+                            spriteInfo.position = positionForSelectedTile;
+                            spriteInfo.priorityInDrawing = false; //! NYI!
+                            sprites.push_back(spriteInfo);
+                        }
+                    }
+                    else
+                        m_placeTileWithCtrl = false;
+                }
+               break;
             }
             default:
                 break;
@@ -213,17 +230,21 @@ void LevelEditorState::handle_events()
 
     while (m_tileSetWindow->pollEvent(_event))
     {
+        //If a popUpBox is being shown, the tileSetWindow doesn't have to check events
+        if (m_popUpBox)
+            continue;
+
         m_levelEditorMenu->handle_event(_event);
 
         switch (_event.type)
         {
             case sf::Event::Closed:
             {
-                if (!m_showPopupBox && !sprites.empty())
+                if (!sprites.empty())
                 {
-                    m_showPopupBox = true;
                     selectedTileFilename = "";
                     drawingCollisionLine = false;
+                    m_popUpBox = new PopUpBox(m_window, m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
                     gameStateAfterPopUpBox = GAME_STATE_MENU;
                     break;
                 }
@@ -243,27 +264,6 @@ void LevelEditorState::handle_events()
                 break;
         }
     }
-
-    if (!m_showPopupBox && m_placeTileWithCtrl)
-    {
-        if (selectedTileFilename != "")
-        {
-            sf::Vector2f positionForSelectedTile = GetPositionForSelectedTile();
-
-            if (!(positionForSelectedTile.x < 0.0f || positionForSelectedTile.y < 0.0f))
-            {
-                SpriteInfo spriteInfo;
-                spriteInfo.filename = selectedTileFilename;
-                spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
-                spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
-                spriteInfo.position = positionForSelectedTile;
-                spriteInfo.priorityInDrawing = false; //! NYI!
-                sprites.push_back(spriteInfo);
-            }
-        }
-        else
-            m_placeTileWithCtrl = false;
-    }
 }
 
 bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
@@ -278,12 +278,10 @@ bool LevelEditorState::IsSpotTakenBySprite(sf::Vector2f position)
     return false;
 }
 
-sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
+sf::Vector2f LevelEditorState::GetPositionForSelectedTile(sf::Vector2i mousePos)
 {
     if (selectedTileFilename == "")
         return sf::Vector2f(0.0f, 0.0f);
-
-    sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
     if (enabledGrid && selectionRespectsGrid)
     {
@@ -334,7 +332,7 @@ sf::Vector2f LevelEditorState::GetPositionForSelectedTile()
 
 void LevelEditorState::logic(double passed, double deltaTime)
 {
-    if (m_showPopupBox)
+    if (m_popUpBox)
         m_popUpBox->logic(passed, deltaTime);
     else
     {
@@ -367,10 +365,10 @@ void LevelEditorState::render(double alpha)
         for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
             m_window->draw(*itr);
 
-    if (!m_showPopupBox && selectedTileFilename != "")
+    if (!m_popUpBox && selectedTileFilename != "")
     {
         sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
-        selectedTile.setPosition(GetPositionForSelectedTile());
+        selectedTile.setPosition(GetPositionForSelectedTile(sf::Mouse::getPosition(*m_window)));
         selectedTile.setColor(sf::Color(255, 255, 255, 100));
         m_window->draw(selectedTile);
     }
@@ -394,7 +392,7 @@ void LevelEditorState::render(double alpha)
                 {
                     foundHoverOverTile = true;
 
-                    if (!m_showPopupBox)
+                    if (!m_popUpBox)
                         sprite.setColor(sf::Color(255, 255, 255, 100));
                 }
             }
@@ -418,7 +416,7 @@ void LevelEditorState::render(double alpha)
         m_window->draw(collisionLineSelection);
     }
 
-    if (m_showPopupBox)
+    if (m_popUpBox)
         m_popUpBox->render(alpha);
 
     m_tileSetWindow->draw(*m_levelEditorMenu);
@@ -470,7 +468,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
                                 justReselectedTile = true;
                                 selectedTileFilename = (*itr).filename;
                                 selectionRespectsGrid = !(*itr).forceIgnoreGrid;
-                            }       
+                            }
                         }
                         else
                         {
@@ -530,7 +528,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
         spriteInfo.filename = selectedTileFilename;
         spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
         spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
-        spriteInfo.position = GetPositionForSelectedTile();
+        spriteInfo.position = GetPositionForSelectedTile(mousePos);
         spriteInfo.priorityInDrawing = false; //! NYI!
         sprites.push_back(spriteInfo);
 
@@ -545,22 +543,19 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
 
 void LevelEditorState::save(void* inst, Button* button)
 {
-    ((LevelEditorState*)inst)->m_showPopupBox = true;
+    LevelEditorState* self = ((LevelEditorState*)inst);
+
+    //Create a PopUpBox
+    self->m_popUpBox = new PopUpBox(self->m_window, self->m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
 }
 
 void LevelEditorState::toggleGrid(void* inst, Button* button)
 {
-    if (((LevelEditorState*)inst)->m_showPopupBox)
-        return;
-
     ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
 }
 
 void LevelEditorState::setSelectedTile(void* inst, Button* button)
 {
-    if (((LevelEditorState*)inst)->m_showPopupBox)
-        return;
-
     LevelEditorState* self = (LevelEditorState*)inst;
 
     //! Check which button called, so we can determine which block we should set
@@ -578,17 +573,12 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
 
 void LevelEditorState::clear(void* inst, Button* button)
 {
-    if (((LevelEditorState*)inst)->m_showPopupBox)
-        return;
-
     ((LevelEditorState*)inst)->sprites.clear();
     ((LevelEditorState*)inst)->collisionLines.clear();
 }
 
 void LevelEditorState::testOut(void* inst, Button* button)
 {
-    if (((LevelEditorState*)inst)->m_showPopupBox)
-        return;
 
     ((LevelEditorState*)inst)->testingLevelOut = !((LevelEditorState*)inst)->testingLevelOut;
 }

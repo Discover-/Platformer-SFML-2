@@ -18,8 +18,8 @@ class GameState
 
         ///\brief Draw function(interpolate and render everything on the window given at creation)
         ///A note on the interpolation:
-        ///The render state = currentstate * alpha - previousstate * ( 1 - alpha )
-        ///Example: renderPos = currentPos * alpha - previousPos * ( 1 - alpha )
+        ///The render state = currentstate * alpha + previousstate * ( 1 - alpha )
+        ///Example: renderPos = currentPos * alpha + previousPos * ( 1 - alpha )
         virtual void render(double alpha) = 0;
 
         GameStates GetState() { return gameState; }

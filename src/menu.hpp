@@ -3,6 +3,7 @@
 
 #include "menuitem.hpp"
 #include <list>
+#include <map>
 
 ///A menu which can manage MenuItems
 class Menu : public sf::Drawable

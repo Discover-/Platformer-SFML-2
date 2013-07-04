@@ -29,7 +29,7 @@ class LevelEditorState : public GameState
         std::vector<SpriteInfo>& GetSprites() { return sprites; }
         std::vector<CollidableObject>& GetCollidableObjects() { return collidableObjects; }
 
-        sf::Vector2f GetPositionForSelectedTile();
+        sf::Vector2f GetPositionForSelectedTile(sf::Vector2i mousePos);
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
         static void testOut(void* inst, Button* button);
@@ -47,7 +47,7 @@ class LevelEditorState : public GameState
         PopUpBox* m_popUpBox;
 
         std::string selectedTileFilename;
-        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_showPopupBox, m_placeTileWithCtrl;
+        bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_placeTileWithCtrl;
         bool m_showCollisionLines;
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;

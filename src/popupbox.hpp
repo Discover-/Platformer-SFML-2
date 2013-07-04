@@ -13,7 +13,7 @@ class PopUpBox
         PopUpBox(sf::RenderWindow* renderWindow, StateManager* manager, std::string _popUpBoxMessage, sf::Vector2f position);
         ~PopUpBox();
 
-        void handle_events();
+        bool handle_event(sf::Event& _event);
         void logic(double passed, double deltaTime);
         void render(double alpha);
 
@@ -21,6 +21,8 @@ class PopUpBox
         static void yes(void* inst, Button* button);
         static void no(void* inst, Button* button);
 
+        void setPosition(sf::Vector2f newPos);
+        inline const sf::Vector2f& getPosition() const;
         void resetPositions();
 
         bool m_pressedYes, m_pressedNo, m_pressedCloseBox;
@@ -30,9 +32,10 @@ class PopUpBox
         sf::Text popUpBoxMessage;
         sf::RectangleShape popUpBoxBackground, popUpBoxSelectBar;
         sf::RenderWindow* m_window;
-        PopUpBoxMenu* m_popUpBoxMenu;
+        PopUpBoxMenu m_popUpBoxMenu;
 
         sf::Vector2f initialPosition;
+        sf::Vector2f m_prevPos; //Needed for interpolation, see gamestate.hpp for more details
 
         bool selectedPopUpBox;
         sf::Vector2f distSelectedBox;

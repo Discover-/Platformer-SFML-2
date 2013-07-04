@@ -8,6 +8,8 @@ Menu::~Menu()
 
 bool Menu::handle_event(sf::Event _event)
 {
+    //Check which item is selected(implement a method)
+
     bool handled = false;
     //Check the event on all the items
     for (MenuItem* it : items)
