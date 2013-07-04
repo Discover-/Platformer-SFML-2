@@ -17,6 +17,7 @@ class LevelEditorMenu : public Menu
         CollapsableButton button_tiles;
         Button button_toggleGrid;
         Button button_clear;
+        Button button_toggleCollisionLines;
 
         //! Buttons for button_tiles
         Button button_tiles_childs[BUTTONT_TILES_CHILDS_SIZE];

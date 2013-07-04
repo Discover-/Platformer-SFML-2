@@ -14,6 +14,7 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_levelEditorMenu->button_save.setCallback(&save, this);
     m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
     m_levelEditorMenu->button_clear.setCallback(&clear, this);
+    m_levelEditorMenu->button_toggleCollisionLines.setCallback(&toggleCollisionLines, this);
 
     //! Tiles buttons
     for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
@@ -68,6 +69,8 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     gameStateAfterPopUpBox = GAME_STATE_NULL;
 
     m_placeTileWithCtrl = false;
+
+    m_showCollisionLines = true;
 }
 
 LevelEditorState::~LevelEditorState()
@@ -360,8 +363,9 @@ void LevelEditorState::render(double alpha)
         for (std::vector<sf::VertexArray>::iterator itr = grid.begin(); itr != grid.end(); ++itr)
             m_window->draw(*itr);
 
-    for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
-        m_window->draw(*itr);
+    if (m_showCollisionLines)
+        for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
+            m_window->draw(*itr);
 
     if (!m_showPopupBox && selectedTileFilename != "")
     {
@@ -377,6 +381,9 @@ void LevelEditorState::render(double alpha)
 
         for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
         {
+            if (!m_showCollisionLines && (*itr).filename == "Graphics/Menu/collision_pointer.png")
+                continue;
+
             sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
             sprite.setPosition((*itr).position.x, (*itr).position.y);
             sf::FloatRect spriteRect = sprite.getGlobalBounds();
@@ -585,4 +592,9 @@ void LevelEditorState::testOut(void* inst, Button* button)
         return;
 
     ((LevelEditorState*)inst)->testingLevelOut = !((LevelEditorState*)inst)->testingLevelOut;
+}
+
+void LevelEditorState::toggleCollisionLines(void* inst, Button* button)
+{
+    ((LevelEditorState*)inst)->m_showCollisionLines = !((LevelEditorState*)inst)->m_showCollisionLines;
 }
