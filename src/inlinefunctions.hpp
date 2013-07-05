@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 enum GameStates
 {
@@ -22,6 +22,13 @@ inline float GetDistance(float x1, float y1, float x2, float y2)
     float dx = x1 - x2;
     float dy = y1 - y2;
     float dist = sqrt((dx * dx) + (dy * dy));
+    return (dist > 0 ? dist : 0);
+}
+
+inline float GetDistanceXorY(float coord1, float coord2)
+{
+    float distCoords = coord1 - coord2;
+    float dist = sqrt(distCoords * distCoords);
     return (dist > 0 ? dist : 0);
 }
 
@@ -47,7 +54,7 @@ struct SpriteInfo
     sf::Vector2f position;
     bool isCollidable;
     bool forceIgnoreGrid;
-    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course) 
+    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course)
 
     bool operator == (SpriteInfo spriteInfo)
     {
@@ -59,5 +66,15 @@ struct SpriteInfo
         return spriteInfo.filename != filename || spriteInfo.position != position || spriteInfo.isCollidable != isCollidable || spriteInfo.forceIgnoreGrid != forceIgnoreGrid || spriteInfo.priorityInDrawing != priorityInDrawing;
     }
 };
+
+struct CollidableObject
+{
+    sf::Vector2f position;
+    float height;
+    float width;
+    bool collideFromTopOnly;
+};
+
+#define BUTTONT_TILES_CHILDS_SIZE    4
 
 #endif // INLINEFUNCTIONS_HPP_INCLUDED

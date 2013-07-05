@@ -12,6 +12,7 @@ class MainMenuState : public GameState
 {
     public:
         MainMenuState(sf::RenderWindow* renderWindow, StateManager* manager);
+        ~MainMenuState();
 
         void handle_events();
         void logic(double passed, double deltaTime);

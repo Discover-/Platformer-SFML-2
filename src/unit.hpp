@@ -12,7 +12,7 @@ class Unit : public Position
 {
     public:
         Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* manager, GameState* _gameState = NULL);
-        ~Unit();
+        virtual ~Unit();
 
         virtual void Update();
 
@@ -28,7 +28,7 @@ class Unit : public Position
         sf::RectangleShape GetBodyShape() { return bodyShape; }
 
         bool CollidesWithGameobjects(float newPosX = 0.0f, float newPosY = 0.0f);
-        bool CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPosX = 0.0f, float newPosY = 0.0f);
+        bool CollidesWithGameobjects(std::vector<CollidableObject> sprites, float newPosX = 0.0f, float newPosY = 0.0f);
 
         StateManager* m_manager;
         GameState* gameState;

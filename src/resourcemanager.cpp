@@ -79,3 +79,28 @@ sf::Music& ResourceManager::getMusic(const std::string filename)
         return *m_musics.at(filename);
     }
 }
+
+sf::Font& ResourceManager::getFont(const std::string filename)
+{
+    if (m_fonts.find(filename) == m_fonts.end())
+    {
+        //The font is not yet loaded, load it now
+        sf::Font font;
+
+        if (font.loadFromFile(filename))
+        {
+            m_fonts.insert(std::make_pair(filename, std::shared_ptr<sf::Font>(new sf::Font(font))));
+            return *m_fonts.at(filename);
+        }
+        else
+        {
+            std::cerr<<"The font: "<<filename<<" could not be loaded"<<std::endl;
+            throw "Problem loading file: "+filename;
+        }
+    }
+    else
+    {
+        //The font is already in our memory, we only have to give a reference
+        return *m_fonts.at(filename);
+    }
+}

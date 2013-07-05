@@ -13,9 +13,6 @@
 class LevelSelectionMenu : public Menu
 {
     public:
-        ///\brief Default constructor
-        LevelSelectionMenu();
-
         ///\brief Constructor taking a pointer to a ResourceManager as argument
         ///Loads the default textures for the buttons and sets them
         LevelSelectionMenu(ResourceManager* resourceManager);

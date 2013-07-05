@@ -21,6 +21,9 @@ class ResourceManager
         /// \brief Load a music if it isn't loaded yet and/or give a reference to the music
         sf::Music& getMusic(const std::string filename);
 
+        /// \brief Load a font if it isn't loaded yet and/or give a reference to the font
+        sf::Font& getFont(const std::string filename);
+
     private:
         /// \brief Textures
         std::map <const std::string, std::shared_ptr<sf::Texture> > m_textures;
@@ -30,6 +33,9 @@ class ResourceManager
 
         /// \brief Musics (these can be played and stopped directly by a state, so there is always only one instance of a certain music)
         std::map <const std::string, std::shared_ptr<sf::Music> > m_musics;
+
+        /// \brief Fonts
+        std::map <const std::string, std::shared_ptr<sf::Font> > m_fonts;
 };
 
 #endif // RESOURCEMANAGER_HPP_INCLUDED

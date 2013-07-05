@@ -12,9 +12,6 @@
 class MainMenu : public Menu
 {
     public:
-        ///\brief Default constructor
-        MainMenu();
-
         ///\brief Constructor taking a pointer to a ResourceManager as argument
         ///Loads the default textures for the buttons and sets them
         MainMenu(ResourceManager* resourceManager);

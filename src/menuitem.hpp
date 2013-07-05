@@ -2,6 +2,8 @@
 #define MENUITEM_HPP_INCLUDED
 
 #include <SFML/Graphics.hpp>
+#include <map>
+#include "callback.hpp"
 
 ///! Base class for all child items of Menu (menu.hpp)
 class MenuItem : public sf::Drawable
@@ -13,6 +15,8 @@ class MenuItem : public sf::Drawable
 
         ///\brief Draws the item on target
         virtual void draw (sf::RenderTarget &target, sf::RenderStates states) const = 0;
+
+        //std::map<sf::Event::EventType, Callback<MenuItem> > callbacks;
 };
 
 #endif // MENUITEM_HPP_INCLUDED

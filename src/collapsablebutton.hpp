@@ -41,7 +41,7 @@ class CollapsableButton : public MenuItem, public sf::Sprite
         bool collapsed;
 
         ///\brief The child items, these are visible and events are checked on them only when collapsed=false
-        std::list<std::pair<MenuItem*, std::string /* textureFilename */> > items;
+        std::list<MenuItem*> items;
 
     private:
         ///Callback function, called when the button is activated, and a pointer to the activated button is given

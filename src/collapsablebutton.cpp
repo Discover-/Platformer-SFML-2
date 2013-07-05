@@ -41,15 +41,15 @@ bool CollapsableButton::handle_event(sf::Event _event)
 
     //Check the event on all the child items, if collapsed
     if (collapsed)
-        for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = items.begin(); itr != items.end(); ++itr)
-            if ((*itr).first->handle_event(_event) == true)
-                if (!handled)
-                    handled = true;
+        for (MenuItem* itr : items)
+            if (itr->handle_event(_event))
+                handled = true;
 
     //Check the event on the CollapsableButton
     switch (_event.type)
     {
         case sf::Event::MouseButtonReleased:
+        {
             if (_event.mouseButton.button == sf::Mouse::Button::Left)
             {
                 //Now check if the pointer was in the button
@@ -74,12 +74,11 @@ bool CollapsableButton::handle_event(sf::Event _event)
                     collapsed = !collapsed;
 
                     //Now the event is handled
-                    if (!handled)
-                        handled = true;
+                    handled = true;
                 }
             }
             break;
-
+        }
         default:
             break;
     }
@@ -90,8 +89,8 @@ bool CollapsableButton::handle_event(sf::Event _event)
 void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (collapsed)
-        for (std::list<std::pair<MenuItem*, std::string> >::const_iterator itr = items.begin(); itr != items.end(); ++itr)
-            target.draw(*(*itr).first, states);
+        for (MenuItem* itr : items)
+            target.draw(*itr, states);
 
     //Draw the collapsablebutton itself, I know it's a little hacky
     if (sf::Texture const* texture = getTexture())

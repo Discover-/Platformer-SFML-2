@@ -16,6 +16,13 @@ currentSubMenu(&m_mainMenu)
     //Set the callbacks for the levelSelectionMenu
     m_levelSelectionMenu.button_backToMenu.setCallback(&backToMain, this);
     m_levelSelectionMenu.button_level1.setCallback(&level1, this);
+
+    gameState = GAME_STATE_MENU;
+}
+
+MainMenuState::~MainMenuState()
+{
+    //delete currentSubMenu;
 }
 
 void MainMenuState::handle_events()
@@ -23,7 +30,18 @@ void MainMenuState::handle_events()
     sf::Event _event;
 
     while (m_window->pollEvent(_event))
+    {
         currentSubMenu->handle_event(_event);
+
+        switch (_event.type)
+        {
+            case sf::Event::Closed:
+            {
+                m_manager->set_next_state(GAME_STATE_EXIT);
+                break;
+            }
+        }
+    }
 }
 
 void MainMenuState::logic(double passed, double deltaTime)

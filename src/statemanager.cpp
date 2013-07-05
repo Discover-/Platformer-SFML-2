@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "statemanager.hpp"
 #include "gamestate.hpp"
 #include "game.hpp"
@@ -21,6 +23,7 @@ void StateManager::clean()
 void StateManager::mainLoop()
 {
     m_window = new sf::RenderWindow(sf::VideoMode(1000, 600), "Platformer C++ SFML", sf::Style::Close);
+    m_window->setPosition(sf::Vector2i(300, 150));
 
     sf::Clock clock;
 
@@ -100,6 +103,12 @@ void StateManager::change_state()
             case GAME_STATE_LEVEL_EDITOR:
                 m_currentState = new LevelEditorState(m_window, this);
                 break;
+            case GAME_STATE_EXIT:
+                m_window->close();
+                break;
+            default:
+                std::cout << "Unknown nextState in StateManager::change_state(): " << nextState << std::endl;
+                return;
         }
 
         stateID = nextState;

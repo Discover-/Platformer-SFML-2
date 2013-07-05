@@ -1,6 +1,7 @@
 #include "statemanager.hpp"
 #include "unit.hpp"
 #include "leveleditorstate.hpp"
+#include "game.hpp"
 
 Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape body, StateManager* _manager, GameState* _gameState /* = NULL */)
 {
@@ -16,12 +17,19 @@ Unit::Unit(sf::RenderWindow* _window, sf::Vector2f position, sf::RectangleShape 
     fallSpeed = 0;
 }
 
+Unit::~Unit()
+{
+
+}
+
 void Unit::Update()
 {
-    std::vector<SpriteInfo> sprites;
-    
-    if (gameState)
-        sprites = ((LevelEditorState*)gameState)->GetSprites();
+    bool levelEditor = gameState->GetState() == GAME_STATE_LEVEL_EDITOR;
+
+    if (IsDead() || (!levelEditor && ((Game*)gameState)->IsGamePaused()))
+        return;
+
+    std::vector<CollidableObject> sprites = levelEditor ? ((LevelEditorState*)gameState)->GetCollidableObjects() : ((Game*)gameState)->GetCollidableObjects();
 
     if (isJumping)
     {
@@ -76,7 +84,7 @@ bool Unit::CollidesWithGameobjects(float newPosX /* = 0.0f */, float newPosY /* 
     return false;
 }
 
-bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPosX /* = 0.0f */, float newPosY /* = 0.0f */)
+bool Unit::CollidesWithGameobjects(std::vector<CollidableObject> sprites, float newPosX /* = 0.0f */, float newPosY /* = 0.0f */)
 {
     if (sprites.empty())
         return CollidesWithGameobjects(newPosX, newPosY);
@@ -93,17 +101,18 @@ bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPos
     if (positionToCheckX < 0.1f || positionToCheckY < 0.1f || positionToCheckX > 900.0f || positionToCheckY > 525.0f)
         return true;
 
-    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+    for (std::vector<CollidableObject>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
     {
-        if (!(*itr).isCollidable)
-            continue;
-
-        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
-        sf::FloatRect tileRect = sprite.getGlobalBounds();
         sf::FloatRect playerRect = bodyShape.getGlobalBounds();
+        sf::FloatRect objectRect((*itr).position.x, (*itr).position.y, (itr)->width, (itr)->height);
 
-        if (WillCollision(positionToCheckY, positionToCheckY, playerRect.height, playerRect.width, (*itr).position.x, (*itr).position.y, tileRect.height, tileRect.width))
+        if (playerRect.intersects(objectRect))
             return true;
+
+        //if (positionToCheckX > (*itr).position.x && positionToCheckX < (*itr).position.x + (itr)->width && positionToCheckY > (*itr).position.y && positionToCheckY < (*itr).position.y + (itr)->height)
+        if (WillCollision(positionToCheckX, positionToCheckY, playerRect.height, playerRect.width, (*itr).position.x, (*itr).position.y, (itr)->height, (itr)->width))
+            if (!(*itr).collideFromTopOnly || positionToCheckX + playerRect.height > (*itr).position.y)
+                return true;
     }
 
     //! TODO: add gameobject collision checks here
@@ -112,6 +121,9 @@ bool Unit::CollidesWithGameobjects(std::vector<SpriteInfo> sprites, float newPos
 
 void Unit::Jump()
 {
+    if (isFalling)
+        return;
+
     isJumping = true;
     fallSpeed = 0;
     jumpSpeed = 15;
