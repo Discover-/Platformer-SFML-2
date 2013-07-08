@@ -8,14 +8,14 @@ m_levelSelectionMenu(&m_manager->resourceManager),
 currentSubMenu(&m_mainMenu)
 {
     //Set the callbacks for mainMenu
-    m_mainMenu.button_play.setCallback(&play, this);
-    m_mainMenu.button_options.setCallback(&options, this);
-    m_mainMenu.button_levelEditor.setCallback(&levelEditor, this);
-    m_mainMenu.button_exit.setCallback(&exit, this);
+    m_mainMenu.button_play.callbacks.MouseButtonReleased.set(&play, this);
+    m_mainMenu.button_options.callbacks.MouseButtonReleased.set(&options, this);
+    m_mainMenu.button_levelEditor.callbacks.MouseButtonReleased.set(&levelEditor, this);
+    m_mainMenu.button_exit.callbacks.MouseButtonReleased.set(&exit, this);
 
     //Set the callbacks for the levelSelectionMenu
-    m_levelSelectionMenu.button_backToMenu.setCallback(&backToMain, this);
-    m_levelSelectionMenu.button_level1.setCallback(&level1, this);
+    m_levelSelectionMenu.button_backToMenu.callbacks.MouseButtonReleased.set(&backToMain, this);
+    m_levelSelectionMenu.button_level1.callbacks.MouseButtonReleased.set(&level1, this);
 
     gameState = GAME_STATE_MENU;
 }
@@ -56,33 +56,33 @@ void MainMenuState::render(double alpha)
     m_window->display();
 }
 
-void MainMenuState::play(void* inst, Button* button)
+void MainMenuState::play(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->currentSubMenu = &((MainMenuState*)inst)->m_levelSelectionMenu;
 }
 
-void MainMenuState::options(void* inst, Button* button)
+void MainMenuState::options(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_OPTIONS);
 }
 
-void MainMenuState::levelEditor(void* inst, Button* button)
+void MainMenuState::levelEditor(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_LEVEL_EDITOR);
 }
 
-void MainMenuState::exit(void* inst, Button* button)
+void MainMenuState::exit(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
 }
 
 //! BEGIN LEVELSELECTIONMENU
-void MainMenuState::backToMain(void* inst, Button* button)
+void MainMenuState::backToMain(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->currentSubMenu = &((MainMenuState*)inst)->m_mainMenu;
 }
 
-void MainMenuState::level1(void* inst, Button* button)
+void MainMenuState::level1(void* inst, Button* button, sf::Event& event)
 {
     ((MainMenuState*)inst)->m_manager->set_next_state(GAME_STATE_GAME);
 }

@@ -3,22 +3,22 @@
 #include "leveleditorstate.hpp"
 #include "inlinefunctions.hpp"
 
-LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_manager(manager), m_window(renderWindow), m_popUpBox(nullptr)
+LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager* manager) : m_window(renderWindow), m_manager(manager), m_popUpBox(nullptr)
 {
     m_tileSetWindow = new sf::RenderWindow(sf::VideoMode(590, 300), "Platformer C++ SFML - Tileset", sf::Style::Close | sf::Style::Resize);
     m_tileSetWindow->setPosition(sf::Vector2i(m_window->getPosition().x + 1015, m_window->getPosition().y));
     prevTilesetWindowPos = sf::Vector2i(0, 0);
 
     m_levelEditorMenu = new LevelEditorMenu(&m_manager->resourceManager);
-    m_levelEditorMenu->button_test.setCallback(&testOut, this);
-    m_levelEditorMenu->button_save.setCallback(&save, this);
-    m_levelEditorMenu->button_toggleGrid.setCallback(&toggleGrid, this);
-    m_levelEditorMenu->button_clear.setCallback(&clear, this);
-    m_levelEditorMenu->button_toggleCollisionLines.setCallback(&toggleCollisionLines, this);
+    m_levelEditorMenu->button_test.callbacks.MouseButtonReleased.set(&testOut, this);
+    m_levelEditorMenu->button_save.callbacks.MouseButtonReleased.set(&save, this);
+    m_levelEditorMenu->button_toggleGrid.callbacks.MouseButtonReleased.set(&toggleGrid, this);
+    m_levelEditorMenu->button_clear.callbacks.MouseButtonReleased.set(&clear, this);
+    m_levelEditorMenu->button_toggleCollisionLines.callbacks.MouseButtonReleased.set(&toggleCollisionLines, this);
 
     //! Tiles buttons
     for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
-        m_levelEditorMenu->button_tiles_childs[i].setCallback(&setSelectedTile, this);
+        m_levelEditorMenu->button_tiles_childs[i].callbacks.MouseButtonReleased.set(&setSelectedTile, this);
 
     //for (std::list<std::pair<MenuItem*, std::string> >::iterator itr = m_levelEditorMenu->button_tiles.items.begin(); itr != m_levelEditorMenu->button_tiles.items.end(); ++itr)
     //    if (MenuItem* menuItem = (*itr).first)
@@ -541,7 +541,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
     }
 }
 
-void LevelEditorState::save(void* inst, Button* button)
+void LevelEditorState::save(void* inst, Button* button, sf::Event& event)
 {
     LevelEditorState* self = ((LevelEditorState*)inst);
 
@@ -549,12 +549,12 @@ void LevelEditorState::save(void* inst, Button* button)
     self->m_popUpBox = new PopUpBox(self->m_window, self->m_manager, "Are you sure you want to exit without saving?", sf::Vector2f(350.0f, 250.0f));
 }
 
-void LevelEditorState::toggleGrid(void* inst, Button* button)
+void LevelEditorState::toggleGrid(void* inst, Button* button, sf::Event& event)
 {
     ((LevelEditorState*)inst)->enabledGrid = !((LevelEditorState*)inst)->enabledGrid;
 }
 
-void LevelEditorState::setSelectedTile(void* inst, Button* button)
+void LevelEditorState::setSelectedTile(void* inst, Button* button, sf::Event& event)
 {
     LevelEditorState* self = (LevelEditorState*)inst;
 
@@ -571,19 +571,19 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
         std::cout << "Unknown/unsupported button in LevelEditorState::setSelectedTile" << std::endl;
 }
 
-void LevelEditorState::clear(void* inst, Button* button)
+void LevelEditorState::clear(void* inst, Button* button, sf::Event& event)
 {
     ((LevelEditorState*)inst)->sprites.clear();
     ((LevelEditorState*)inst)->collisionLines.clear();
 }
 
-void LevelEditorState::testOut(void* inst, Button* button)
+void LevelEditorState::testOut(void* inst, Button* button, sf::Event& event)
 {
 
     ((LevelEditorState*)inst)->testingLevelOut = !((LevelEditorState*)inst)->testingLevelOut;
 }
 
-void LevelEditorState::toggleCollisionLines(void* inst, Button* button)
+void LevelEditorState::toggleCollisionLines(void* inst, Button* button, sf::Event& event)
 {
     ((LevelEditorState*)inst)->m_showCollisionLines = !((LevelEditorState*)inst)->m_showCollisionLines;
 }

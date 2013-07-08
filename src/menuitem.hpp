@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <map>
-#include "callback.hpp"
 
 ///! Base class for all child items of Menu (menu.hpp)
 class MenuItem : public sf::Drawable
@@ -16,7 +15,9 @@ class MenuItem : public sf::Drawable
         ///\brief Draws the item on target
         virtual void draw (sf::RenderTarget &target, sf::RenderStates states) const = 0;
 
-        //std::map<sf::Event::EventType, Callback<MenuItem> > callbacks;
+        ///\brief Check if the item is focussed. The position of the mouse cursor is given.
+        ///\note Only focussed items get to check events through handle_event
+        virtual bool isFocussed(sf::Vector2i mousePos) = 0;
 };
 
 #endif // MENUITEM_HPP_INCLUDED

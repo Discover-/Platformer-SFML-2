@@ -7,8 +7,8 @@ LevelEditorMenu::LevelEditorMenu(ResourceManager* resourceManager) :
 button_test(sf::Vector2f(10.0f, 10.0f), resourceManager->getTexture("Graphics/Menu/test.png")),
 button_save(sf::Vector2f(202.0f, 10.0f), resourceManager->getTexture("Graphics/Menu/save.png")),
 button_tiles(sf::Vector2f(394.0f, 10.0f), resourceManager->getTexture("Graphics/Menu/tiles.png")),
-button_clear(sf::Vector2f(202.0f, 45.0f), resourceManager->getTexture("Graphics/Menu/clear.png")),
 button_toggleGrid(sf::Vector2f(10.0f, 45.0f), resourceManager->getTexture("Graphics/Menu/toggle_grid.png")),
+button_clear(sf::Vector2f(202.0f, 45.0f), resourceManager->getTexture("Graphics/Menu/clear.png")),
 button_toggleCollisionLines(sf::Vector2f(394.0f, 45.0f), resourceManager->getTexture("Graphics/Menu/toggle_collision_lines.png"))
 {
     items.push_back(&button_save);
@@ -28,7 +28,7 @@ button_toggleCollisionLines(sf::Vector2f(394.0f, 45.0f), resourceManager->getTex
         blockPosX += 60.0f;
     }
 
-    button_tiles_childs[3] = Button(sf::Vector2f(190.0f, 95.0f), resourceManager->getTexture("Graphics/Menu/collision_pointer.png"), nullptr, false);
+    button_tiles_childs[3] = Button(sf::Vector2f(190.0f, 95.0f), resourceManager->getTexture("Graphics/Menu/collision_pointer.png"));
 
     for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
         button_tiles.items.push_back(&button_tiles_childs[i]);

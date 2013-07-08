@@ -2,85 +2,112 @@
 
 #include "collapsablebutton.hpp"
 
-CollapsableButton::CollapsableButton(): callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
+CollapsableButton::CollapsableButton()
+:collapsed(true)
 {
 
 }
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(CollapsableButton*) /* = nullptr */, bool _collapsed /* = true */)
-:collapsed(_collapsed),
-callback(_callback)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(CollapsableButton*, sf::Event&) /* = nullptr */, bool _collapsed /* = true */)
+:collapsed(_collapsed)
 {
+    callbacks.MouseButtonReleased.set(_callback);
     setPosition(position);
     setTexture(_texture, true);
 }
 
-CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*), void* _classPointer, bool _collapsed /* = false */) : collapsed(_collapsed), callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
+CollapsableButton::CollapsableButton(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(void*, CollapsableButton*, sf::Event&), void* _classPointer, bool _collapsed /* = true */)
+:collapsed(_collapsed)
 {
+    callbacks.MouseButtonReleased.set(_callback, _classPointer);
     setPosition(position);
     setTexture(_texture, true);
-}
-
-void CollapsableButton::setCallback(void (*_callback)(CollapsableButton*))
-{
-    callback = _callback;
-    memberCallback = nullptr;
-    classPointer = nullptr;
-}
-
-void CollapsableButton::setCallback(void (*_callback)(void*, CollapsableButton*), void* _classPointer)
-{
-    memberCallback = _callback;
-    classPointer = _classPointer;
-    callback = nullptr;
 }
 
 bool CollapsableButton::handle_event(sf::Event _event)
 {
+    if (_event.type == sf::Event::EventType::MouseMoved)
+    {
+        //Check which items are currently focussed
+        for (auto it : items)
+        {
+            if (it->isFocussed(sf::Vector2i(_event.mouseMove.x, _event.mouseMove.y)))
+                focussedItems.push_back(it);
+        }
+    }
+
     bool handled = false;
 
-    //Check the event on all the child items, if collapsed
-    if (collapsed)
-        for (MenuItem* itr : items)
-            if (itr->handle_event(_event))
-                handled = true;
-
-    //Check the event on the CollapsableButton
-    switch (_event.type)
+    //Check the event on all the items
+    for (auto it = focussedItems.rbegin(); it != focussedItems.rend(); ++it)
     {
-        case sf::Event::MouseButtonReleased:
+        if ((*it)->handle_event(_event) == true)
         {
-            if (_event.mouseButton.button == sf::Mouse::Button::Left)
-            {
-                //Now check if the pointer was in the button
-                if (_event.mouseButton.x > getPosition().x && _event.mouseButton.x < getPosition().x + getGlobalBounds().width && _event.mouseButton.y > getPosition().y && _event.mouseButton.y < getPosition().y + getGlobalBounds().height)
-                {
-                    //The button was clicked. Now call it's callback function
-                    if (classPointer == nullptr)
-                    {
-                        if (callback != nullptr)
-                        {
-                            //The callback function is a static member or global function
-                            callback(this);
-                        }
-                    }
-                    else if (memberCallback != nullptr)
-                    {
-                        //The callback function is a non-static member function, some tricks are needed
-                        memberCallback(classPointer, this);
-                    }
+            handled = true;
 
-                    //Also, expand or collapse
-                    collapsed = !collapsed;
-
-                    //Now the event is handled
-                    handled = true;
-                }
-            }
+            //The event is handled already, so we can move on
             break;
         }
-        default:
-            break;
+    }
+
+    //If the event still isn't handled, see if the collapsabe button itself can handle it
+    if (!handled)
+    {
+        switch(_event.type)
+        {
+            case sf::Event::EventType::TextEntered:
+                handled = callbacks.TextEntered(this, _event);
+                break;
+
+            case sf::Event::EventType::KeyPressed:
+                handled = callbacks.KeyPressed(this, _event);
+                break;
+
+            case sf::Event::EventType::KeyReleased:
+                handled = callbacks.KeyReleased(this, _event);
+                break;
+
+            case sf::Event::EventType::MouseWheelMoved:
+                handled = callbacks.MouseWheelMoved(this, _event);
+                break;
+
+            case sf::Event::EventType::MouseButtonPressed:
+                handled = callbacks.MouseButtonPressed(this, _event);
+                break;
+
+            case sf::Event::EventType::MouseButtonReleased:
+                handled = callbacks.MouseButtonReleased(this, _event);
+                if (handled)
+                    collapsed = !collapsed; //Collapse or expand the button
+                break;
+
+            case sf::Event::EventType::MouseMoved:
+                handled = callbacks.MouseMoved(this, _event);
+                break;
+
+            case sf::Event::EventType::JoystickButtonPressed:
+                handled = callbacks.JoystickButtonPressed(this, _event);
+                break;
+
+            case sf::Event::EventType::JoystickButtonReleased:
+                handled = callbacks.JoystickButtonReleased(this, _event);
+                break;
+
+            case sf::Event::EventType::JoystickMoved:
+                handled = callbacks.JoystickMoved(this, _event);
+                break;
+
+            case sf::Event::EventType::JoystickConnected:
+                handled = callbacks.JoystickConnected(this, _event);
+                break;
+
+            case sf::Event::EventType::JoystickDisconnected:
+                handled = callbacks.JoystickDisconnected(this, _event);
+                break;
+
+            default:
+                break;
+        }
     }
 
     return handled;
@@ -116,4 +143,16 @@ void CollapsableButton::draw(sf::RenderTarget &target, sf::RenderStates states) 
 
         target.draw(vertices, 4, sf::Quads, states);
     }
+}
+
+bool CollapsableButton::isFocussed(sf::Vector2i mousePos)
+{
+    if ( (mousePos.x > this->getPosition().x && mousePos.x <  this->getPosition().x + this->getGlobalBounds().width) && (mousePos.y > this->getPosition().y && mousePos.y < this->getPosition().y + this->getGlobalBounds().height) )
+        return true; //The cursor is in the CollapsableButton itself
+
+    for (auto it : items)
+        if (it->isFocussed(mousePos))
+            return true; //One of the child items is focussed, so we want to get events
+
+    return false; //the cursor isn't in the button or child items, so we call it unfocussed.
 }

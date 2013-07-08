@@ -32,12 +32,12 @@ class LevelEditorState : public GameState
         sf::Vector2f GetPositionForSelectedTile(sf::Vector2i mousePos);
         bool IsSpotTakenBySprite(sf::Vector2f position);
 
-        static void testOut(void* inst, Button* button);
-        static void save(void* inst, Button* button);
-        static void toggleGrid(void* inst, Button* button);
-        static void setSelectedTile(void* inst, Button* button);
-        static void clear(void* inst, Button* button);
-        static void toggleCollisionLines(void* inst, Button* button);
+        static void testOut(void* inst, Button* button, sf::Event& event);
+        static void save(void* inst, Button* button, sf::Event& event);
+        static void toggleGrid(void* inst, Button* button, sf::Event& event);
+        static void setSelectedTile(void* inst, Button* button, sf::Event& event);
+        static void clear(void* inst, Button* button, sf::Event& event);
+        static void toggleCollisionLines(void* inst, Button* button, sf::Event& event);
 
     private:
         sf::RenderWindow* m_window;

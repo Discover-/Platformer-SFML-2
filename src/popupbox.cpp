@@ -22,9 +22,9 @@ PopUpBox::PopUpBox(sf::RenderWindow* renderWindow, StateManager* manager, std::s
     popUpBoxMessage.setColor(sf::Color::Black);
     popUpBoxMessage.setFont(m_manager->resourceManager.getFont("Fonts/arial.ttf"));
 
-    m_popUpBoxMenu.button_close.setCallback(&closeBox, this);
-    m_popUpBoxMenu.button_yes.setCallback(&yes, this);
-    m_popUpBoxMenu.button_no.setCallback(&no, this);
+    m_popUpBoxMenu.button_close.callbacks.MouseButtonReleased.set(&closeBox, this);
+    m_popUpBoxMenu.button_yes.callbacks.MouseButtonReleased.set(&yes, this);
+    m_popUpBoxMenu.button_no.callbacks.MouseButtonReleased.set(&no, this);
 
     m_pressedCloseBox = false;
     m_pressedYes = false;
@@ -152,17 +152,17 @@ void PopUpBox::render(double alpha)
     setPosition(realPos);
 }
 
-void PopUpBox::yes(void* inst, Button* button)
+void PopUpBox::yes(void* inst, Button* button, sf::Event& event)
 {
     ((PopUpBox*)inst)->m_pressedYes = true;
 }
 
-void PopUpBox::no(void* inst, Button* button)
+void PopUpBox::no(void* inst, Button* button, sf::Event& event)
 {
     ((PopUpBox*)inst)->m_pressedNo = true;
 }
 
-void PopUpBox::closeBox(void* inst, Button* button)
+void PopUpBox::closeBox(void* inst, Button* button, sf::Event& event)
 {
     ((PopUpBox*)inst)->m_pressedCloseBox = true;
     ((PopUpBox*)inst)->resetPositions();

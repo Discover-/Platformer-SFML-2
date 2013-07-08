@@ -20,9 +20,9 @@ Game::Game(sf::RenderWindow* window, StateManager* manager)
     buttonPositions[2] = sf::Vector2f(481.0f, 330.0f);
 
     m_gameMiniMenu = new GameMiniMenu(&m_manager->resourceManager, buttonPositions);
-    m_gameMiniMenu->button_resume.setCallback(&resume, this);
-    m_gameMiniMenu->button_backToMenu.setCallback(&backToMenu, this);
-    m_gameMiniMenu->button_exit.setCallback(&exit, this);
+    m_gameMiniMenu->button_resume.callbacks.MouseButtonReleased.set(&resume, this);
+    m_gameMiniMenu->button_backToMenu.callbacks.MouseButtonReleased.set(&backToMenu, this);
+    m_gameMiniMenu->button_exit.callbacks.MouseButtonReleased.set(&exit, this);
 
     m_miniMenuBackground.setPosition(sf::Vector2f(400.0f, 240.0f));
     m_miniMenuBackground.setSize(sf::Vector2f(200.0f, 150.0f));
@@ -118,17 +118,17 @@ void Game::render(double alpha)
     m_window->display();
 }
 
-void Game::resume(void* inst, Button* button)
+void Game::resume(void* inst, Button* button, sf::Event& event)
 {
     ((Game*)inst)->m_PausedGame = false;
 }
 
-void Game::backToMenu(void* inst, Button* button)
+void Game::backToMenu(void* inst, Button* button, sf::Event& event)
 {
     ((Game*)inst)->m_manager->set_next_state(GAME_STATE_MENU);
 }
 
-void Game::exit(void* inst, Button* button)
+void Game::exit(void* inst, Button* button, sf::Event& event)
 {
     ((Game*)inst)->m_manager->set_next_state(GAME_STATE_EXIT);
 }

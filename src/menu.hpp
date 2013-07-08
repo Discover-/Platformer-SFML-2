@@ -3,7 +3,7 @@
 
 #include "menuitem.hpp"
 #include <list>
-#include <map>
+#include "callback.hpp"
 
 ///A menu which can manage MenuItems
 class Menu : public sf::Drawable
@@ -19,6 +19,15 @@ class Menu : public sf::Drawable
 
         ///\brief The items
         std::list<MenuItem*> items;
+
+        ///\brief Currently focussed items.
+        ///Only focussed items can handle events
+        ///An item gets focussed if the mouse cursor is on top of it
+        std::list<MenuItem*> focussedItems;
+
+        ///\brief Callback system
+        ///\note See callback.hpp for more details
+        CallbackSystem<Menu> callbacks;
 };
 
 #endif // MENU_HPP_INCLUDED

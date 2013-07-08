@@ -25,18 +25,18 @@ class MainMenuState : public GameState
 
         ///Main menu
         //Callback functions for the menuitems
-        static void play(void* inst, Button* button);
-        static void options(void* inst, Button* button);
-        static void levelEditor(void* inst, Button* button);
-        static void exit(void* inst, Button* button);
+        static void play(void* inst, Button* button, sf::Event& event);
+        static void options(void* inst, Button* button, sf::Event& event);
+        static void levelEditor(void* inst, Button* button, sf::Event& event);
+        static void exit(void* inst, Button* button, sf::Event& event);
 
         //The menu
         MainMenu m_mainMenu;
 
         ///LevelSelection menu
         //Callback functions
-        static void backToMain(void* inst, Button* button);
-        static void level1(void* inst, Button* button);
+        static void backToMain(void* inst, Button* button, sf::Event& event);
+        static void level1(void* inst, Button* button, sf::Event& event);
 
         //The menu
         LevelSelectionMenu m_levelSelectionMenu;

@@ -20,9 +20,9 @@ class Game : public GameState
         bool IsGamePaused() { return m_PausedGame; }
         std::vector<CollidableObject>& GetCollidableObjects() { return collidableObjects; }
 
-        static void resume(void* inst, Button* button);
-        static void backToMenu(void* inst, Button* button);
-        static void exit(void* inst, Button* button);
+        static void resume(void* inst, Button* button, sf::Event& event);
+        static void backToMenu(void* inst, Button* button, sf::Event& event);
+        static void exit(void* inst, Button* button, sf::Event& event);
 
     private:
         StateManager* m_manager;

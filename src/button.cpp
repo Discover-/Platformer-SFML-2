@@ -1,74 +1,79 @@
 #include "button.hpp"
 
-Button::Button() :
-callback(nullptr), memberCallback(nullptr), classPointer(nullptr)
+Button::Button()
 {
 
 }
 
-Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*) /* = nullptr */) :
-callback(_callback), memberCallback(nullptr), classPointer(nullptr)
+Button::Button(sf::Vector2f position, sf::Texture& _texture, void (*_callback)(Button*, sf::Event&) /* = nullptr */)
 {
+    callbacks.MouseButtonReleased.set(_callback);
     setPosition(position);
     setTexture(_texture, true);
 }
 
-Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(void*, Button*), void* _classPointer) :
-callback(nullptr), memberCallback(_callback), classPointer(_classPointer)
+Button::Button(sf::Vector2f position, sf::Texture&  _texture, void (*_callback)(void*, Button*, sf::Event&), void* _classPointer)
 {
+    callbacks.MouseButtonReleased.set(_callback, _classPointer);
     setPosition(position);
     setTexture(_texture, true);
-}
-
-void Button::setCallback(void (*_callback)(Button*))
-{
-    callback = _callback;
-    memberCallback = nullptr;
-    classPointer = nullptr;
-}
-
-void Button::setCallback(void (*_callback)(void*, Button*), void* _classPointer)
-{
-    memberCallback = _callback;
-    classPointer = _classPointer;
-    callback = nullptr;
 }
 
 bool Button::handle_event(sf::Event _event)
 {
     bool handled = false;
 
-    switch (_event.type)
+    //Call the callback function for the type of _event, if one exists.
+    switch(_event.type)
     {
-        case sf::Event::MouseButtonReleased:
-        {
-            if (_event.mouseButton.button == sf::Mouse::Button::Left)
-            {
-                //Now check if the pointer was in the button
-                if (_event.mouseButton.x > getPosition().x && _event.mouseButton.x < getPosition().x + getGlobalBounds().width && _event.mouseButton.y > getPosition().y && _event.mouseButton.y < getPosition().y + getGlobalBounds().height)
-                {
-                    //The button was clicked. Now call it's callback function
-                    if (classPointer == nullptr)
-                    {
-                        if (callback != nullptr)
-                        {
-                            //The callback function is a static member or global function
-                            callback(this);
-                        }
-                    }
-                    else if (memberCallback != nullptr)
-                    {
-                        //The callback function is a non-static member function, some tricks are needed
-                        memberCallback(classPointer, this);
-                    }
-
-                    //Now the event is handled
-                    if (!handled)
-                        handled = true;
-                }
-            }
+        case sf::Event::EventType::TextEntered:
+            handled = callbacks.TextEntered(this, _event);
             break;
-        }
+
+        case sf::Event::EventType::KeyPressed:
+            handled = callbacks.KeyPressed(this, _event);
+            break;
+
+        case sf::Event::EventType::KeyReleased:
+            handled = callbacks.KeyReleased(this, _event);
+            break;
+
+        case sf::Event::EventType::MouseWheelMoved:
+            handled = callbacks.MouseWheelMoved(this, _event);
+            break;
+
+        case sf::Event::EventType::MouseButtonPressed:
+            handled = callbacks.MouseButtonPressed(this, _event);
+            break;
+
+        case sf::Event::EventType::MouseButtonReleased:
+            handled = callbacks.MouseButtonReleased(this, _event);
+            break;
+
+        case sf::Event::EventType::MouseMoved:
+            handled = callbacks.MouseMoved(this, _event);
+            break;
+
+        case sf::Event::EventType::JoystickButtonPressed:
+            handled = callbacks.JoystickButtonPressed(this, _event);
+            break;
+
+        case sf::Event::EventType::JoystickButtonReleased:
+            handled = callbacks.JoystickButtonReleased(this, _event);
+            break;
+
+        case sf::Event::EventType::JoystickMoved:
+            handled = callbacks.JoystickMoved(this, _event);
+            break;
+
+        case sf::Event::EventType::JoystickConnected:
+            handled = callbacks.JoystickConnected(this, _event);
+            break;
+
+        case sf::Event::EventType::JoystickDisconnected:
+            handled = callbacks.JoystickDisconnected(this, _event);
+            break;
+
         default:
             break;
     }
@@ -102,4 +107,11 @@ void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
         target.draw(vertices, 4, sf::Quads, states);
     }
+}
+
+bool Button::isFocussed(sf::Vector2i mousePos)
+{
+    if ( (mousePos.x > this->getPosition().x && mousePos.x <  this->getPosition().x + this->getGlobalBounds().width) && (mousePos.y > this->getPosition().y && mousePos.y < this->getPosition().y + this->getGlobalBounds().height) )
+        return true; //The cursor is in the button, so we call the button focussed.
+    return false; //the cursor isn't in the button, so we call it unfocussed.
 }

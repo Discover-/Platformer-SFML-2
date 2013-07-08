@@ -17,9 +17,9 @@ class PopUpBox
         void logic(double passed, double deltaTime);
         void render(double alpha);
 
-        static void closeBox(void* inst, Button* button);
-        static void yes(void* inst, Button* button);
-        static void no(void* inst, Button* button);
+        static void closeBox(void* inst, Button* button, sf::Event& event);
+        static void yes(void* inst, Button* button, sf::Event& event);
+        static void no(void* inst, Button* button, sf::Event& event);
 
         void setPosition(sf::Vector2f newPos);
         inline const sf::Vector2f& getPosition() const;
