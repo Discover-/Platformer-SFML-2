@@ -21,7 +21,7 @@ class LevelEditorState : public GameState
 
         void MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick);
 
-        void SetSelectedTileFilename(std::string filename, bool _selectionRespectsGrid = true) { selectedTileFilename = filename; selectionRespectsGrid = _selectionRespectsGrid; }
+        void SetSelectedTileFilename(std::string filename, bool _selectionRespectsGrid = true, int _selectedZindex = 1);
         std::string GetSelectedTileFilename() { return selectedTileFilename; }
         bool HasSelectedTile() { return selectedTileFilename != ""; }
 
@@ -49,6 +49,8 @@ class LevelEditorState : public GameState
         std::string selectedTileFilename;
         bool enabledGrid, selectionRespectsGrid, justReselectedTile, movedCursorOutOfNewTile, testingLevelOut, drawingCollisionLine, minimizedWindow, m_showPopupBox, m_placeTileWithCtrl;
         bool m_showCollisionLines;
+        int selectedZindex;
+
         std::vector<SpriteInfo> sprites;
         std::vector<CollidableObject> collidableObjects;
         std::vector<sf::VertexArray> grid;

@@ -54,16 +54,24 @@ struct SpriteInfo
     sf::Vector2f position;
     bool isCollidable;
     bool forceIgnoreGrid;
-    bool priorityInDrawing; //! NYI! When set to true it is drawn last (right before player, of course)
+    int zIndex; //! Priority of drawing
 
     bool operator == (SpriteInfo spriteInfo)
     {
-        return spriteInfo.filename == filename && spriteInfo.position == position && spriteInfo.isCollidable == isCollidable && spriteInfo.forceIgnoreGrid == forceIgnoreGrid && spriteInfo.priorityInDrawing == priorityInDrawing;
+        return spriteInfo.filename == filename && spriteInfo.position == position && spriteInfo.isCollidable == isCollidable && spriteInfo.forceIgnoreGrid == forceIgnoreGrid && spriteInfo.zIndex == zIndex;
     }
 
     bool operator != (SpriteInfo spriteInfo)
     {
-        return spriteInfo.filename != filename || spriteInfo.position != position || spriteInfo.isCollidable != isCollidable || spriteInfo.forceIgnoreGrid != forceIgnoreGrid || spriteInfo.priorityInDrawing != priorityInDrawing;
+        return spriteInfo.filename != filename || spriteInfo.position != position || spriteInfo.isCollidable != isCollidable || spriteInfo.forceIgnoreGrid != forceIgnoreGrid || spriteInfo.zIndex != zIndex;
+    }
+};
+
+struct SortSpritesByZIndex
+{
+    bool operator()(SpriteInfo &infoOne, SpriteInfo &infoTwo)
+    {
+        return infoOne.zIndex < infoTwo.zIndex;
     }
 };
 

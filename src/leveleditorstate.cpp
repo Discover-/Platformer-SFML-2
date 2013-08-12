@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 
 #include "leveleditorstate.hpp"
 #include "inlinefunctions.hpp"
@@ -71,6 +72,8 @@ LevelEditorState::LevelEditorState(sf::RenderWindow* renderWindow, StateManager*
     m_placeTileWithCtrl = false;
 
     m_showCollisionLines = true;
+
+    selectedZindex = 1;
 }
 
 LevelEditorState::~LevelEditorState()
@@ -119,6 +122,7 @@ void LevelEditorState::handle_events()
                     drawingCollisionLine = false;
                     selectedTileFilename = "";
                     m_showPopupBox = true;
+                    selectedZindex = 1;
                     break;
                 }
                 else if ((!m_showPopupBox && sprites.empty()) || m_popUpBox->m_pressedYes)
@@ -183,6 +187,7 @@ void LevelEditorState::handle_events()
                             justReselectedTile = false;
                             selectedTileFilename = "";
                             selectionRespectsGrid = true;
+                            selectedZindex = 1;
                         }
                         else if (drawingCollisionLine)
                             drawingCollisionLine = false;
@@ -225,6 +230,7 @@ void LevelEditorState::handle_events()
                     selectedTileFilename = "";
                     drawingCollisionLine = false;
                     gameStateAfterPopUpBox = GAME_STATE_MENU;
+                    selectedZindex = 1;
                     break;
                 }
                 else if (sprites.empty())
@@ -257,7 +263,7 @@ void LevelEditorState::handle_events()
                 spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
                 spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
                 spriteInfo.position = positionForSelectedTile;
-                spriteInfo.priorityInDrawing = false; //! NYI!
+                spriteInfo.zIndex = selectedZindex;
                 sprites.push_back(spriteInfo);
             }
         }
@@ -367,17 +373,13 @@ void LevelEditorState::render(double alpha)
         for (std::vector<sf::VertexArray>::iterator itr = collisionLines.begin(); itr != collisionLines.end(); ++itr)
             m_window->draw(*itr);
 
-    if (!m_showPopupBox && selectedTileFilename != "")
-    {
-        sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
-        selectedTile.setPosition(GetPositionForSelectedTile());
-        selectedTile.setColor(sf::Color(255, 255, 255, 100));
-        m_window->draw(selectedTile);
-    }
-
     bool foundHoverOverTile = false;
 
-    for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); ++itr)
+    std::vector<SpriteInfo> sortedSprites = sprites;
+    std::sort(sortedSprites.begin(), sortedSprites.end(), SortSpritesByZIndex());
+    std::vector<SpriteInfo> sortedSpritesCopy = sortedSprites;
+
+    for (std::vector<SpriteInfo>::iterator itr = sortedSprites.begin(); itr != sortedSprites.end(); ++itr)
     {
         if (!m_showCollisionLines && (*itr).filename == "Graphics/Menu/collision_pointer.png")
             continue;
@@ -386,23 +388,68 @@ void LevelEditorState::render(double alpha)
         sprite.setPosition((*itr).position.x, (*itr).position.y);
         sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
-        if (selectedTileFilename == "")
-        {
-            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
-            {
-                if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
-                {
-                    foundHoverOverTile = true;
+        //if (selectedTileFilename == "")
+        //{
+        //    if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr).position.x, (*itr).position.y, spriteRect.height, spriteRect.width))
+        //    {
+        //        if (!foundHoverOverTile && ((*itr == sprites.back() && movedCursorOutOfNewTile) || *itr != sprites.back()))
+        //        {
+        //            if (*itr == sortedSprites.back())
+        //            {
+        //                foundHoverOverTile = true;
 
-                    if (!m_showPopupBox)
-                        sprite.setColor(sf::Color(255, 255, 255, 100));
-                }
+        //                if (!m_showPopupBox)
+        //                    sprite.setColor(sf::Color(255, 255, 255, 100));
+        //            }
+        //        }
+        //    }
+        //    else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
+        //        movedCursorOutOfNewTile = true;
+        //}
+
+        sortedSpritesCopy.push_back(*itr);
+        //m_window->draw(sprite);
+    }
+
+    sf::Vector2f hoverOverTilePos(0.0f, 0.0f);
+
+    if (selectedTileFilename == "")
+    {
+        std::reverse(sortedSpritesCopy.begin(), sortedSpritesCopy.end());
+
+        for (std::vector<SpriteInfo>::iterator itr2 = sortedSpritesCopy.begin(); itr2 != sortedSpritesCopy.end(); ++itr2)
+        {
+            sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr2).filename));
+            sprite.setPosition((*itr2).position.x, (*itr2).position.y);
+            sf::FloatRect spriteRect = sprite.getGlobalBounds();
+
+            if (WillCollision(float(mousePos.x), float(mousePos.y), 0.0f, 0.0f, (*itr2).position.x, (*itr2).position.y, spriteRect.height, spriteRect.width))
+            {
+                hoverOverTilePos = (*itr2).position;
+                break;
             }
-            else if (*itr == sprites.back() && !movedCursorOutOfNewTile)
-                movedCursorOutOfNewTile = true;
         }
+        
+        std::reverse(sortedSpritesCopy.begin(), sortedSpritesCopy.end());
+    }
+
+    for (std::vector<SpriteInfo>::iterator itr3 = sortedSpritesCopy.begin(); itr3 != sortedSpritesCopy.end(); ++itr3)
+    {
+        sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr3).filename));
+        sprite.setPosition((*itr3).position.x, (*itr3).position.y);
+
+        if (hoverOverTilePos.x != 0.0f && hoverOverTilePos.y != 0.0f && (*itr3).position == hoverOverTilePos)
+            sprite.setColor(sf::Color(255, 255, 255, 100));
 
         m_window->draw(sprite);
+    }
+
+    if (!m_showPopupBox && selectedTileFilename != "")
+    {
+        sf::Sprite selectedTile(m_manager->resourceManager.getTexture(selectedTileFilename));
+        selectedTile.setPosition(GetPositionForSelectedTile());
+        selectedTile.setColor(sf::Color(255, 255, 255, 100));
+        m_window->draw(selectedTile);
     }
 
     if (testingLevelOut && player)
@@ -426,14 +473,29 @@ void LevelEditorState::render(double alpha)
     m_tileSetWindow->display();
 }
 
+std::vector<SpriteInfo> erasedSprites;
+
 void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseClick)
 {
     if (selectedTileFilename == "" || !leftMouseClick)
     {
         bool shiftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 
-        for (std::vector<SpriteInfo>::iterator itr = sprites.begin(); itr != sprites.end(); )
+        std::vector<SpriteInfo> sortedSprites = sprites;
+        std::sort(sortedSprites.begin(), sortedSprites.end(), SortSpritesByZIndex());
+        std::reverse(sortedSprites.begin(), sortedSprites.end());
+
+        for (std::vector<SpriteInfo>::iterator itr = sortedSprites.begin(); itr != sortedSprites.end(); )
+        //for (std::vector<SpriteInfo>::reverse_iterator itr = sortedSprites.rbegin(); itr != sortedSprites.rend(); )
         {
+            if (!erasedSprites.empty())
+            {
+                std::vector<SpriteInfo>::iterator findIter = std::find(erasedSprites.begin(), erasedSprites.end(), *itr);
+
+                if (findIter != erasedSprites.end())
+                    continue;
+            }
+
             sf::Sprite sprite(m_manager->resourceManager.getTexture((*itr).filename));
             sf::FloatRect spriteRect = sprite.getGlobalBounds();
 
@@ -470,7 +532,8 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
                                 justReselectedTile = true;
                                 selectedTileFilename = (*itr).filename;
                                 selectionRespectsGrid = !(*itr).forceIgnoreGrid;
-                            }       
+                                selectedZindex = (*itr).zIndex;
+                            }
                         }
                         else
                         {
@@ -506,10 +569,22 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
                     justReselectedTile = true;
                     selectedTileFilename = (*itr).filename;
                     selectionRespectsGrid = !(*itr).forceIgnoreGrid;
+                    selectedZindex = (*itr).zIndex;
                 }
 
                 if (eraseItr)
-                    itr = sprites.erase(itr);
+                {
+                    erasedSprites.push_back(*itr);
+                    //sortedSprites.erase( --(itr.base()) );
+                    //itr = sortedSprites.rbegin();
+
+                    //sortedSprites.erase(sortedSprites.rbegin(), sortedSprites.rend());
+                    //sortedSprites.erase((itr++).base());
+                    //std::set<int>::iterator tempIter = sortedSprites.erase(--itr.base());
+                    //rev_iter = setOfInts.erase(tempIter);
+                    //sortedSprites.erase(itr);
+                    //itr = sortedSprites.begin();
+                }
 
                 break;
             }
@@ -531,7 +606,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
         spriteInfo.forceIgnoreGrid = selectedTileFilename == "Graphics/Menu/collision_pointer.png";
         spriteInfo.isCollidable = selectedTileFilename != "Graphics/Menu/collision_pointer.png";
         spriteInfo.position = GetPositionForSelectedTile();
-        spriteInfo.priorityInDrawing = false; //! NYI!
+        spriteInfo.zIndex = selectedZindex;
         sprites.push_back(spriteInfo);
 
         if (!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)))
@@ -539,6 +614,7 @@ void LevelEditorState::MouseButtonPressed(sf::Vector2i mousePos, bool leftMouseC
             selectedTileFilename = "";
             selectionRespectsGrid = true;
             movedCursorOutOfNewTile = false;
+            selectedZindex = 1;
         }
     }
 }
@@ -565,13 +641,13 @@ void LevelEditorState::setSelectedTile(void* inst, Button* button)
 
     //! Check which button called, so we can determine which block we should set
     if (button == &self->m_levelEditorMenu->button_tiles_childs[0])
-        self->SetSelectedTileFilename("Graphics/Menu/block1.png");
+        self->SetSelectedTileFilename("Graphics/Menu/block1.png", true, 2);
     else if (button == &self->m_levelEditorMenu->button_tiles_childs[1])
-        self->SetSelectedTileFilename("Graphics/Menu/block2.png");
+        self->SetSelectedTileFilename("Graphics/Menu/block2.png", true, 3);
     else if (button == &self->m_levelEditorMenu->button_tiles_childs[2])
         self->SetSelectedTileFilename("Graphics/Menu/block3.png");
     else if (button == &self->m_levelEditorMenu->button_tiles_childs[3])
-        self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png", false);
+        self->SetSelectedTileFilename("Graphics/Menu/collision_pointer.png", false, 4);
     else
         std::cout << "Unknown/unsupported button in LevelEditorState::setSelectedTile" << std::endl;
 }
@@ -596,4 +672,11 @@ void LevelEditorState::testOut(void* inst, Button* button)
 void LevelEditorState::toggleCollisionLines(void* inst, Button* button)
 {
     ((LevelEditorState*)inst)->m_showCollisionLines = !((LevelEditorState*)inst)->m_showCollisionLines;
+}
+
+void LevelEditorState::SetSelectedTileFilename(std::string filename, bool _selectionRespectsGrid /* = true */, int _selectedZindex /* = 1 */) 
+{
+    selectedTileFilename = filename;
+    selectionRespectsGrid = _selectionRespectsGrid;
+    selectedZindex = _selectedZindex;
 }

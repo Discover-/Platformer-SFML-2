@@ -28,7 +28,7 @@ button_toggleCollisionLines(sf::Vector2f(394.0f, 45.0f), resourceManager->getTex
         blockPosX += 60.0f;
     }
 
-    button_tiles_childs[3] = Button(sf::Vector2f(190.0f, 95.0f), resourceManager->getTexture("Graphics/Menu/collision_pointer.png"), nullptr, false);
+    button_tiles_childs[3] = Button(sf::Vector2f(190.0f, 95.0f), resourceManager->getTexture("Graphics/Menu/collision_pointer.png"));
 
     for (int i = 0; i < BUTTONT_TILES_CHILDS_SIZE; ++i)
         button_tiles.items.push_back(&button_tiles_childs[i]);
